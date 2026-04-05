@@ -1,399 +1,218 @@
-# Choncc Project Structure Scaffold (Visual Tree)
+# Choncc Project Structure (UI-First Monorepo Layout)
 
 ## 1) Purpose
 
-This document gives you a fully finished, visual scaffold using tree lines so you can quickly see which folders and files are nested under each parent.
+This document defines the root-level architecture for Choncc after the UI-first strategy pivot.
 
-Core structure rule:
+Primary goals:
 
-- Organize by domain first (feature folders), then by technical role (components, server, validators, tests).
+- Build the complete frontend experience first, including high-fidelity interactions and drag-and-drop workflows, using mock/static data.
+- Keep backend work isolated until the UI behavior and information architecture are validated.
+- Separate concerns clearly at the repository root so implementation order and ownership are always obvious.
 
 ---
 
-## 2) Full Project Scaffold (Production-Ready)
+## 2) Root-Level Directory Strategy
+
+Choncc uses three primary top-level directories:
+
+- /frontend: Product UI application (Next.js App Router + Tailwind CSS + React state and interactions).
+- /backend: Supabase and data platform assets (schema, migrations, seed data, auth and security policies, edge functions).
+- /docs: All planning, architecture, product, and operational documentation.
+
+### Canonical Root Tree
 
 ```txt
 choncc/
-|-- .editorconfig
-|-- .env.example
-|-- .eslintrc.cjs
-|-- .gitignore
-|-- .prettierignore
-|-- .prettierrc
-|-- LICENSE
-|-- Makefile
-|-- README.md
-|-- next-env.d.ts
-|-- next.config.ts
+|-- frontend/
+|-- backend/
+`-- docs/
+```
+
+This intentionally avoids mixing frontend runtime code with backend database concerns in the same root namespace.
+
+---
+
+## 3) Frontend Structure (/frontend)
+
+The frontend is organized for fast UI iteration and strict separation between reusable UI, feature logic, and mock-data simulation.
+
+```txt
+frontend/
 |-- package.json
+|-- next.config.ts
+|-- tsconfig.json
 |-- postcss.config.cjs
 |-- tailwind.config.ts
-|-- tsconfig.json
-|-- middleware.ts
+|-- .env.example
 |
-|-- app/
-|   |-- globals.css
-|   |-- layout.tsx
-|   |-- not-found.tsx
-|   |-- global-error.tsx
+|-- src/
+|   |-- app/
+|   |   |-- (ui)/
+|   |   |   |-- layout.tsx
+|   |   |   |-- page.tsx
+|   |   |   `-- workspace/
+|   |   |       `-- [workspaceSlug]/
+|   |   |           |-- page.tsx
+|   |   |           |-- board/page.tsx
+|   |   |           |-- backlog/page.tsx
+|   |   |           `-- settings/page.tsx
+|   |   |-- globals.css
+|   |   `-- favicon.ico
 |   |
-|   |-- (marketing)/
-|   |   |-- layout.tsx
-|   |   `-- page.tsx
+|   |-- components/
+|   |   |-- ui/                      # Generic design-system primitives
+|   |   |-- layout/                  # 3-pane shell, resizable/collapsible panes
+|   |   `-- feedback/                # Empty/loading/error visual states
 |   |
-|   |-- (auth)/
-|   |   |-- layout.tsx
-|   |   |-- login/
-|   |   |   `-- page.tsx
-|   |   `-- signup/
-|   |       `-- page.tsx
+|   |-- features/
+|   |   |-- shell/                   # App chrome, navigation, pane orchestration
+|   |   |-- board/                   # Kanban lanes, cards, DnD interactions
+|   |   |-- sprint/                  # Sprint timers, counters, sprint status UX
+|   |   `-- backlog/                 # Backlog filters, ordering, task previews
 |   |
-|   |-- (app)/
-|   |   |-- layout.tsx
-|   |   |-- page.tsx
-|   |   |
-|   |   |-- workspace/
-|   |   |   `-- [workspaceId]/
-|   |   |       |-- layout.tsx
-|   |   |       |-- page.tsx
-|   |   |       |-- board/
-|   |   |       |   `-- page.tsx
-|   |   |       |-- backlog/
-|   |   |       |   `-- page.tsx
-|   |   |       |-- analytics/
-|   |   |       |   `-- page.tsx
-|   |   |       `-- settings/
-|   |   |           `-- page.tsx
-|   |   |
-|   |   `-- api/
-|   |       `-- v1/
-|   |           |-- health/
-|   |           |   `-- route.ts
-|   |           |-- me/
-|   |           |   `-- route.ts
-|   |           |-- workspaces/
-|   |           |   |-- route.ts
-|   |           |   `-- [workspaceId]/
-|   |           |       |-- route.ts
-|   |           |       `-- projects/
-|   |           |           `-- route.ts
-|   |           |-- projects/
-|   |           |   `-- [projectId]/
-|   |           |       |-- route.ts
-|   |           |       |-- sprints/
-|   |           |       |   `-- route.ts
-|   |           |       |-- tasks/
-|   |           |       |   `-- route.ts
-|   |           |       |-- analytics/
-|   |           |       |   |-- velocity/
-|   |           |       |   |   `-- route.ts
-|   |           |       |   `-- throughput/
-|   |           |       |       `-- route.ts
-|   |           |       `-- exports/
-|   |           |           `-- route.ts
-|   |           |-- sprints/
-|   |           |   `-- [sprintId]/
-|   |           |       |-- route.ts
-|   |           |       |-- start/
-|   |           |       |   `-- route.ts
-|   |           |       `-- complete/
-|   |           |           `-- route.ts
-|   |           `-- tasks/
-|   |               |-- bulk-update/
-|   |               |   `-- route.ts
-|   |               `-- [taskId]/
-|   |                   |-- route.ts
-|   |                   |-- move/
-|   |                   |   `-- route.ts
-|   |                   `-- assign/
-|   |                       `-- route.ts
+|   |-- hooks/
+|   |   |-- use-pane-layout.ts
+|   |   |-- use-board-dnd.ts
+|   |   |-- use-sprint-timer.ts
+|   |   `-- use-local-storage.ts
 |   |
-|   `-- actions/
-|       |-- workspace/
-|       |   |-- create-workspace.action.ts
-|       |   `-- update-workspace.action.ts
-|       |-- sprint/
-|       |   |-- create-sprint.action.ts
-|       |   |-- start-sprint.action.ts
-|       |   `-- complete-sprint.action.ts
-|       `-- task/
-|           |-- create-task.action.ts
-|           |-- move-task.action.ts
-|           |-- reorder-backlog.action.ts
-|           `-- assign-task.action.ts
+|   |-- state/
+|   |   |-- stores/                  # Zustand/Redux stores for UI-only state
+|   |   |-- selectors/
+|   |   `-- actions/
+|   |
+|   |-- mock/
+|   |   |-- data/                    # Static JSON/TS mock datasets
+|   |   |-- factories/               # Builders for fake tasks/sprints/users
+|   |   `-- scenarios/               # Scenario presets (small team, overloaded sprint)
+|   |
+|   |-- lib/
+|   |   |-- constants/
+|   |   |-- utils/
+|   |   `-- types/
+|   |
+|   `-- styles/
+|       |-- tokens.css
+|       `-- animations.css
 |
-|-- components/
-|   |-- ui/
-|   |   |-- badge.tsx
-|   |   |-- button.tsx
-|   |   |-- card.tsx
-|   |   |-- dialog.tsx
-|   |   |-- dropdown-menu.tsx
-|   |   |-- input.tsx
-|   |   |-- progress.tsx
-|   |   |-- select.tsx
-|   |   |-- tabs.tsx
-|   |   |-- textarea.tsx
-|   |   `-- tooltip.tsx
-|   |-- layout/
-|   |   |-- three-pane-shell.tsx
-|   |   |-- workspace-nav-pane.tsx
-|   |   |-- sprint-board-pane.tsx
-|   |   `-- backlog-pane.tsx
-|   `-- feedback/
-|       |-- empty-state.tsx
-|       |-- error-state.tsx
-|       `-- loading-state.tsx
-|
-|-- features/
-|   |-- auth/
-|   |   |-- components/
-|   |   |   |-- login-form.tsx
-|   |   |   `-- signup-form.tsx
-|   |   |-- server/
-|   |   |   |-- auth.service.ts
-|   |   |   `-- session.service.ts
-|   |   |-- guards/
-|   |   |   `-- require-auth.ts
-|   |   |-- validators/
-|   |   |   `-- auth.schema.ts
-|   |   `-- types.ts
-|   |
-|   |-- workspace/
-|   |   |-- components/
-|   |   |   |-- workspace-switcher.tsx
-|   |   |   `-- project-list.tsx
-|   |   |-- hooks/
-|   |   |   `-- use-workspace.ts
-|   |   |-- server/
-|   |   |   |-- workspace.repository.ts
-|   |   |   `-- workspace.service.ts
-|   |   |-- validators/
-|   |   |   `-- workspace.schema.ts
-|   |   |-- mappers/
-|   |   |   `-- workspace.mapper.ts
-|   |   `-- types.ts
-|   |
-|   |-- sprint/
-|   |   |-- components/
-|   |   |   |-- sprint-header.tsx
-|   |   |   |-- sprint-capacity-card.tsx
-|   |   |   `-- sprint-timer.tsx
-|   |   |-- dnd/
-|   |   |   |-- board-dnd-context.tsx
-|   |   |   |-- task-sortable-item.tsx
-|   |   |   `-- dnd-helpers.ts
-|   |   |-- timers/
-|   |   |   `-- sprint-timer.machine.ts
-|   |   |-- hooks/
-|   |   |   `-- use-sprint-board.ts
-|   |   |-- server/
-|   |   |   |-- sprint.repository.ts
-|   |   |   |-- sprint.service.ts
-|   |   |   `-- sprint-policy.service.ts
-|   |   |-- validators/
-|   |   |   `-- sprint.schema.ts
-|   |   `-- types.ts
-|   |
-|   |-- backlog/
-|   |   |-- components/
-|   |   |   |-- backlog-list.tsx
-|   |   |   |-- backlog-item-row.tsx
-|   |   |   `-- backlog-filters.tsx
-|   |   |-- filters/
-|   |   |   `-- backlog-filter-builder.ts
-|   |   |-- hooks/
-|   |   |   `-- use-backlog.ts
-|   |   |-- server/
-|   |   |   |-- backlog.repository.ts
-|   |   |   `-- backlog.service.ts
-|   |   |-- validators/
-|   |   |   `-- backlog.schema.ts
-|   |   `-- types.ts
-|   |
-|   |-- framework/
-|   |   |-- components/
-|   |   |   `-- framework-switcher.tsx
-|   |   |-- policies/
-|   |   |   |-- agile.policy.ts
-|   |   |   |-- kanban.policy.ts
-|   |   |   |-- waterfall.policy.ts
-|   |   |   `-- vmodel.policy.ts
-|   |   |-- server/
-|   |   |   `-- framework.service.ts
-|   |   |-- validators/
-|   |   |   `-- framework.schema.ts
-|   |   `-- types.ts
-|   |
-|   `-- analytics/
-|       |-- components/
-|       |   |-- velocity-chart.tsx
-|       |   |-- throughput-chart.tsx
-|       |   `-- cycle-time-chart.tsx
-|       |-- server/
-|       |   |-- analytics.repository.ts
-|       |   `-- analytics.service.ts
-|       |-- serializers/
-|       |   `-- analytics.serializer.ts
-|       `-- types.ts
-|
-|-- hooks/
-|   |-- use-debounced-value.ts
-|   |-- use-keyboard-shortcuts.ts
-|   |-- use-local-storage.ts
-|   `-- use-media-query.ts
-|
-|-- lib/
-|   |-- auth/
-|   |   |-- permissions.ts
-|   |   `-- session.ts
-|   |-- cache/
-|   |   |-- keys.ts
-|   |   `-- revalidate.ts
-|   |-- db/
-|   |   |-- client.ts
-|   |   |-- pagination.ts
-|   |   `-- query-helpers.ts
-|   |-- observability/
-|   |   |-- logger.ts
-|   |   |-- metrics.ts
-|   |   `-- tracing.ts
-|   |-- security/
-|   |   |-- csrf.ts
-|   |   |-- rate-limit.ts
-|   |   `-- sanitize.ts
-|   `-- utils/
-|       |-- date.ts
-|       |-- id.ts
-|       |-- math.ts
-|       `-- objects.ts
-|
-|-- public/
-|   |-- fonts/
-|   |   |-- geist-mono.woff2
-|   |   `-- geist-sans.woff2
-|   |-- icons/
-|   |   |-- backlog.svg
-|   |   |-- board.svg
-|   |   `-- timer.svg
-|   `-- images/
-|       |-- auth-hero.webp
-|       `-- og-cover.png
-|
-|-- styles/
-|   |-- tokens.css
-|   |-- utilities.css
-|   `-- animations.css
-|
+`-- public/
+     |-- icons/
+     |-- images/
+     `-- fonts/
+```
+
+### Frontend Organization Principles
+
+- Feature-first composition: complex interaction logic lives inside /features, not in global utility folders.
+- Reusable components remain intentionally presentational; business-like UI behavior lives in feature modules.
+- Mock data is first-class and versioned in /mock, enabling realistic user flows before any API exists.
+- State is local-first and interaction-driven, designed to feel production-ready while remaining backend-independent.
+
+---
+
+## 4) Backend Structure (/backend)
+
+The backend folder is initialized after the UI interaction model is proven. It contains all Supabase and persistence concerns.
+
+```txt
+backend/
 |-- supabase/
 |   |-- config.toml
+|   |
 |   |-- migrations/
 |   |   |-- 0001_init.sql
-|   |   |-- 0002_rls_policies.sql
-|   |   `-- 0003_indexes.sql
+|   |   |-- 0002_auth_tables.sql
+|   |   |-- 0003_sprint_entities.sql
+|   |   `-- 0004_rls_policies.sql
+|   |
+|   |-- schema/
+|   |   |-- core.sql               # Users, workspaces, membership
+|   |   |-- planning.sql           # Epics, stories, tasks, backlog
+|   |   `-- sprints.sql            # Sprint windows, timers, snapshots
+|   |
 |   |-- seed/
 |   |   |-- dev.seed.sql
-|   |   `-- staging.seed.sql
+|   |   `-- test.seed.sql
+|   |
 |   |-- policies/
-|   |   |-- workspace_members.sql
+|   |   |-- workspaces.sql
 |   |   |-- projects.sql
 |   |   |-- sprints.sql
 |   |   `-- tasks.sql
+|   |
 |   `-- functions/
-|       `-- validate-membership.sql
+|       |-- auth-hooks/
+|       `-- domain-automation/
 |
 |-- scripts/
-|   |-- check-env.ts
-|   |-- generate-db-types.ts
-|   |-- seed-dev.ts
-|   `-- smoke-test.ts
+|   |-- reset-db.ps1
+|   |-- run-migrations.ps1
+|   `-- seed-db.ps1
 |
-|-- tests/
-|   |-- unit/
-|   |   |-- features/
-|   |   |   |-- sprint/
-|   |   |   |   `-- sprint-policy.test.ts
-|   |   |   `-- backlog/
-|   |   |       `-- reorder.test.ts
-|   |   `-- lib/
-|   |       `-- security.test.ts
-|   |
-|   |-- integration/
-|   |   |-- api/
-|   |   |   |-- workspaces.route.test.ts
-|   |   |   `-- tasks.route.test.ts
-|   |   `-- db/
-|   |       `-- rls-policies.test.ts
-|   |
-|   |-- e2e/
-|   |   |-- auth-flow.spec.ts
-|   |   |-- sprint-flow.spec.ts
-|   |   `-- backlog-dnd.spec.ts
-|   |
-|   |-- fixtures/
-|   |   |-- small-team-scrum.json
-|   |   `-- overloaded-sprint.json
-|   `-- factories/
-|       `-- task.factory.ts
-|
-|-- types/
-|   |-- api.ts
-|   |-- common.ts
-|   |-- database.ts
-|   `-- events.ts
-|
-|-- .github/
-|   `-- workflows/
-|       |-- ci.yml
-|       |-- deploy-staging.yml
-|       `-- deploy-production.yml
-|
-`-- docs/
-    |-- 01-phases.md
-    |-- 02-structure.md
-    |-- 03-techstack.md
-    |-- 04-schema.md
-    |-- 05-agents.md
-    |-- 06-features.md
-    |-- 07-security.md
-    |-- 08-deployment.md
-    |-- 09-api-design.md
-    `-- 10-testing.md
+`-- README.md
+```
+
+### Backend Organization Principles
+
+- Migrations are append-only and represent release-safe schema evolution.
+- /schema is declarative and human-readable; /migrations is chronological and executable.
+- Seed data supports local integration and deterministic test fixtures.
+- Security policy SQL is explicit and isolated to simplify RLS auditing.
+
+---
+
+## 5) Documentation Structure (/docs)
+
+All planning artifacts remain inside /docs and act as the decision log for product, architecture, delivery, and standards.
+
+```txt
+docs/
+|-- 00-phase0-signoff.md
+|-- 01-phases.md
+|-- 02-structure.md
+|-- 03-techstack.md
+|-- ...
+`-- adr/
+     |-- ADR-001-framework.md
+     |-- ADR-002-data-layer.md
+     |-- ADR-003-auth.md
+     `-- ADR-004-deployment.md
 ```
 
 ---
 
-## 3) Folder Intent (Quick Reference)
+## 6) Why Strict Separation Supports UI-First
 
-- app: routing, layouts, page composition, API route handlers, server actions.
-- features: domain-first business modules (auth, workspace, sprint, backlog, framework, analytics).
-- components: reusable design system and cross-domain layout/feedback pieces.
-- lib: cross-domain infrastructure and utility logic.
-- supabase: migrations, RLS policies, seeds, and SQL helpers.
-- tests: unit, integration, and end-to-end quality layers.
-- scripts: operational scripts for env checks, db types, seeds, and smoke tests.
+1. It protects momentum in early product shaping.
+   UI and interaction work can move at full speed without waiting on database/auth decisions.
 
----
+2. It prevents premature backend coupling.
+   No API contract pressure while navigation, pane behavior, drag-and-drop ergonomics, and information density are still evolving.
 
-## 4) Naming and Conventions
+3. It makes replacement from mock to real data predictable.
+   Frontend feature modules can swap mock providers for Supabase providers with minimal structural churn.
 
-- File names: kebab-case.
-- Component names: PascalCase.
-- Route handlers: route.ts.
-- Server actions: name.action.ts.
-- SQL entities: snake_case.
+4. It improves quality of backend implementation later.
+   Backend schema and auth can be built against validated UX flows instead of assumptions.
 
-Examples:
-
-- create-sprint.action.ts
-- sprint-policy.service.ts
-- sprint-capacity-card.tsx
+5. It reduces architectural drift in solo development.
+   Folder boundaries clarify where each decision belongs and lower accidental cross-layer complexity.
 
 ---
 
-## 5) Why This Scaffold Works for Choncc
+## 7) Conventions and Guardrails
 
-- Makes folder ownership obvious at a glance.
-- Preserves fast solo development while staying enterprise-scalable.
-- Keeps SDLC-framework expansion clean through dedicated feature modules.
-- Reduces refactor risk by centralizing shared infra under lib and domain logic under features.
+- Frontend must not import backend assets directly.
+- Backend should expose versioned contracts that map to already-validated UI states.
+- Mock contracts in /frontend/src/mock define the expected data shape before API wiring.
+- Any new cross-layer decision must be documented in /docs and, when architectural, captured as an ADR.
+
+---
+
+## 8) Adoption Checklist
+
+- Confirm root contains exactly /frontend, /backend, and /docs as primary directories.
+- Build all UI flows and interaction states in /frontend with mock/static data first.
+- Create /backend only when Phase 3 begins.
+- Keep docs current as structure evolves.

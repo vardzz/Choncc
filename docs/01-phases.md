@@ -1,332 +1,206 @@
-# Choncc Project Phases and Execution Plan
+# Choncc Project Phases (Strict UI-First Execution Plan)
 
-## 1) Vision and Delivery Strategy
+## 1) Delivery Philosophy
 
-Choncc is being built as a performance-first SDLC platform with an initial specialization in advanced Agile sprint planning and a deliberate architecture path toward supporting multiple SDLC frameworks (Kanban, Waterfall, V-Model, and hybrid modes).
+Choncc is now executed with a strict UI/UX-first methodology.
 
-Delivery strategy:
+Core rule:
 
-- Build vertical slices, not disconnected technical layers.
-- Keep performance and interaction quality as first-class requirements from day one.
-- Treat extensibility (framework-agnostic process engine) as a core architecture concern, not a post-MVP refactor.
-- Ship in frequent milestones with measurable quality gates.
+- No backend implementation, authentication, or persistence work begins until frontend interactions, layouts, and user flows are fully validated with mock/static data.
+
+This strategy ensures that the product experience is proven before infrastructure complexity is introduced.
 
 ---
 
-## 2) Program-Level Timeline (Suggested)
+## 2) Phase Overview
 
-- Phase 0: Product Foundation and Architectural Decisioning (1-2 weeks)
-- Phase 1: MVP Foundation and Workspace Shell (2-3 weeks)
-- Phase 2: Core Sprint Logic and Backlog Flow (3-4 weeks)
-- Phase 3: Collaboration, Roles, and Operational Intelligence (2-3 weeks)
-- Phase 4: SDLC Expansion Layer (3-5 weeks)
-- Phase 5: Security Hardening, Scale, and Reliability (2-3 weeks)
-- Phase 6: Launch Readiness and Post-Launch Operating Model (1-2 weeks)
-
-Total suggested initial runway: 14-22 weeks for a robust, launch-capable v1.
+| Phase | Title                            | Status    | Primary Focus                                         |
+| ----- | -------------------------------- | --------- | ----------------------------------------------------- |
+| 0     | Foundation and Naming            | Completed | Vision, scope boundaries, architecture intent         |
+| 1     | UI/UX Shell and Layout           | Planned   | 3-pane shell, navigation, static screens              |
+| 2     | Core Interactions and Mock State | Planned   | Drag-and-drop, sprint timers, realistic mock behavior |
+| 3     | Backend and Database Setup       | Planned   | Supabase, PostgreSQL schema, authentication           |
+| 4     | API Integration and Data Wiring  | Planned   | Replace mock data with live data + RLS                |
+| 5     | Advanced SDLC Features           | Planned   | Multi-framework modes (Kanban, Waterfall)             |
+| 6     | Deployment and Security          | Planned   | Hardening, CI/CD, production deployment               |
 
 ---
 
 ## 3) Detailed Phase Plan
 
-## Phase 0: Product Foundation and Architectural Decisioning
+## Phase 0 [Completed]: Foundation and Naming
 
 ### Objectives
 
-- Establish clear product boundaries for v1.
-- Define architecture and constraints before writing core code.
-- Create baseline docs, development standards, and risk register.
+- Finalize product identity and directional scope.
+- Establish baseline documentation and architectural constraints.
+- Confirm the UI-first implementation doctrine.
 
-### Key Deliverables
+### Completed Outputs
 
-- Product requirements baseline (core personas, workflows, and primary user stories).
-- Architecture Decision Records (ADRs) for framework, data layer, auth, and deployment.
-- Initial data model draft with evolution strategy.
-- Quality standards for performance, accessibility, and security.
+- Core project naming and product framing.
+- Initial documentation baseline and ADR direction.
+- Preliminary standards for implementation and delivery.
 
-### Prerequisites
+### Exit Criteria (Met)
 
-- Clear articulation of initial target users (solo developer and small dev team scenarios).
-- Agreement on scope boundaries for v1.
+- Foundational decisions captured and signed off.
+- Team-of-one execution path clear for Phase 1.
 
-### Milestones
+---
 
-- M0.1: Product scope freeze for Phase 1 and 2.
-- M0.2: Architecture baseline approved.
-- M0.3: Engineering standards and branch strategy finalized.
+## Phase 1: UI/UX Shell and Layout
+
+### Objective
+
+Build the full visual shell in Next.js App Router + Tailwind CSS with a high-quality 3-pane layout and navigation, using only static/mock data.
+
+### Scope
+
+- Build the 3-pane responsive and collapsible interface:
+  - Left pane: Workspace and navigation hierarchy.
+  - Center pane: Primary planning board surface.
+  - Right pane: Backlog and detail context panel.
+- Implement top-level navigation, keyboard/accessibility foundations, and static route shells.
+- Finalize visual language for layout, spacing, typography, and component composition.
+
+### Explicitly Out of Scope
+
+- Supabase setup.
+- Authentication.
+- API routes and data persistence.
 
 ### Exit Criteria
 
-- All foundational decisions documented.
-- No unresolved high-risk unknowns that block implementation.
+- Entire shell is production-grade from a UI perspective across desktop and mobile breakpoints.
+- All primary screens can be navigated and demoed with static content only.
 
 ---
 
-## Phase 1: MVP Foundation and Workspace Shell
+## Phase 2: Core Interactions and Mock State
 
-### Objectives
+### Objective
 
-- Implement core platform scaffolding and identity.
-- Deliver the 3-pane deep-focus shell with collapsible behavior.
-- Provide stable workspace and project foundations.
+Implement all high-value interactions and local state behavior so the application feels fully functional without backend persistence.
 
-### Key Deliverables
+### Scope
 
-- Next.js App Router foundation with route groups and layouts.
-- Authentication + user profile initialization.
-- Workspace and project creation flows.
-- 3-pane responsive shell:
-  - Left: Workspace Navigation.
-  - Center: Active Sprint Board.
-  - Right: Backlog Manager.
-- Persistent panel states (collapse/expand widths) per user.
+- Drag-and-drop Kanban board interactions:
+  - Move cards between columns.
+  - Reorder cards within columns.
+  - Move backlog items into active sprint lanes.
+- Sprint timing UX:
+  - Sprint countdown controls.
+  - Pause/resume/reset behaviors.
+  - Visual state signaling and urgency indicators.
+- Local state architecture:
+  - Mock store/state manager for boards, tasks, sprints, filters.
+  - Realistic seeded scenarios for demos and testing.
 
-### Prerequisites
+### Behavioral Expectation
 
-- Phase 0 architecture approved.
-- Database schema baseline for users/workspaces/projects.
-
-### Milestones
-
-- M1.1: App bootstrap and design token system complete.
-- M1.2: Auth and workspace CRUD complete.
-- M1.3: 3-pane shell live with persistence and keyboard shortcuts.
+- App should feel complete to end users during demos.
+- Data resets on refresh by design (no persistence yet).
 
 ### Exit Criteria
 
-- User can sign in, create workspace/project, and navigate shell reliably.
-- Core shell meets baseline interaction performance target (for example, panel interactions under 16 ms frame budget in normal conditions).
+- Interaction model is stable, intuitive, and polished.
+- Frontend data contracts are solidified through mock usage.
 
 ---
 
-## Phase 2: Core Sprint Logic and Backlog Flow
+## Phase 3: Backend and Database Setup
 
-### Objectives
+### Objective
 
-- Ship the core Agile value proposition.
-- Enable backlog grooming, sprint planning, sprint execution, and task movement.
+After UI is validated, initialize backend infrastructure and persistence foundations in /backend.
 
-### Key Deliverables
+### Scope
 
-- Sprint lifecycle:
-  - Planned -> Active -> Completed -> Archived.
-- Backlog model with estimation, priority, dependencies, and tagging.
-- Drag-and-drop mechanics:
-  - Backlog to sprint.
-  - Cross-column movement.
-  - Reordering with optimistic UI and conflict-safe persistence.
-- Active sprint timer system:
-  - Sprint-level countdown.
-  - Optional task-level focus timer.
-  - Pausing and event logging.
-- Capacity planning indicators:
-  - Team/person capacity.
-  - Story point load ratio.
-
-### Prerequisites
-
-- Stable workspace shell and role model from Phase 1.
-
-### Milestones
-
-- M2.1: Backlog and task schema finalized and migrated.
-- M2.2: Drag-and-drop board operational.
-- M2.3: Sprint timer and capacity tracker integrated.
+- Initialize backend folder and Supabase project configuration.
+- Define PostgreSQL schema for users, workspaces, projects, sprints, backlog, tasks.
+- Create SQL migrations and deterministic seed files.
+- Implement authentication foundations and identity model.
 
 ### Exit Criteria
 
-- End-to-end sprint planning/execution flow is production-usable.
-- Task movement and sprint updates are auditable and resilient.
+- Backend environment is bootstrapped and reproducible.
+- Auth and schema are ready for frontend data wiring.
 
 ---
 
-## Phase 3: Collaboration, Roles, and Operational Intelligence
+## Phase 4: API Integration and Data Wiring
 
-### Objectives
+### Objective
 
-- Add team-grade collaboration and governance.
-- Improve decision support with analytics and operational telemetry.
+Replace all frontend mock data flows with real Supabase-backed reads/writes while preserving the validated UI behavior.
 
-### Key Deliverables
+### Scope
 
-- Role-based access control:
-  - Project Manager, Developer, optional Viewer.
-- Activity stream and audit events.
-- Notifications (in-app first; optional email later).
-- Analytics dashboard:
-  - Throughput.
-  - Velocity trends.
-  - WIP and cycle-time snapshots.
-- Data export (CSV/JSON) for sprint and backlog analytics.
-
-### Prerequisites
-
-- Core sprint engine stable and event model in place.
-
-### Milestones
-
-- M3.1: RBAC enforcement across UI and API.
-- M3.2: Event/audit logging implemented.
-- M3.3: Foundational analytics shipped.
+- Integrate Server Actions and/or API handlers for data operations.
+- Replace mock repositories/providers with live data access layers.
+- Enforce Row Level Security (RLS) for all scoped entities.
+- Add loading, error, and optimistic update handling over real network calls.
 
 ### Exit Criteria
 
-- Multi-user workflow is secure and traceable.
-- Product supports practical planning and retrospective insights.
+- No production route depends on mock data.
+- UI behavior parity with Phase 2 interaction quality is maintained.
 
 ---
 
-## Phase 4: SDLC Expansion Layer
+## Phase 5: Advanced SDLC Features
 
-### Objectives
+### Objective
 
-- Generalize from Agile-first to framework-adaptable platform.
-- Introduce framework profiles and configurable workflow engines.
+Extend the connected product beyond initial sprint planning to support multiple SDLC frameworks.
 
-### Key Deliverables
+### Scope
 
-- SDLC framework abstraction:
-  - Agile sprint mode.
-  - Kanban continuous flow mode.
-  - Waterfall phase-gate mode.
-  - V-Model verification/validation mapping.
-- Configurable workflow policies:
-  - Status transitions.
-  - Required fields by workflow stage.
-  - Approval checkpoints.
-- Framework migration wizard (project-level conversion with audit trail).
-
-### Prerequisites
-
-- Stable domain model for tasks/events and robust permissions.
-
-### Milestones
-
-- M4.1: Framework type model integrated.
-- M4.2: Policy-based workflow rules engine live.
-- M4.3: Kanban and Waterfall templates delivered.
+- Introduce framework modes and workflow rules for:
+  - Kanban.
+  - Waterfall.
+- Add framework-aware views and transitions while preserving a unified UX system.
+- Provide migration/adaptation paths for project workflow switching where applicable.
 
 ### Exit Criteria
 
-- A project can switch framework profiles with controlled data transformations.
-- Core UX remains consistent while behavior adapts per framework.
+- Choncc supports multiple SDLC paradigms on top of the same core platform.
 
 ---
 
-## Phase 5: Security Hardening, Scale, and Reliability
+## Phase 6: Deployment and Security
 
-### Objectives
+### Objective
 
-- Raise operational maturity to launch grade.
-- Verify security controls and scalability assumptions.
+Perform final hardening and release the application with reliable operations.
 
-### Key Deliverables
+### Scope
 
-- Complete security hardening pass (RLS, CSRF, XSS, secrets handling).
-- Performance optimization:
-  - Query plans.
-  - Caching strategy.
-  - Render cost audits.
-- Reliability mechanisms:
-  - Structured logging.
-  - Alerting.
-  - Error budgets and SLO baselines.
-- Disaster readiness:
-  - Backup/restore procedures.
-  - Migration rollback strategy.
-
-### Prerequisites
-
-- Feature set stabilized for launch candidate.
-
-### Milestones
-
-- M5.1: Security review and remediation complete.
-- M5.2: Load and stress benchmarks passed.
-- M5.3: Runbooks and observability stack in place.
+- Security hardening across auth, data access, secrets, and transport.
+- Deployment workflows for Vercel and/or Docker-based environments.
+- CI/CD pipeline setup for build, lint, test, and deployment checks.
+- Production readiness checklist, monitoring, and rollback procedures.
 
 ### Exit Criteria
 
-- Security and reliability gates passed.
-- Platform is operationally supportable.
+- Secure, repeatable production deployment is in place.
+- Release workflow is automated and operationally documented.
 
 ---
 
-## Phase 6: Launch Readiness and Post-Launch Operating Model
+## 4) Governance Rules for This Plan
 
-### Objectives
-
-- Execute a controlled launch and establish sustainable iteration cycles.
-
-### Key Deliverables
-
-- Release candidate checklist and go/no-go criteria.
-- Production rollout strategy (staged exposure).
-- Incident response playbook.
-- Post-launch roadmap (next 2-3 quarters).
-
-### Prerequisites
-
-- Phase 5 sign-off.
-
-### Milestones
-
-- M6.1: Release candidate approved.
-- M6.2: Production deployment completed.
-- M6.3: First iteration after launch planned from real usage signals.
-
-### Exit Criteria
-
-- Stable production operation with feedback loop active.
+1. Phase order is strict; phases do not overlap on core scope.
+2. Backend work cannot begin before completion criteria for Phase 2 are met.
+3. Any exception to UI-first sequencing must be documented in docs and ADR notes.
+4. Every phase must update documentation before sign-off.
 
 ---
 
-## 4) Cross-Phase Dependencies Matrix
+## 5) Why This Plan Fits Solo Development
 
-| Dependency             | Needed By  | Produced In | Notes                                    |
-| ---------------------- | ---------- | ----------- | ---------------------------------------- |
-| Auth + identity model  | Phases 1-6 | Phase 1     | Required for RBAC, audit, ownership      |
-| Core task/event schema | Phases 2-6 | Phase 2     | Powers analytics and workflow adaptation |
-| RBAC permissions map   | Phases 3-6 | Phase 3     | Must align with RLS policies             |
-| Workflow policy engine | Phases 4-6 | Phase 4     | Enables non-Agile framework support      |
-| Observability baseline | Phases 5-6 | Phase 5     | Required for launch confidence           |
-
----
-
-## 5) Definition of Done by Phase
-
-Each phase is complete only when all are true:
-
-- Functional scope is implemented and demoable.
-- Automated test coverage for critical paths is added.
-- Security checks relevant to changed surfaces are passed.
-- Performance budget regressions are reviewed.
-- Documentation and runbooks are updated.
-- Rollback strategy is defined for schema or API changes.
-
----
-
-## 6) Risk Register (Initial)
-
-- Risk: Overfitting to Agile and making future frameworks expensive.
-  - Mitigation: Introduce framework abstraction in data model early (Phase 2-4).
-- Risk: Complex drag-and-drop state causes race conditions.
-  - Mitigation: Event-driven state updates, optimistic UI with version checks.
-- Risk: Analytics queries degrade with data growth.
-  - Mitigation: Incremental aggregation tables/materialized views and indexing strategy.
-- Risk: Security regressions in rapid iteration.
-  - Mitigation: Mandatory security review checklist on every release candidate.
-
----
-
-## 7) Recommended Execution Cadence for Solo Development
-
-- Weekly structure:
-  - Day 1: Plan and architecture decisions.
-  - Day 2-4: Build vertical slice.
-  - Day 5: Test, refactor, document, release candidate.
-- Monthly structure:
-  - Week 1-3: Feature throughput.
-  - Week 4: Stabilization, hardening, debt payment.
-
-This cadence preserves momentum while controlling architectural drift.
+- Maximizes visible progress quickly.
+- Reduces rework caused by premature schema/auth assumptions.
+- Keeps product decisions user-experience driven.
+- Creates a cleaner handoff from mock contracts to real data contracts.
