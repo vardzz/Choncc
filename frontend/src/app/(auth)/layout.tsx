@@ -4,99 +4,162 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
+const brandingContent = {
+  login: {
+    badge: "Welcome Back!",
+    headline: "Master the pace of development.",
+    description:
+      "Choncc is a high-performance SDLC platform designed for deep focus and rapid execution. Orchestrate your sprints, manage your backlog, and adapt to any framework without breaking your flow.",
+  },
+  signup: {
+    badge: "Come on and Join us!",
+    headline: "Master the pace of development.",
+    description:
+      "Choncc is a high-performance SDLC platform designed for deep focus and rapid execution. Orchestrate your sprints, manage your backlog, and adapt to any framework without breaking your flow.",
+  },
+};
+
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const isLogin = pathname === "/login";
+  const content = isLogin ? brandingContent.login : brandingContent.signup;
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-zinc-950 via-zinc-900 to-black px-4 py-10">
+    <main className="relative flex min-h-screen overflow-hidden bg-gradient-to-br from-zinc-950 via-zinc-900 to-black">
+      {/* Ambient Background Elements */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute left-[8%] top-[-10%] h-[500px] w-[500px] rounded-full bg-zinc-800/30 blur-[100px]" />
         <div className="absolute bottom-[-12%] right-[8%] h-[500px] w-[500px] rounded-full bg-zinc-300/10 blur-[100px]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.05),transparent_28%),radial-gradient(circle_at_bottom,rgba(255,255,255,0.03),transparent_22%)]" />
       </div>
 
-      <motion.section
-        initial={{ opacity: 0, y: 24, scale: 0.97 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 w-full max-w-sm overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-2xl sm:p-8"
-      >
-        <div className="mb-7 flex flex-col items-center text-center">
-          <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-100 shadow-[0_0_24px_rgba(255,255,255,0.12)]">
-            <Sparkles className="h-6 w-6 text-zinc-950" aria-hidden="true" />
+      {/* Left Panel - Branding */}
+      <div className="relative z-10 hidden w-1/2 flex-col justify-center px-12 lg:flex">
+        {/* Choncc Logo */}
+        <div className="mb-16 flex items-center gap-3">
+          <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-zinc-100">
+            <Sparkles className="h-5 w-5 text-zinc-950" aria-hidden="true" />
           </div>
-          <h1 className="text-2xl font-black tracking-tight text-zinc-100 [text-shadow:0_0_18px_rgba(255,255,255,0.08)]">
+          <h1 className="text-2xl font-black tracking-tight text-zinc-100">
             Choncc
           </h1>
-          <p className="mt-1 text-xs uppercase tracking-[0.18em] text-zinc-400">
-            Project Intelligence Platform
-          </p>
         </div>
 
-        <div className="mb-6 flex items-center gap-1 rounded-2xl border border-white/10 bg-white/5 p-1">
-          <button
-            type="button"
-            onClick={() => router.push("/login")}
-            aria-current={isLogin ? "page" : undefined}
-            className={`flex-1 cursor-pointer rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-300 ${
-              isLogin ? "bg-white/10 text-zinc-100 shadow-sm" : "text-zinc-500 hover:text-zinc-300"
-            }`}
+        {/* Dynamic Branding Content */}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={pathname}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+            className="space-y-6"
           >
-            Sign In
-          </button>
-          <button
-            type="button"
-            onClick={() => router.push("/signup")}
-            aria-current={!isLogin ? "page" : undefined}
-            className={`flex-1 cursor-pointer rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-300 ${
-              !isLogin ? "bg-white/10 text-zinc-100 shadow-sm" : "text-zinc-500 hover:text-zinc-300"
-            }`}
-          >
-            Create Account
-          </button>
-        </div>
+            <div className="inline-flex rounded-full border border-zinc-800/50 bg-white/5 px-4 py-2 backdrop-blur-sm">
+              <span className="text-l font-medium text-zinc-400 tracking-wide font-mono">
+                {content.badge}
+              </span>
+            </div>
 
-        <div className="relative overflow-hidden">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={pathname}
-              initial={{ opacity: 0, x: 60 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -60 }}
-              transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+            <h2 className="max-w-md text-5xl font-black text-zinc-100 tracking-tight leading-tight">
+              {content.headline}
+            </h2>
+
+            <p className="max-w-md text-base text-zinc-400 leading-relaxed">
+              {content.description}
+            </p>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Right Panel - Auth Form */}
+      <div className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-10 lg:w-1/2">
+        <motion.section
+          initial={{ opacity: 0, y: 24, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="w-full max-w-sm overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-2xl sm:p-8"
+        >
+          <div className="mb-7 flex flex-col items-center text-center">
+            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-100 shadow-[0_0_24px_rgba(255,255,255,0.12)]">
+              <Sparkles className="h-6 w-6 text-zinc-950" aria-hidden="true" />
+            </div>
+            <h1 className="text-2xl font-black tracking-tight text-zinc-100 [text-shadow:0_0_18px_rgba(255,255,255,0.08)]">
+              Choncc
+            </h1>
+            <p className="mt-1 text-xs uppercase tracking-[0.18em] text-zinc-400">
+              Project Intelligence Platform
+            </p>
+          </div>
+
+          <div className="mb-6 flex items-center gap-1 rounded-2xl border border-white/10 bg-white/5 p-1">
+            <button
+              type="button"
+              onClick={() => router.push("/login")}
+              aria-current={isLogin ? "page" : undefined}
+              className={`flex-1 cursor-pointer rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-300 ${
+                isLogin
+                  ? "bg-white/10 text-zinc-100 shadow-sm"
+                  : "text-zinc-500 hover:text-zinc-300"
+              }`}
             >
-              {children}
-            </motion.div>
-          </AnimatePresence>
-        </div>
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push("/signup")}
+              aria-current={!isLogin ? "page" : undefined}
+              className={`flex-1 cursor-pointer rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-300 ${
+                !isLogin
+                  ? "bg-white/10 text-zinc-100 shadow-sm"
+                  : "text-zinc-500 hover:text-zinc-300"
+              }`}
+            >
+              Create Account
+            </button>
+          </div>
 
-        <div className="my-6 flex items-center gap-3">
-          <div className="h-px flex-1 bg-white/10" />
-          <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-500">
-            OR CONTINUE WITH
-          </span>
-          <div className="h-px flex-1 bg-white/10" />
-        </div>
+          <div className="relative overflow-hidden">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={pathname}
+                initial={{ opacity: 0, x: 60 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -60 }}
+                transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {children}
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-white/5 px-4 py-3 text-sm font-medium text-zinc-200 transition hover:bg-white/10"
-          >
-            <GoogleIcon />
-            Google
-          </button>
-          <button
-            type="button"
-            className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-white/5 px-4 py-3 text-sm font-medium text-zinc-200 transition hover:bg-white/10"
-          >
-            <GitHubIcon />
-            GitHub
-          </button>
-        </div>
-      </motion.section>
+          <div className="my-6 flex items-center gap-3">
+            <div className="h-px flex-1 bg-white/10" />
+            <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-500">
+              OR CONTINUE WITH
+            </span>
+            <div className="h-px flex-1 bg-white/10" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-white/5 px-4 py-3 text-sm font-medium text-zinc-200 transition hover:bg-white/10"
+            >
+              <GoogleIcon />
+              Google
+            </button>
+            <button
+              type="button"
+              className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-white/5 px-4 py-3 text-sm font-medium text-zinc-200 transition hover:bg-white/10"
+            >
+              <GitHubIcon />
+              GitHub
+            </button>
+          </div>
+        </motion.section>
+      </div>
     </main>
   );
 }
