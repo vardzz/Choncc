@@ -91,6 +91,14 @@ Every recommendation must include component hierarchy, state ownership, and perf
 Avoid purely visual suggestions that ignore engineering feasibility.
 ```
 
+### UI-First Frontend Routing (Next.js App Router)
+
+To support seamless, non-reloading animations between routes (like Login to Sign Up), we use route groups and shared layouts:
+`/frontend/app/(auth)/layout.tsx` -> Holds the static glassmorphism card, background gradient, and Framer Motion `<AnimatePresence>` wrapper.
+`/frontend/app/(auth)/login/page.tsx` -> The Sign In form component.
+`/frontend/app/(auth)/signup/page.tsx` -> The Create Account form component.
+_(Navigating between these two will update the URL, but the layout remains mounted, allowing the inner forms to slide left/right smoothly)._
+
 ### Expected Outputs
 
 - UI architecture diagrams (textual or Mermaid).
