@@ -25,10 +25,10 @@ export interface WorkspaceSidebarProps {
 
 const iconMap = [Layers, Briefcase, Globe, User];
 const colorMap = [
-  "from-sky-500 to-cyan-500",
-  "from-violet-500 to-purple-600",
-  "from-emerald-500 to-teal-500",
-  "from-amber-500 to-orange-500",
+  "from-zinc-700 to-zinc-500",
+  "from-zinc-800 to-zinc-600",
+  "from-zinc-700 to-zinc-400",
+  "from-zinc-900 to-zinc-600",
 ];
 
 export function WorkspaceSidebar({
@@ -41,17 +41,17 @@ export function WorkspaceSidebar({
 
   return (
     <aside
-      className={`h-full border-r border-white/10 bg-slate-950/45 transition-all duration-300 ease-in-out ${
+      className={`h-full border-r border-black/5 bg-white/70 transition-all duration-500 ease-in-out dark:border-white/5 dark:bg-zinc-900/55 ${
         isCollapsed ? "w-16" : "w-64"
       } shrink-0 overflow-hidden`}
     >
-      <div className="border-b border-white/10 px-3 py-3">
-        <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-zinc-500">
+      <div className="border-b border-black/5 px-3 py-3 transition-colors duration-500 ease-in-out dark:border-white/5">
+        <div className="flex items-center gap-2 text-[11px] uppercase tracking-widest text-zinc-500 transition-colors duration-500 ease-in-out dark:text-zinc-400">
           <Button
             type="button"
             size="icon"
             variant="ghost"
-            className="h-8 w-8 shrink-0 rounded-lg border border-white/10 text-zinc-400 hover:bg-white/5 hover:text-zinc-200"
+            className="h-8 w-8 shrink-0 rounded-lg border border-black/10 text-zinc-500 transition-colors duration-500 ease-in-out hover:bg-black/5 hover:text-zinc-900 dark:border-white/10 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-zinc-100"
             onClick={() => setIsCollapsed((current) => !current)}
             aria-label={isCollapsed ? "Expand workspace sidebar" : "Collapse workspace sidebar"}
           >
@@ -61,11 +61,11 @@ export function WorkspaceSidebar({
         </div>
       </div>
 
-      <div className="border-b border-white/10 px-2 py-2">
+      <div className="border-b border-black/5 px-2 py-2 transition-colors duration-500 ease-in-out dark:border-white/5">
         {!isCollapsed ? (
           <Button
             variant="outline"
-            className="w-full justify-start border-dashed border-white/15 bg-transparent text-zinc-400 hover:border-violet-400/40 hover:bg-violet-500/10 hover:text-violet-300"
+            className="w-full justify-start border-dashed border-black/10 bg-transparent text-zinc-600 transition-colors duration-500 ease-in-out hover:border-zinc-400 hover:bg-zinc-200/40 hover:text-zinc-900 dark:border-white/15 dark:text-zinc-400 dark:hover:border-zinc-400 dark:hover:bg-zinc-800/40 dark:hover:text-zinc-100"
             onClick={onNewWorkspace}
           >
             <Plus className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
@@ -77,7 +77,7 @@ export function WorkspaceSidebar({
               type="button"
               size="icon"
               variant="ghost"
-              className="h-8 w-8 rounded-lg border-none text-zinc-300 hover:bg-white/5 hover:text-white"
+              className="h-8 w-8 rounded-lg border-none text-zinc-600 transition-colors duration-500 ease-in-out hover:bg-black/5 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-white/5 dark:hover:text-zinc-100"
               onClick={onNewWorkspace}
               aria-label="New Workspace"
             >
@@ -98,10 +98,10 @@ export function WorkspaceSidebar({
               return (
                 <Card
                   key={workspace.id}
-                  className={`cursor-pointer border transition ${
+                  className={`cursor-pointer border transition-colors duration-500 ease-in-out ${
                     isActive
-                      ? "border-white/20 bg-white/10"
-                      : "border-white/10 bg-transparent hover:border-white/15 hover:bg-white/5"
+                      ? "border-zinc-300/70 bg-zinc-100/80 shadow-sm shadow-zinc-200/50 dark:border-zinc-700 dark:bg-zinc-800/60 dark:shadow-none"
+                      : "border-black/5 bg-white/45 hover:border-zinc-300 hover:bg-zinc-100/70 dark:border-white/5 dark:bg-transparent dark:hover:border-zinc-700 dark:hover:bg-zinc-800/40"
                   }`}
                   onClick={() => onSelectWorkspace(workspace.id)}
                 >
@@ -110,8 +110,8 @@ export function WorkspaceSidebar({
                       <Icon className="h-4 w-4 text-white" aria-hidden="true" />
                     </div>
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-zinc-100">{workspace.name}</p>
-                      <p className="truncate text-xs text-zinc-500">
+                      <p className="truncate text-sm font-medium tracking-tight text-zinc-900 transition-colors duration-500 ease-in-out dark:text-zinc-100">{workspace.name}</p>
+                      <p className="truncate text-xs text-zinc-500 transition-colors duration-500 ease-in-out dark:text-zinc-400">
                         {workspace.tag ?? workspace.type ?? "Workspace"}
                         {workspace.members !== undefined
                           ? ` - ${workspace.members} member${workspace.members === 1 ? "" : "s"}`
@@ -121,7 +121,7 @@ export function WorkspaceSidebar({
                       </p>
                     </div>
                     {isActive ? (
-                      <Badge variant="secondary" className="ml-auto bg-violet-500/20 text-violet-300">
+                      <Badge variant="secondary" className="ml-auto border border-black/10 bg-zinc-200 text-zinc-700 transition-colors duration-500 ease-in-out dark:border-white/10 dark:bg-zinc-700 dark:text-zinc-100">
                         Active
                       </Badge>
                     ) : null}

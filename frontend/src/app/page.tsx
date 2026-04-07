@@ -1,7 +1,13 @@
 "use client";
 
-import { BacklogSidebar, type Task as BacklogTask, type TaskStatus } from "@/components/dashboard/backlog";
-import { DashboardMain } from "@/components/dashboard/main";
+import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
+import { BacklogSidebar } from "@/components/dashboard/backlog";
+import {
+  MainBoard,
+  type BoardColumns,
+  type KanbanColumnId,
+  type KanbanTask,
+} from "@/components/dashboard/mainBoard";
 import { DashboardNavbar } from "@/components/dashboard/navbar";
 import { type Workspace } from "@/components/dashboard/workspace";
 import { WorkspaceSidebar } from "@/components/dashboard/workspace";
@@ -14,7 +20,9 @@ const initialWorkspaces: Workspace[] = [
   { id: "ws-personal", name: "Personal", health: "1m", type: "Tasks" },
 ];
 
-const initialTasks: BacklogTask[] = [
+type WorkspaceBoardState = Record<KanbanColumnId, KanbanTask[]>;
+
+const initialTasks: Array<KanbanTask & { status: "Backlog" | "To Do" | "In Progress" | "Review" | "Done" }> = [
   {
     id: "tsk-101",
     title: "Setup CI/CD pipeline",
@@ -22,6 +30,9 @@ const initialTasks: BacklogTask[] = [
     priority: "HIGH",
     category: "Backend",
     storyPoints: 5,
+    assignee: "Jordan Diaz",
+    tags: ["Infra"],
+    dateRange: "Apr 08 - Apr 10",
     workspaceId: "ws-dentara",
   },
   {
@@ -31,6 +42,9 @@ const initialTasks: BacklogTask[] = [
     priority: "MEDIUM",
     category: "Frontend",
     storyPoints: 3,
+    assignee: "Ava Kim",
+    tags: ["UI"],
+    dateRange: "Apr 07 - Apr 09",
     workspaceId: "ws-dentara",
   },
   {
@@ -40,6 +54,9 @@ const initialTasks: BacklogTask[] = [
     priority: "MEDIUM",
     category: "UI/UX",
     storyPoints: 4,
+    assignee: "Noah Park",
+    tags: ["Design"],
+    dateRange: "Apr 09 - Apr 12",
     workspaceId: "ws-dentara",
   },
   {
@@ -49,6 +66,9 @@ const initialTasks: BacklogTask[] = [
     priority: "HIGH",
     category: "Backend",
     storyPoints: 5,
+    assignee: "Liam Stone",
+    tags: ["Search"],
+    dateRange: "Apr 07 - Apr 14",
     workspaceId: "ws-dentara",
   },
   {
@@ -58,6 +78,9 @@ const initialTasks: BacklogTask[] = [
     priority: "LOW",
     category: "UI/UX",
     storyPoints: 2,
+    assignee: "Ella Wood",
+    tags: ["Theming"],
+    dateRange: "Apr 10 - Apr 12",
     workspaceId: "ws-dentara",
   },
   {
@@ -67,6 +90,9 @@ const initialTasks: BacklogTask[] = [
     priority: "LOW",
     category: "Frontend",
     storyPoints: 2,
+    assignee: "Mason Reed",
+    tags: ["Perf"],
+    dateRange: "Apr 05 - Apr 06",
     workspaceId: "ws-dentara",
   },
   {
@@ -76,6 +102,9 @@ const initialTasks: BacklogTask[] = [
     priority: "HIGH",
     category: "Backend",
     storyPoints: 3,
+    assignee: "Jordan Diaz",
+    tags: ["Security"],
+    dateRange: "Apr 12 - Apr 15",
     workspaceId: "ws-dentara",
   },
   {
@@ -85,6 +114,9 @@ const initialTasks: BacklogTask[] = [
     priority: "MEDIUM",
     category: "UI/UX",
     storyPoints: 2,
+    assignee: "Ava Kim",
+    tags: ["Onboarding"],
+    dateRange: "Apr 14 - Apr 16",
     workspaceId: "ws-dentara",
   },
   {
@@ -94,68 +126,179 @@ const initialTasks: BacklogTask[] = [
     priority: "LOW",
     category: "Frontend",
     storyPoints: 2,
+    assignee: "Noah Park",
+    tags: ["Table"],
+    dateRange: "Apr 16 - Apr 18",
     workspaceId: "ws-dentara",
   },
 ];
+
+function createEmptyWorkspaceBoard(): WorkspaceBoardState {
+  return {
+    backlog: [],
+    todo: [],
+    inprogress: [],
+    review: [],
+    done: [],
+  };
+}
+
+function statusToColumnId(status: "Backlog" | "To Do" | "In Progress" | "Review" | "Done"): KanbanColumnId {
+  if (status === "Backlog") return "backlog";
+  if (status === "To Do") return "todo";
+  if (status === "In Progress") return "inprogress";
+  if (status === "Review") return "review";
+  return "done";
+}
+
+function isColumnId(value: string): value is KanbanColumnId {
+  return value === "backlog" || value === "todo" || value === "inprogress" || value === "review" || value === "done";
+}
+
+function buildInitialBoards(workspaces: Workspace[], tasks: Array<KanbanTask & { status: "Backlog" | "To Do" | "In Progress" | "Review" | "Done" }>) {
+  const boards: Record<string, WorkspaceBoardState> = {};
+
+  workspaces.forEach((workspace) => {
+    boards[String(workspace.id)] = createEmptyWorkspaceBoard();
+  });
+
+  tasks.forEach((task) => {
+    const workspaceId = String(task.workspaceId);
+    if (!boards[workspaceId]) boards[workspaceId] = createEmptyWorkspaceBoard();
+    boards[workspaceId][statusToColumnId(task.status)].push({
+      id: task.id,
+      title: task.title,
+      category: task.category,
+      priority: task.priority,
+      workspaceId,
+      storyPoints: task.storyPoints,
+      assignee: task.assignee,
+      tags: task.tags,
+      dateRange: task.dateRange,
+    });
+  });
+
+  return boards;
+}
 
 export default function Page() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [workspaces, setWorkspaces] = useState<Workspace[]>(initialWorkspaces);
   const [activeWorkspaceId, setActiveWorkspaceId] = useState<string>(String(initialWorkspaces[0]?.id ?? "ws-dentara"));
-  const [tasks, setTasks] = useState<BacklogTask[]>(initialTasks);
+  const [sprintIndex, setSprintIndex] = useState(9);
+  const [workspaceBoards, setWorkspaceBoards] = useState<Record<string, WorkspaceBoardState>>(() =>
+    buildInitialBoards(initialWorkspaces, initialTasks),
+  );
 
   const activeWorkspace = useMemo(
     () => workspaces.find((workspace) => workspace.id === activeWorkspaceId) ?? workspaces[0],
     [activeWorkspaceId, workspaces],
   );
 
-  const workspaceTasks = useMemo(
-    () => tasks.filter((task) => task.workspaceId === activeWorkspaceId),
-    [tasks, activeWorkspaceId],
+  const activeBoard = useMemo(
+    () => workspaceBoards[activeWorkspaceId] ?? createEmptyWorkspaceBoard(),
+    [workspaceBoards, activeWorkspaceId],
   );
 
-  const boardTasks = workspaceTasks.filter((task) => task.status !== "Backlog");
-  const backlogTasks = workspaceTasks.filter((task) => task.status === "Backlog");
+  const boardColumns = useMemo<BoardColumns>(
+    () => ({
+      todo: activeBoard.todo,
+      inprogress: activeBoard.inprogress,
+      review: activeBoard.review,
+      done: activeBoard.done,
+    }),
+    [activeBoard],
+  );
+
+  const capacityUsed = useMemo(
+    () => [...activeBoard.todo, ...activeBoard.inprogress, ...activeBoard.review, ...activeBoard.done].reduce((sum, task) => sum + (task.sp ?? task.storyPoints ?? 2), 0),
+    [activeBoard],
+  );
 
   const addTask = (title: string, category: string) => {
-    setTasks((current) => {
-      const newTask: BacklogTask = {
+    setWorkspaceBoards((current) => {
+      const newTask: KanbanTask = {
         id: `tsk-${Date.now()}`,
         title,
-        status: "Backlog",
         priority: "MEDIUM",
         category,
         storyPoints: 2,
         workspaceId: activeWorkspaceId,
+        assignee: "Unassigned",
+        tags: ["New"],
       };
 
-      return [newTask, ...current];
+      const workspaceBoard = current[activeWorkspaceId] ?? createEmptyWorkspaceBoard();
+
+      return {
+        ...current,
+        [activeWorkspaceId]: {
+          ...workspaceBoard,
+          backlog: [newTask, ...workspaceBoard.backlog],
+        },
+      };
     });
   };
 
-  const moveTask = (taskId: string, status: TaskStatus) => {
-    setTasks((current) =>
-      current.map((task) => {
-        if (task.id !== taskId) return task;
-        return { ...task, status };
-      }),
-    );
-  };
+  const onDragEnd = (result: DropResult) => {
+    const { destination, source } = result;
+    if (!destination) return;
+    if (!isColumnId(source.droppableId) || !isColumnId(destination.droppableId)) return;
+    if (source.droppableId === destination.droppableId && source.index === destination.index) return;
 
-  const promoteTaskToTodo = (taskId: string) => {
-    moveTask(taskId, "To Do");
+    setWorkspaceBoards((current) => {
+      const workspaceBoard = current[activeWorkspaceId] ?? createEmptyWorkspaceBoard();
+      const sourceColumn = source.droppableId as KanbanColumnId;
+      const destinationColumn = destination.droppableId as KanbanColumnId;
+
+      const sourceItems = [...workspaceBoard[sourceColumn]];
+      const [movedTask] = sourceItems.splice(source.index, 1);
+      if (!movedTask) return current;
+
+      if (sourceColumn === destinationColumn) {
+        sourceItems.splice(destination.index, 0, movedTask);
+        return {
+          ...current,
+          [activeWorkspaceId]: {
+            ...workspaceBoard,
+            [sourceColumn]: sourceItems,
+          },
+        };
+      }
+
+      const destinationItems = [...workspaceBoard[destinationColumn]];
+      destinationItems.splice(destination.index, 0, { ...movedTask, workspaceId: activeWorkspaceId });
+
+      return {
+        ...current,
+        [activeWorkspaceId]: {
+          ...workspaceBoard,
+          [sourceColumn]: sourceItems,
+          [destinationColumn]: destinationItems,
+        },
+      };
+    });
   };
 
   const createWorkspace = (name: string) => {
+    const workspaceId = `ws-${Date.now()}`;
+
     setWorkspaces((current) => {
       const workspace: Workspace = {
-        id: `ws-${Date.now()}`,
+        id: workspaceId,
         name,
         health: "0m",
         type: "General",
       };
 
       return [workspace, ...current];
+    });
+
+    setWorkspaceBoards((current) => {
+      return {
+        ...current,
+        [workspaceId]: createEmptyWorkspaceBoard(),
+      };
     });
   };
 
@@ -165,13 +308,9 @@ export default function Page() {
 
   return (
     <div
-      className={`h-screen overflow-hidden text-white ${
-        theme === "dark"
-          ? "bg-slate-950"
-          : "bg-zinc-100 text-zinc-950"
-      }`}
+      className={`${theme === "dark" ? "dark" : ""} h-screen overflow-hidden bg-zinc-50 text-zinc-950 transition-colors duration-500 ease-in-out dark:bg-zinc-950 dark:text-zinc-50`}
     >
-      <div className="h-full bg-[radial-gradient(circle_at_12%_0%,rgba(139,92,246,0.22),transparent_34%),radial-gradient(circle_at_88%_100%,rgba(59,130,246,0.16),transparent_40%)]">
+      <div className="h-full bg-gradient-to-b from-zinc-100 to-white transition-colors duration-500 ease-in-out dark:from-[#050505] dark:to-zinc-950">
         <div className="grid h-full grid-rows-[56px_1fr]">
           <DashboardNavbar
             activeWorkspaceName={activeWorkspace?.name ?? "Workspace"}
@@ -179,24 +318,36 @@ export default function Page() {
             onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
           />
 
-          <div className="grid min-h-0 grid-cols-[auto_1fr_auto]">
-            <WorkspaceSidebar
-              workspaces={workspaces}
-              activeWorkspaceId={activeWorkspaceId}
-              onSelectWorkspace={switchWorkspace}
-              onNewWorkspace={() => {
-                const name = window.prompt("Workspace name");
-                if (!name) return;
-                const trimmed = name.trim();
-                if (!trimmed) return;
-                createWorkspace(trimmed);
-              }}
-            />
-            <main className="min-h-0 px-3 py-3">
-              <DashboardMain boardTasks={boardTasks} onMoveTask={moveTask} />
-            </main>
-            <BacklogSidebar backlogTasks={backlogTasks} onAddTask={addTask} onPromoteTask={promoteTaskToTodo} />
-          </div>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <div className="grid min-h-0 grid-cols-[auto_1fr_auto]">
+              <WorkspaceSidebar
+                workspaces={workspaces}
+                activeWorkspaceId={activeWorkspaceId}
+                onSelectWorkspace={switchWorkspace}
+                onNewWorkspace={() => {
+                  const name = window.prompt("Workspace name");
+                  if (!name) return;
+                  const trimmed = name.trim();
+                  if (!trimmed) return;
+                  createWorkspace(trimmed);
+                }}
+              />
+              <main className="min-h-0 px-3 py-3">
+                <MainBoard
+                  columns={boardColumns}
+                  sprintIndex={sprintIndex}
+                  onPrevSprint={() => setSprintIndex((current) => Math.max(0, current - 1))}
+                  onNextSprint={() => setSprintIndex((current) => Math.min(13, current + 1))}
+                  capacityUsed={capacityUsed}
+                  capacityTotal={20}
+                />
+              </main>
+              <BacklogSidebar
+                backlogTasks={activeBoard.backlog}
+                onAddTask={addTask}
+              />
+            </div>
+          </DragDropContext>
         </div>
       </div>
     </div>
