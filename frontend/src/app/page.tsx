@@ -11,6 +11,7 @@ import {
 import { DashboardNavbar } from "@/components/dashboard/navbar";
 import { type Workspace } from "@/components/dashboard/workspace";
 import { WorkspaceSidebar } from "@/components/dashboard/workspace";
+import { useScrollVisibility } from "@/hooks/use-scroll-visibility";
 import { useMemo, useState } from "react";
 
 const initialWorkspaces: Workspace[] = [
@@ -189,6 +190,7 @@ export default function Page() {
   const [workspaceBoards, setWorkspaceBoards] = useState<Record<string, WorkspaceBoardState>>(() =>
     buildInitialBoards(initialWorkspaces, initialTasks),
   );
+  const onViewportScroll = useScrollVisibility();
 
   const activeWorkspace = useMemo(
     () => workspaces.find((workspace) => workspace.id === activeWorkspaceId) ?? workspaces[0],
@@ -319,33 +321,35 @@ export default function Page() {
           />
 
           <DragDropContext onDragEnd={onDragEnd}>
-            <div className="grid min-h-0 grid-cols-[auto_1fr_auto]">
-              <WorkspaceSidebar
-                workspaces={workspaces}
-                activeWorkspaceId={activeWorkspaceId}
-                onSelectWorkspace={switchWorkspace}
-                onNewWorkspace={() => {
-                  const name = window.prompt("Workspace name");
-                  if (!name) return;
-                  const trimmed = name.trim();
-                  if (!trimmed) return;
-                  createWorkspace(trimmed);
-                }}
-              />
-              <main className="min-h-0 px-3 py-3">
-                <MainBoard
-                  columns={boardColumns}
-                  sprintIndex={sprintIndex}
-                  onPrevSprint={() => setSprintIndex((current) => Math.max(0, current - 1))}
-                  onNextSprint={() => setSprintIndex((current) => Math.min(13, current + 1))}
-                  capacityUsed={capacityUsed}
-                  capacityTotal={20}
+            <div onScroll={onViewportScroll} className="zinc-scroll min-h-0 overflow-x-auto overflow-y-hidden">
+              <div className="grid min-h-0 h-full min-w-[1220px] grid-cols-[auto_minmax(640px,1fr)_auto]">
+                <WorkspaceSidebar
+                  workspaces={workspaces}
+                  activeWorkspaceId={activeWorkspaceId}
+                  onSelectWorkspace={switchWorkspace}
+                  onNewWorkspace={() => {
+                    const name = window.prompt("Workspace name");
+                    if (!name) return;
+                    const trimmed = name.trim();
+                    if (!trimmed) return;
+                    createWorkspace(trimmed);
+                  }}
                 />
-              </main>
-              <BacklogSidebar
-                backlogTasks={activeBoard.backlog}
-                onAddTask={addTask}
-              />
+                <main className="min-h-0 px-2 py-2 sm:px-3 sm:py-3">
+                  <MainBoard
+                    columns={boardColumns}
+                    sprintIndex={sprintIndex}
+                    onPrevSprint={() => setSprintIndex((current) => Math.max(0, current - 1))}
+                    onNextSprint={() => setSprintIndex((current) => Math.min(13, current + 1))}
+                    capacityUsed={capacityUsed}
+                    capacityTotal={20}
+                  />
+                </main>
+                <BacklogSidebar
+                  backlogTasks={activeBoard.backlog}
+                  onAddTask={addTask}
+                />
+              </div>
             </div>
           </DragDropContext>
         </div>

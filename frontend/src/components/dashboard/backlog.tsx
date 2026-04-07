@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TaskCard, type KanbanTask } from "@/components/dashboard/mainBoard";
 import { Select } from "@/components/ui/select";
+import { useScrollVisibility } from "@/hooks/use-scroll-visibility";
 import { AnimatePresence } from "framer-motion";
 import { Menu } from "lucide-react";
 import { useState, type FormEvent } from "react";
@@ -18,6 +19,8 @@ export function BacklogSidebar({ backlogTasks, onAddTask }: BacklogSidebarProps)
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Frontend");
+  const onBacklogScroll = useScrollVisibility();
+  const sidebarWidthClass = isCollapsed ? "w-14 sm:w-16" : "w-[268px] lg:w-[300px]";
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -30,9 +33,7 @@ export function BacklogSidebar({ backlogTasks, onAddTask }: BacklogSidebarProps)
 
   return (
     <aside
-      className={`flex h-full shrink-0 flex-col overflow-hidden border-l border-black/5 bg-white/70 transition-all duration-500 ease-in-out dark:border-white/5 dark:bg-zinc-900/55 ${
-        isCollapsed ? "w-16" : "w-[300px]"
-      }`}
+      className={`flex h-full shrink-0 flex-col overflow-hidden border-l border-black/5 bg-white/70 transition-all duration-500 ease-in-out dark:border-white/5 dark:bg-zinc-900/55 ${sidebarWidthClass}`}
     >
       <div className="border-b border-black/5 px-3 py-3 transition-colors duration-500 ease-in-out dark:border-white/5">
         <div className={`flex items-start ${isCollapsed ? "justify-center" : "justify-between"}`}>
@@ -82,7 +83,8 @@ export function BacklogSidebar({ backlogTasks, onAddTask }: BacklogSidebarProps)
               <div
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                className={`min-h-0 flex-1 space-y-2.5 overflow-y-auto rounded-2xl border border-black/5 bg-white/40 p-2 pr-1 transition-all duration-500 ease-in-out dark:border-white/10 dark:bg-white/[0.02] ${snapshot.isDraggingOver ? "bg-zinc-100/80 dark:bg-zinc-800/50" : ""}`}
+                onScroll={onBacklogScroll}
+                className={`zinc-scroll min-h-0 flex-1 space-y-2.5 overflow-y-auto rounded-2xl border border-black/5 bg-white/40 p-2 pr-1 transition-all duration-500 ease-in-out dark:border-white/10 dark:bg-white/[0.02] ${snapshot.isDraggingOver ? "bg-zinc-100/80 dark:bg-zinc-800/50" : ""}`}
               >
                 <AnimatePresence>
                   {backlogTasks.map((task, i) => (

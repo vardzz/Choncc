@@ -38,12 +38,11 @@ export function WorkspaceSidebar({
   onNewWorkspace,
 }: WorkspaceSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const sidebarWidthClass = isCollapsed ? "w-14 sm:w-16" : "w-56 lg:w-64";
 
   return (
     <aside
-      className={`h-full border-r border-black/5 bg-white/70 transition-all duration-500 ease-in-out dark:border-white/5 dark:bg-zinc-900/55 ${
-        isCollapsed ? "w-16" : "w-64"
-      } shrink-0 overflow-hidden`}
+      className={`h-full border-r border-black/5 bg-white/70 transition-all duration-500 ease-in-out dark:border-white/5 dark:bg-zinc-900/55 ${sidebarWidthClass} shrink-0 overflow-hidden`}
     >
       <div className="border-b border-black/5 px-3 py-3 transition-colors duration-500 ease-in-out dark:border-white/5">
         <div className="flex items-center gap-2 text-[11px] uppercase tracking-widest text-zinc-500 transition-colors duration-500 ease-in-out dark:text-zinc-400">

@@ -2,6 +2,7 @@
 
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import { AnimatePresence, motion } from "framer-motion";
+import { useScrollVisibility } from "@/hooks/use-scroll-visibility";
 import { ChevronLeft, ChevronRight, GripVertical, MoreHorizontal, Zap } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -191,6 +192,8 @@ export function MainBoard({
   const sprintNum = sprintIndex + 1;
   const pct = Math.min((capacityUsed / capacityTotal) * 100, 100);
   const overloaded = capacityUsed > capacityTotal;
+  const onBoardXScroll = useScrollVisibility();
+  const onColumnScroll = useScrollVisibility();
 
   const btnCls = "border border-black/10 bg-white/80 text-zinc-500 transition-colors duration-500 ease-in-out hover:bg-zinc-100 hover:text-zinc-900 dark:border-white/10 dark:bg-zinc-900/70 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100";
 
@@ -250,12 +253,12 @@ export function MainBoard({
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-x-auto px-3.5 pb-4 pt-3">
+      <div onScroll={onBoardXScroll} className="zinc-scroll min-h-0 flex-1 overflow-x-auto px-3.5 pb-4 pt-3">
         <div className="flex h-full min-w-max gap-3.5">
           {COLUMNS.map((col) => {
             const tasks = columns[col.id] || [];
             return (
-              <div key={col.id} className="flex w-[248px] shrink-0 flex-col">
+              <div key={col.id} className="flex w-[220px] shrink-0 flex-col sm:w-[236px] xl:w-[248px]">
                 <div
                   className="mb-0.5 flex items-center justify-between rounded-t-2xl border border-black/5 bg-white/70 px-3.5 py-2.5 transition-colors duration-500 ease-in-out dark:border-white/10 dark:bg-zinc-900/70"
                 >
@@ -277,7 +280,8 @@ export function MainBoard({
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className={`min-h-[380px] flex-1 space-y-2.5 overflow-y-auto rounded-b-2xl border border-t-0 border-black/5 bg-white/45 p-2 transition-all duration-500 ease-in-out dark:border-white/10 dark:bg-zinc-900/40 ${snapshot.isDraggingOver ? "bg-zinc-100/80 dark:bg-zinc-800/50" : ""}`}
+                      onScroll={onColumnScroll}
+                      className={`zinc-scroll min-h-[380px] flex-1 space-y-2.5 overflow-y-auto rounded-b-2xl border border-t-0 border-black/5 bg-white/45 p-2 transition-all duration-500 ease-in-out dark:border-white/10 dark:bg-zinc-900/40 ${snapshot.isDraggingOver ? "bg-zinc-100/80 dark:bg-zinc-800/50" : ""}`}
                     >
                       <AnimatePresence>
                         {tasks.map((task, i) => (
