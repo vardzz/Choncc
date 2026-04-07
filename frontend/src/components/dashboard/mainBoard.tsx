@@ -30,26 +30,36 @@ const COLUMNS: Array<{
   id: BoardColumnId;
   label: string;
   dot: string;
+  text: string;
+  glow: string;
 }> = [
   {
     id: "todo",
     label: "To Do",
-    dot: "bg-zinc-500 dark:bg-zinc-400",
+    dot: "bg-red-500 dark:bg-red-400",
+    text: "text-red-600 dark:text-red-400",
+    glow: "shadow-[0_0_10px_rgba(220,38,38,0.75)] dark:shadow-[0_0_10px_rgba(248,113,113,0.85)]",
   },
   {
     id: "inprogress",
     label: "In Progress",
-    dot: "bg-zinc-600 dark:bg-zinc-300",
+    dot: "bg-emerald-500 dark:bg-emerald-400",
+    text: "text-emerald-600 dark:text-emerald-400",
+    glow: "shadow-[0_0_10px_rgba(22,163,74,0.75)] dark:shadow-[0_0_10px_rgba(74,222,128,0.85)]",
   },
   {
     id: "review",
     label: "Review",
-    dot: "bg-zinc-700 dark:bg-zinc-200",
+    dot: "bg-orange-500 dark:bg-orange-400",
+    text: "text-orange-600 dark:text-orange-400",
+    glow: "shadow-[0_0_10px_rgba(234,88,12,0.75)] dark:shadow-[0_0_10px_rgba(251,146,60,0.85)]",
   },
   {
     id: "done",
     label: "Done",
-    dot: "bg-zinc-800 dark:bg-zinc-100",
+    dot: "bg-blue-500 dark:bg-blue-400",
+    text: "text-blue-600 dark:text-blue-400",
+    glow: "shadow-[0_0_10px_rgba(37,99,235,0.75)] dark:shadow-[0_0_10px_rgba(96,165,250,0.85)]",
   },
 ];
 
@@ -191,7 +201,7 @@ export function MainBoard({
   const timer = useCountdown(168 * 3600 - 23 * 60);
   const sprintNum = sprintIndex + 1;
   const pct = Math.min((capacityUsed / capacityTotal) * 100, 100);
-  const overloaded = capacityUsed > capacityTotal;
+  const overloaded = capacityUsed >= capacityTotal;
   const onBoardXScroll = useScrollVisibility();
   const onColumnScroll = useScrollVisibility();
 
@@ -224,7 +234,7 @@ export function MainBoard({
       <div className="shrink-0 border-b border-black/5 px-5 py-2.5 transition-colors duration-500 ease-in-out dark:border-white/5">
         <div className="flex items-center gap-4">
           <div className="flex shrink-0 items-center gap-2">
-            <Zap className={`h-3.5 w-3.5 ${overloaded ? "text-zinc-700 dark:text-zinc-200" : "text-zinc-500 dark:text-zinc-300"}`} />
+            <Zap className={`h-3.5 w-3.5 ${overloaded ? "text-red-500 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"}`} />
             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 transition-colors duration-500 ease-in-out dark:text-zinc-400">
               Sprint Capacity
             </span>
@@ -232,7 +242,9 @@ export function MainBoard({
           <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-black/10 transition-colors duration-500 ease-in-out dark:bg-white/10">
             <div
               className={`h-full rounded-full transition-all duration-700 ${
-                overloaded ? "bg-gradient-to-r from-zinc-700 to-zinc-500 dark:from-zinc-300 dark:to-zinc-100" : "bg-gradient-to-r from-zinc-800 to-zinc-600 dark:from-zinc-300 dark:to-zinc-500"
+                overloaded
+                  ? "bg-gradient-to-r from-red-600 to-red-500 dark:from-red-500 dark:to-red-400"
+                  : "bg-gradient-to-r from-emerald-600 to-green-500 dark:from-emerald-500 dark:to-green-400"
               }`}
               style={{ width: `${pct}%` }}
             />
@@ -245,7 +257,7 @@ export function MainBoard({
             <span className="font-mono text-sm text-zinc-500 transition-colors duration-500 ease-in-out dark:text-zinc-400">{capacityTotal}</span>
             <span className="ml-0.5 text-[10px] text-zinc-500 transition-colors duration-500 ease-in-out dark:text-zinc-400">SP</span>
             {overloaded ? (
-              <span className="ml-1 rounded-full border border-black/10 bg-zinc-200 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-zinc-700 transition-colors duration-500 ease-in-out dark:border-white/10 dark:bg-zinc-800 dark:text-zinc-100">
+              <span className="ml-1 rounded-full border border-red-300 bg-red-50 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-red-600 transition-colors duration-500 ease-in-out dark:border-red-400/40 dark:bg-red-500/10 dark:text-red-400">
                 Overloaded
               </span>
             ) : null}
@@ -263,8 +275,8 @@ export function MainBoard({
                   className="mb-0.5 flex items-center justify-between rounded-t-2xl border border-black/5 bg-white/70 px-3.5 py-2.5 transition-colors duration-500 ease-in-out dark:border-white/10 dark:bg-zinc-900/70"
                 >
                   <div className="flex items-center gap-2">
-                    <span className={`h-2 w-2 rounded-full ${col.dot}`} />
-                    <span className="text-xs font-bold text-zinc-700 transition-colors duration-500 ease-in-out dark:text-zinc-300">{col.label}</span>
+                    <span className={`h-2 w-2 rounded-full ${col.dot} ${col.glow}`} />
+                    <span className={`text-xs font-bold transition-colors duration-500 ease-in-out ${col.text}`}>{col.label}</span>
                     <span className="rounded-md bg-zinc-200 px-1.5 py-0.5 text-[10px] font-semibold text-zinc-600 transition-colors duration-500 ease-in-out dark:bg-zinc-800 dark:text-zinc-400">
                       {tasks.length}
                     </span>
