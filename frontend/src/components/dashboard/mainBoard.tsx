@@ -64,15 +64,16 @@ const COLUMNS: Array<{
 ];
 
 const CAT = {
-  Frontend: "border-black/10 bg-zinc-100 text-zinc-700 dark:border-white/10 dark:bg-zinc-800 dark:text-zinc-200",
-  Backend: "border-black/10 bg-zinc-100 text-zinc-700 dark:border-white/10 dark:bg-zinc-800 dark:text-zinc-200",
-  "UI/UX": "border-black/10 bg-zinc-100 text-zinc-700 dark:border-white/10 dark:bg-zinc-800 dark:text-zinc-200",
-  Database: "border-black/10 bg-zinc-100 text-zinc-700 dark:border-white/10 dark:bg-zinc-800 dark:text-zinc-200",
+  Frontend: "border-blue-500/35 bg-blue-500/10 text-blue-500 dark:border-blue-400/40 dark:bg-blue-500/10 dark:text-blue-400",
+  Backend: "border-yellow-500/35 bg-yellow-500/10 text-yellow-500 dark:border-yellow-400/40 dark:bg-yellow-500/10 dark:text-yellow-400",
+  "UI/UX": "border-purple-500/35 bg-purple-500/10 text-purple-500 dark:border-purple-400/40 dark:bg-purple-500/10 dark:text-purple-400",
+  DevOps: "border-white/20 bg-white/5 text-white dark:border-white/20 dark:bg-white/5 dark:text-white",
+  Database: "border-white/20 bg-white/5 text-white dark:border-white/20 dark:bg-white/5 dark:text-white",
 };
 const PRI = {
-  HIGH: "border-black/10 bg-zinc-200 text-zinc-800 dark:border-white/10 dark:bg-zinc-700 dark:text-zinc-100",
-  MEDIUM: "border-black/10 bg-zinc-100 text-zinc-700 dark:border-white/10 dark:bg-zinc-800 dark:text-zinc-200",
-  LOW: "border-black/10 bg-zinc-50 text-zinc-600 dark:border-white/10 dark:bg-zinc-900 dark:text-zinc-300",
+  HIGH: "border-red-500/35 bg-red-500/10 text-red-500 dark:border-red-400/40 dark:bg-red-500/10 dark:text-red-400",
+  MEDIUM: "border-orange-500/35 bg-orange-500/10 text-orange-500 dark:border-orange-400/40 dark:bg-orange-500/10 dark:text-orange-400",
+  LOW: "border-emerald-500/35 bg-emerald-500/10 text-emerald-500 dark:border-emerald-400/40 dark:bg-emerald-500/10 dark:text-emerald-400",
 };
 
 const SP_MAP: Record<string, number> = { "k-1": 5, "k-2": 3, "k-3": 4, "k-4": 5, "k-5": 2, "k-6": 2, "k-7": 3 };
