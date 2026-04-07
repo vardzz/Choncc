@@ -1,16 +1,23 @@
 "use client";
 
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, type FormEvent } from "react";
 
 const inputClassName =
   "w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-10 pr-10 text-sm text-zinc-100 placeholder:text-zinc-500 outline-none transition duration-200 focus:border-zinc-300 focus:bg-white/10 focus:ring-0";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    router.push("/");
+  };
 
   return (
-    <form className="space-y-4" action="#" method="post">
+    <form className="space-y-4" onSubmit={handleSubmit}>
       <div className="space-y-2">
         <label className="sr-only" htmlFor="login-email">
           Email address
