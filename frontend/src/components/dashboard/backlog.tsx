@@ -33,14 +33,14 @@ export function BacklogSidebar({ backlogTasks, onAddTask }: BacklogSidebarProps)
 
   return (
     <aside
-      className={`flex h-full shrink-0 flex-col overflow-hidden border-l border-black/5 bg-white/70 transition-all duration-500 ease-in-out dark:border-white/5 dark:bg-zinc-900/55 ${sidebarWidthClass}`}
+      className={`flex h-full shrink-0 flex-col overflow-hidden border-l border-zinc-800 bg-zinc-900/50 transition-all duration-300 ${sidebarWidthClass}`}
     >
-      <div className="border-b border-black/5 px-3 py-3 transition-colors duration-500 ease-in-out dark:border-white/5">
+      <div className="border-b border-zinc-800 px-3 py-3">
         <div className={`flex items-start ${isCollapsed ? "justify-center" : "justify-between"}`}>
           {!isCollapsed ? (
             <div>
-              <h2 className="text-sm font-semibold tracking-tight text-zinc-900 transition-colors duration-500 ease-in-out dark:text-zinc-100">Backlog</h2>
-              <p className="text-xs text-zinc-500 transition-colors duration-500 ease-in-out dark:text-zinc-400">
+              <h2 className="text-sm font-semibold tracking-tight text-zinc-50">Backlog</h2>
+              <p className="text-xs text-zinc-400">
                 {backlogTasks.length} task{backlogTasks.length === 1 ? "" : "s"}
               </p>
             </div>
@@ -49,7 +49,7 @@ export function BacklogSidebar({ backlogTasks, onAddTask }: BacklogSidebarProps)
             type="button"
             size="icon"
             variant="ghost"
-            className="h-8 w-8 shrink-0 cursor-pointer rounded-lg border border-black/10 text-zinc-500 transition-colors duration-500 ease-in-out hover:bg-black/5 hover:text-zinc-900 dark:border-white/10 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-zinc-100"
+            className="h-8 w-8 shrink-0 cursor-pointer rounded-lg border border-zinc-800 text-zinc-500 transition-colors duration-300 hover:bg-zinc-800 hover:text-zinc-100"
             onClick={() => setIsCollapsed((current) => !current)}
             aria-label={isCollapsed ? "Expand backlog sidebar" : "Collapse backlog sidebar"}
           >
@@ -64,16 +64,16 @@ export function BacklogSidebar({ backlogTasks, onAddTask }: BacklogSidebarProps)
         }`}
       >
         <div className="flex h-full min-h-0 flex-col gap-4 p-3">
-          <form onSubmit={handleSubmit} className="space-y-2.5 border-b border-black/5 pb-3 transition-colors duration-500 ease-in-out dark:border-white/5">
-            <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500 transition-colors duration-500 ease-in-out dark:text-zinc-400">New Task</p>
+          <form onSubmit={handleSubmit} className="space-y-2.5 border-b border-zinc-800 pb-3">
+            <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">New Task</p>
             <Input placeholder="Task title..." value={title} onChange={(event) => setTitle(event.target.value)} />
             <Select value={category} onChange={(event) => setCategory(event.target.value)}>
               <option>Frontend</option>
               <option>Backend</option>
               <option>UI/UX</option>
-              <option>DevOps</option>
+              <option>DevOps/Infra</option>
             </Select>
-            <Button type="submit" className="w-full cursor-pointer border border-black/10 bg-zinc-900 text-zinc-50 transition-colors duration-500 ease-in-out hover:bg-zinc-700 dark:border-white/10 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200">
+            <Button type="submit" className="w-full cursor-pointer border border-zinc-700 bg-zinc-100 text-zinc-950 transition-colors duration-300 hover:bg-zinc-200">
               + Add to Backlog
             </Button>
           </form>
@@ -84,7 +84,7 @@ export function BacklogSidebar({ backlogTasks, onAddTask }: BacklogSidebarProps)
                 ref={provided.innerRef}
                 {...provided.droppableProps}
                 onScroll={onBacklogScroll}
-                className={`zinc-scroll min-h-0 flex-1 space-y-2.5 overflow-y-auto rounded-2xl border border-black/5 bg-white/40 p-2 pr-1 transition-all duration-500 ease-in-out dark:border-white/10 dark:bg-white/[0.02] ${snapshot.isDraggingOver ? "bg-zinc-100/80 dark:bg-zinc-800/50" : ""}`}
+                className={`zinc-scroll min-h-0 flex-1 space-y-2.5 overflow-y-auto rounded-2xl border border-zinc-800 bg-zinc-900/40 p-2 pr-1 transition-all duration-300 ${snapshot.isDraggingOver ? "bg-zinc-800/60" : ""}`}
               >
                 <AnimatePresence>
                   {backlogTasks.map((task, i) => (
@@ -93,7 +93,7 @@ export function BacklogSidebar({ backlogTasks, onAddTask }: BacklogSidebarProps)
                 </AnimatePresence>
                 {provided.placeholder}
                 {backlogTasks.length === 0 && !snapshot.isDraggingOver ? (
-                  <div className="mt-1 flex h-16 items-center justify-center rounded-xl border border-dashed border-black/10 text-[11px] text-zinc-400 transition-colors duration-500 ease-in-out dark:border-white/8 dark:text-zinc-500">
+                  <div className="mt-1 flex h-16 items-center justify-center rounded-xl border border-dashed border-zinc-700 text-[11px] text-zinc-500">
                     Drop here
                   </div>
                 ) : null}
