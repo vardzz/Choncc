@@ -50,7 +50,7 @@ export function DashboardNavbar({ activeWorkspaceName, isDarkMode, onToggleTheme
             type="button"
             onClick={onToggleTheme}
             aria-label="Toggle theme"
-            className="group relative flex h-7 w-14 items-center rounded-full border border-black/10 bg-gradient-to-r from-zinc-200/70 via-white to-zinc-200/80 px-1 shadow-[inset_0_1px_2px_rgba(255,255,255,0.7),0_1px_2px_rgba(0,0,0,0.08)] transition-colors duration-500 ease-in-out dark:border-white/10 dark:bg-gradient-to-r dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 dark:shadow-[inset_0_1px_2px_rgba(255,255,255,0.12),0_0_18px_rgba(255,255,255,0.06)]"
+            className="group relative flex h-7 w-14 cursor-pointer items-center rounded-full border border-black/10 bg-gradient-to-r from-zinc-200/70 via-white to-zinc-200/80 px-1 shadow-[inset_0_1px_2px_rgba(255,255,255,0.7),0_1px_2px_rgba(0,0,0,0.08)] transition-colors duration-500 ease-in-out dark:border-white/10 dark:bg-gradient-to-r dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 dark:shadow-[inset_0_1px_2px_rgba(255,255,255,0.12),0_0_18px_rgba(255,255,255,0.06)]"
           >
             <Sun className="pointer-events-none absolute left-1.5 h-3 w-3 text-zinc-500 transition-colors duration-500 ease-in-out dark:text-zinc-300" aria-hidden="true" />
             <Moon className="pointer-events-none absolute right-1.5 h-3 w-3 text-zinc-600 transition-colors duration-500 ease-in-out dark:text-zinc-200" aria-hidden="true" />
@@ -72,7 +72,7 @@ export function DashboardNavbar({ activeWorkspaceName, isDarkMode, onToggleTheme
               type="button"
               onClick={() => setDropOpen((open) => !open)}
               aria-label="Open user menu"
-              className="group flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-gradient-to-br from-zinc-900 to-zinc-700 shadow-sm transition-all duration-500 ease-in-out hover:border-zinc-500/35 dark:border-white/15 dark:from-zinc-700 dark:to-zinc-500 dark:shadow-[0_0_14px_rgba(255,255,255,0.08)]"
+              className="group flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-black/10 bg-gradient-to-br from-zinc-900 to-zinc-700 shadow-sm transition-all duration-500 ease-in-out hover:border-zinc-500/35 dark:border-white/15 dark:from-zinc-700 dark:to-zinc-500 dark:shadow-[0_0_14px_rgba(255,255,255,0.08)]"
             >
               <span className="text-[11px] font-bold tracking-wide text-white">JD</span>
             </button>
@@ -95,7 +95,7 @@ export function DashboardNavbar({ activeWorkspaceName, isDarkMode, onToggleTheme
                       <button
                         key={label}
                         type="button"
-                        className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium transition-colors duration-500 ease-in-out hover:bg-black/5 dark:hover:bg-white/8 ${
+                        className={`flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium transition-colors duration-500 ease-in-out hover:bg-black/5 dark:hover:bg-white/8 ${
                           danger ? "text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300" : "text-zinc-600 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-50"
                         }`}
                       >

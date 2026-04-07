@@ -199,14 +199,14 @@ export function MainBoard({
       <div className="shrink-0 border-b border-black/5 px-6 py-3.5 transition-colors duration-500 ease-in-out dark:border-white/5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <button onClick={onPrevSprint} className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-all ${btnCls}`}>
+            <button onClick={onPrevSprint} className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border transition-all ${btnCls}`}>
               <ChevronLeft className="h-4 w-4" />
             </button>
             <div className="min-w-[72px] text-center">
               <p className="text-sm font-bold leading-none tracking-tight text-zinc-950 transition-colors duration-500 ease-in-out dark:text-zinc-100">Sprint {sprintNum}</p>
               <p className="mt-0.5 text-[10px] font-mono text-zinc-500 transition-colors duration-500 ease-in-out dark:text-zinc-400">of 14 total</p>
             </div>
-            <button onClick={onNextSprint} className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-all ${btnCls}`}>
+            <button onClick={onNextSprint} className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border transition-all ${btnCls}`}>
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
@@ -267,7 +267,7 @@ export function MainBoard({
                     </span>
                   </div>
                   <button
-                    className="flex h-6 w-6 items-center justify-center rounded-lg text-zinc-500 transition-colors duration-500 ease-in-out hover:bg-black/5 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/8 dark:hover:text-zinc-100"
+                    className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-lg text-zinc-500 transition-colors duration-500 ease-in-out hover:bg-black/5 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/8 dark:hover:text-zinc-100"
                   >
                     <MoreHorizontal className="h-3.5 w-3.5" />
                   </button>

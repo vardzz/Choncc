@@ -51,7 +51,7 @@ export function WorkspaceSidebar({
             type="button"
             size="icon"
             variant="ghost"
-            className="h-8 w-8 shrink-0 rounded-lg border border-black/10 text-zinc-500 transition-colors duration-500 ease-in-out hover:bg-black/5 hover:text-zinc-900 dark:border-white/10 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-zinc-100"
+            className="h-8 w-8 shrink-0 cursor-pointer rounded-lg border border-black/10 text-zinc-500 transition-colors duration-500 ease-in-out hover:bg-black/5 hover:text-zinc-900 dark:border-white/10 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-zinc-100"
             onClick={() => setIsCollapsed((current) => !current)}
             aria-label={isCollapsed ? "Expand workspace sidebar" : "Collapse workspace sidebar"}
           >
@@ -65,7 +65,7 @@ export function WorkspaceSidebar({
         {!isCollapsed ? (
           <Button
             variant="outline"
-            className="w-full justify-start border-dashed border-black/10 bg-transparent text-zinc-600 transition-colors duration-500 ease-in-out hover:border-zinc-400 hover:bg-zinc-200/40 hover:text-zinc-900 dark:border-white/15 dark:text-zinc-400 dark:hover:border-zinc-400 dark:hover:bg-zinc-800/40 dark:hover:text-zinc-100"
+            className="w-full cursor-pointer justify-start border-dashed border-black/10 bg-transparent text-zinc-600 transition-colors duration-500 ease-in-out hover:border-zinc-400 hover:bg-zinc-200/40 hover:text-zinc-900 dark:border-white/15 dark:text-zinc-400 dark:hover:border-zinc-400 dark:hover:bg-zinc-800/40 dark:hover:text-zinc-100"
             onClick={onNewWorkspace}
           >
             <Plus className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
@@ -77,7 +77,7 @@ export function WorkspaceSidebar({
               type="button"
               size="icon"
               variant="ghost"
-              className="h-8 w-8 rounded-lg border-none text-zinc-600 transition-colors duration-500 ease-in-out hover:bg-black/5 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-white/5 dark:hover:text-zinc-100"
+              className="h-8 w-8 cursor-pointer rounded-lg border-none text-zinc-600 transition-colors duration-500 ease-in-out hover:bg-black/5 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-white/5 dark:hover:text-zinc-100"
               onClick={onNewWorkspace}
               aria-label="New Workspace"
             >

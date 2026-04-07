@@ -48,7 +48,7 @@ export function BacklogSidebar({ backlogTasks, onAddTask }: BacklogSidebarProps)
             type="button"
             size="icon"
             variant="ghost"
-            className="h-8 w-8 shrink-0 rounded-lg border border-black/10 text-zinc-500 transition-colors duration-500 ease-in-out hover:bg-black/5 hover:text-zinc-900 dark:border-white/10 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-zinc-100"
+            className="h-8 w-8 shrink-0 cursor-pointer rounded-lg border border-black/10 text-zinc-500 transition-colors duration-500 ease-in-out hover:bg-black/5 hover:text-zinc-900 dark:border-white/10 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-zinc-100"
             onClick={() => setIsCollapsed((current) => !current)}
             aria-label={isCollapsed ? "Expand backlog sidebar" : "Collapse backlog sidebar"}
           >
@@ -72,7 +72,7 @@ export function BacklogSidebar({ backlogTasks, onAddTask }: BacklogSidebarProps)
               <option>UI/UX</option>
               <option>DevOps</option>
             </Select>
-            <Button type="submit" className="w-full border border-black/10 bg-zinc-900 text-zinc-50 transition-colors duration-500 ease-in-out hover:bg-zinc-700 dark:border-white/10 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200">
+            <Button type="submit" className="w-full cursor-pointer border border-black/10 bg-zinc-900 text-zinc-50 transition-colors duration-500 ease-in-out hover:bg-zinc-700 dark:border-white/10 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200">
               + Add to Backlog
             </Button>
           </form>
