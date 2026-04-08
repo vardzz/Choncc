@@ -150,8 +150,8 @@ export function TaskCard({ task, index }: { task: KanbanTask; index: number }) {
             exit={{ opacity: 0, scale: 0.95 }}
             className={`group rounded-2xl p-3.5 transition-all duration-300 ${
               ds.isDragging
-                ? "cursor-grabbing border border-zinc-700 bg-zinc-900/90 scale-[1.02]"
-                : "cursor-grab border border-zinc-800 bg-zinc-900 hover:bg-zinc-800/80 hover:border-zinc-700"
+                ? "cursor-grabbing border border-zinc-700 bg-zinc-950/95 scale-[1.02]"
+                : "cursor-grab border border-zinc-800 bg-zinc-950/90 hover:bg-zinc-900/85 hover:border-zinc-700"
             }`}
           >
             <div className="mb-2.5 flex items-center justify-between">
@@ -171,7 +171,7 @@ export function TaskCard({ task, index }: { task: KanbanTask; index: number }) {
               {task.tags?.filter(Boolean).map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex rounded-lg border border-zinc-700 bg-zinc-900/70 px-2 py-0.5 text-[10px] font-medium text-zinc-400 transition-colors duration-300"
+                  className="inline-flex rounded-lg border border-zinc-700 bg-zinc-950/70 px-2 py-0.5 text-[10px] font-medium text-zinc-400 transition-colors duration-300"
                 >
                   {tag}
                 </span>
@@ -186,7 +186,7 @@ export function TaskCard({ task, index }: { task: KanbanTask; index: number }) {
                   <span className="font-mono text-[9px] text-zinc-400 transition-colors duration-300">{task.dateRange}</span>
                 ) : null}
               </div>
-              <div className="flex h-6 w-6 items-center justify-center rounded-lg border border-zinc-700 bg-zinc-900/80">
+              <div className="flex h-6 w-6 items-center justify-center rounded-lg border border-zinc-700 bg-zinc-950/80">
                 <span className="text-[10px] font-bold text-zinc-100">{sp}</span>
               </div>
             </div>
@@ -222,7 +222,7 @@ export function MainBoard({
   const onColumnScroll = useScrollVisibility();
   const [activeView, setActiveView] = useState<"board" | "gantt" | "timeline" | "calendar">("board");
 
-  const btnCls = "border border-zinc-700/80 bg-zinc-900/60 text-zinc-400 transition-colors duration-300 hover:bg-zinc-800/70 hover:text-zinc-100";
+  const btnCls = "border border-zinc-700/80 bg-zinc-950/60 text-zinc-400 transition-colors duration-300 hover:bg-zinc-900/70 hover:text-zinc-100";
   const views = [
     { id: "board" as const, label: "Board", icon: LayoutGrid },
     { id: "gantt" as const, label: "Gantt Chart", icon: GanttChartSquare },
@@ -231,8 +231,8 @@ export function MainBoard({
   ];
 
   return (
-    <section className="flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-transparent">
-      <div className="shrink-0 border-b border-zinc-800 px-5 py-3.5">
+    <section className="flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-gradient-to-b from-zinc-950/55 to-zinc-900/25">
+      <div className="shrink-0 border-b border-zinc-800 bg-zinc-950/35 px-5 py-3.5">
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -318,7 +318,7 @@ export function MainBoard({
               type="button"
               variant="outline"
               size="sm"
-              className="h-8 border-zinc-700/80 bg-zinc-900/60 text-zinc-400 hover:bg-zinc-800/70 hover:text-zinc-100"
+              className="h-8 border-zinc-700/80 bg-zinc-950/60 text-zinc-400 hover:bg-zinc-900/70 hover:text-zinc-100"
             >
               <Filter className="mr-1.5 h-3.5 w-3.5" />
               Filter
@@ -327,7 +327,7 @@ export function MainBoard({
               type="button"
               variant="outline"
               size="sm"
-              className="h-8 border-zinc-700/80 bg-zinc-900/60 text-zinc-400 hover:bg-zinc-800/70 hover:text-zinc-100"
+              className="h-8 border-zinc-700/80 bg-zinc-950/60 text-zinc-400 hover:bg-zinc-900/70 hover:text-zinc-100"
             >
               <ArrowUpDown className="mr-1.5 h-3.5 w-3.5" />
               Sort
@@ -338,13 +338,13 @@ export function MainBoard({
       </div>
 
       {activeView === "board" ? (
-        <div onScroll={onBoardXScroll} className="zinc-scroll min-h-0 flex-1 overflow-x-auto px-3.5 pb-4 pt-3">
+        <div onScroll={onBoardXScroll} className="zinc-scroll min-h-0 flex-1 overflow-x-auto bg-zinc-950/30 px-3.5 pb-4 pt-3">
           <div className="flex h-full min-w-max gap-3.5">
             {COLUMNS.map((col) => {
               const tasks = columns[col.id] || [];
               return (
                 <div key={col.id} className="flex w-[220px] shrink-0 flex-col sm:w-[236px] xl:w-[248px]">
-                  <div className="mb-0.5 flex items-center justify-between rounded-t-2xl border border-zinc-800 bg-zinc-900 px-3.5 py-2.5">
+                  <div className="mb-0.5 flex items-center justify-between rounded-t-2xl border border-zinc-800 bg-zinc-950/80 px-3.5 py-2.5">
                     <div className="flex items-center gap-2">
                       <span className={`h-2 w-2 rounded-full ${col.dot} ${col.glow}`} />
                       <span className={`text-xs font-bold transition-colors duration-500 ease-in-out ${col.text}`}>{col.label}</span>
@@ -364,7 +364,7 @@ export function MainBoard({
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                         onScroll={onColumnScroll}
-                        className={`zinc-scroll min-h-[380px] flex-1 space-y-2.5 overflow-y-auto rounded-b-2xl border border-t-0 border-zinc-800 bg-zinc-900/50 p-2 transition-all duration-300 ${snapshot.isDraggingOver ? "bg-zinc-800/70" : ""}`}
+                        className={`zinc-scroll min-h-[380px] flex-1 space-y-2.5 overflow-y-auto rounded-b-2xl border border-t-0 border-zinc-800 bg-zinc-950/60 p-2 transition-all duration-300 ${snapshot.isDraggingOver ? "bg-zinc-900/80" : ""}`}
                       >
                         <AnimatePresence>
                           {tasks.map((task, i) => (
