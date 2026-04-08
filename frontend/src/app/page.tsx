@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
+import ChonccLoader from "@/components/layout/choncc-loader";
 import {
   ArrowRight,
   CheckCircle2,
@@ -437,6 +438,20 @@ const Footer = () => (
 );
 
 export default function LandingPage() {
+  const [isBootLoading, setIsBootLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setIsBootLoading(false);
+    }, 2000);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  if (isBootLoading) {
+    return <ChonccLoader />;
+  }
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-zinc-950 via-zinc-900 to-black font-sans text-zinc-50 selection:bg-zinc-200/30 selection:text-zinc-100">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
