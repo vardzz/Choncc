@@ -3,7 +3,20 @@
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import { AnimatePresence, motion } from "framer-motion";
 import { useScrollVisibility } from "@/hooks/use-scroll-visibility";
-import { ChevronLeft, ChevronRight, GripVertical, MoreHorizontal, Zap } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  ArrowUpDown,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+  GanttChartSquare,
+  GripVertical,
+  LayoutGrid,
+  Rows3,
+  MoreHorizontal,
+  Zap,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export type KanbanColumnId = "backlog" | "todo" | "inprogress" | "review" | "done";
@@ -207,114 +220,185 @@ export function MainBoard({
   const overloaded = capacityUsed >= capacityTotal;
   const onBoardXScroll = useScrollVisibility();
   const onColumnScroll = useScrollVisibility();
+  const [activeView, setActiveView] = useState<"board" | "gantt" | "timeline" | "calendar">("board");
 
-  const btnCls = "border border-zinc-800 bg-zinc-900 text-zinc-400 transition-colors duration-300 hover:bg-zinc-800 hover:text-zinc-100";
+  const btnCls = "border border-zinc-700/80 bg-zinc-900/60 text-zinc-400 transition-colors duration-300 hover:bg-zinc-800/70 hover:text-zinc-100";
+  const views = [
+    { id: "board" as const, label: "Board", icon: LayoutGrid },
+    { id: "gantt" as const, label: "Gantt Chart", icon: GanttChartSquare },
+    { id: "timeline" as const, label: "Timeline", icon: Rows3 },
+    { id: "calendar" as const, label: "Calendar", icon: Calendar },
+  ];
 
   return (
-    <section className="flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50">
-      <div className="shrink-0 border-b border-zinc-800 px-6 py-3.5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <button onClick={onPrevSprint} className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border transition-all ${btnCls}`}>
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <div className="min-w-[72px] text-center">
-              <p className="text-sm font-bold leading-none tracking-tight text-zinc-50">Sprint {sprintNum}</p>
-              <p className="mt-0.5 text-[10px] font-mono text-zinc-400">of 14 total</p>
-            </div>
-            <button onClick={onNextSprint} className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border transition-all ${btnCls}`}>
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-
-          <div className="text-right">
-            <p className="text-[10px] font-medium text-zinc-400">Apr 7 - Apr 21, 2026</p>
-            <p className="font-mono text-sm font-bold tabular-nums text-zinc-100">{timer}</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="shrink-0 border-b border-zinc-800 px-5 py-2.5">
-        <div className="flex items-center gap-4">
-          <div className="flex shrink-0 items-center gap-2">
-            <Zap className={`h-3.5 w-3.5 ${overloaded ? "text-rose-400" : "text-emerald-400"}`} />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
-              Sprint Capacity
-            </span>
-          </div>
-          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-800">
-            <div
-              className={`h-full rounded-full transition-all duration-700 ${
-                overloaded
-                  ? "bg-gradient-to-r from-rose-500 to-rose-400"
-                  : "bg-gradient-to-r from-indigo-500 to-violet-500"
-              }`}
-              style={{ width: `${pct}%` }}
-            />
-          </div>
-          <div className="flex shrink-0 items-center gap-1.5">
-            <span className="font-mono text-sm font-bold tabular-nums text-zinc-100">
-              {capacityUsed}
-            </span>
-            <span className="text-sm text-zinc-500">/</span>
-            <span className="font-mono text-sm text-zinc-400">{capacityTotal}</span>
-            <span className="ml-0.5 text-[10px] text-zinc-500">SP</span>
-            {overloaded ? (
-              <span className="ml-1 rounded-full border border-rose-500/20 bg-rose-500/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-rose-400">
-                Overloaded
-              </span>
-            ) : null}
-          </div>
-        </div>
-      </div>
-
-      <div onScroll={onBoardXScroll} className="zinc-scroll min-h-0 flex-1 overflow-x-auto px-3.5 pb-4 pt-3">
-        <div className="flex h-full min-w-max gap-3.5">
-          {COLUMNS.map((col) => {
-            const tasks = columns[col.id] || [];
-            return (
-              <div key={col.id} className="flex w-[220px] shrink-0 flex-col sm:w-[236px] xl:w-[248px]">
-                <div className="mb-0.5 flex items-center justify-between rounded-t-2xl border border-zinc-800 bg-zinc-900 px-3.5 py-2.5">
-                  <div className="flex items-center gap-2">
-                    <span className={`h-2 w-2 rounded-full ${col.dot} ${col.glow}`} />
-                    <span className={`text-xs font-bold transition-colors duration-500 ease-in-out ${col.text}`}>{col.label}</span>
-                    <span className="rounded-md bg-zinc-800 px-1.5 py-0.5 text-[10px] font-semibold text-zinc-400">
-                      {tasks.length}
-                    </span>
-                  </div>
-                  <button
-                    className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-lg text-zinc-500 transition-colors duration-300 hover:bg-zinc-800 hover:text-zinc-100"
-                  >
-                    <MoreHorizontal className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-                <Droppable droppableId={col.id}>
-                  {(provided, snapshot) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                      onScroll={onColumnScroll}
-                      className={`zinc-scroll min-h-[380px] flex-1 space-y-2.5 overflow-y-auto rounded-b-2xl border border-t-0 border-zinc-800 bg-zinc-900/50 p-2 transition-all duration-300 ${snapshot.isDraggingOver ? "bg-zinc-800/70" : ""}`}
-                    >
-                      <AnimatePresence>
-                        {tasks.map((task, i) => (
-                          <TaskCard key={task.id} task={task} index={i} />
-                        ))}
-                      </AnimatePresence>
-                      {provided.placeholder}
-                      {tasks.length === 0 && !snapshot.isDraggingOver ? (
-                        <div className="mt-1 flex h-16 items-center justify-center rounded-xl border border-dashed border-black/10 text-[11px] text-zinc-400 transition-colors duration-500 ease-in-out dark:border-white/8 dark:text-zinc-500">
-                          Drop here
-                        </div>
-                      ) : null}
-                    </div>
-                  )}
-                </Droppable>
+    <section className="flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-transparent">
+      <div className="shrink-0 border-b border-zinc-800 px-5 py-3.5">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <button onClick={onPrevSprint} className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border transition-all ${btnCls}`}>
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <div className="min-w-[72px] text-center">
+                <p className="text-sm font-bold leading-none tracking-tight text-zinc-50">Sprint {sprintNum}</p>
+                <p className="mt-0.5 text-[10px] font-mono text-zinc-400">of 14 total</p>
               </div>
-            );
-          })}
+              <button onClick={onNextSprint} className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border transition-all ${btnCls}`}>
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="text-right">
+              <p className="text-[10px] font-medium text-zinc-400">Apr 7 - Apr 21, 2026</p>
+              <p className="font-mono text-sm font-bold tabular-nums text-zinc-100">{timer}</p>
+            </div>
+          </div>
+
+          <div className="h-px bg-zinc-800/70" />
+
+          <div className="flex items-center gap-4">
+            <div className="flex shrink-0 items-center gap-2">
+              <Zap className={`h-3.5 w-3.5 ${overloaded ? "text-rose-400" : "text-emerald-400"}`} />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                Sprint Capacity
+              </span>
+            </div>
+            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-800">
+              <div
+                className={`h-full rounded-full transition-all duration-700 ${
+                  overloaded
+                    ? "bg-gradient-to-r from-rose-500 to-rose-400"
+                    : "bg-gradient-to-r from-indigo-500 to-violet-500"
+                }`}
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+            <div className="flex shrink-0 items-center gap-1.5">
+              <span className="font-mono text-sm font-bold tabular-nums text-zinc-100">
+                {capacityUsed}
+              </span>
+              <span className="text-sm text-zinc-500">/</span>
+              <span className="font-mono text-sm text-zinc-400">{capacityTotal}</span>
+              <span className="ml-0.5 text-[10px] text-zinc-500">SP</span>
+              {overloaded ? (
+                <span className="ml-1 rounded-full border border-rose-500/20 bg-rose-500/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-rose-400">
+                  Overloaded
+                </span>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="h-px bg-zinc-800/70" />
+
+          <div className="flex items-center justify-between gap-3">
+            <div className="inline-flex items-center gap-1">
+            {views.map(({ id, label, icon: Icon }) => {
+              const active = activeView === id;
+
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setActiveView(id)}
+                  className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                    active
+                      ? "bg-white/10 text-zinc-50"
+                      : "text-zinc-500 hover:text-zinc-300"
+                  }`}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  <span>{label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-8 border-zinc-700/80 bg-zinc-900/60 text-zinc-400 hover:bg-zinc-800/70 hover:text-zinc-100"
+            >
+              <Filter className="mr-1.5 h-3.5 w-3.5" />
+              Filter
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-8 border-zinc-700/80 bg-zinc-900/60 text-zinc-400 hover:bg-zinc-800/70 hover:text-zinc-100"
+            >
+              <ArrowUpDown className="mr-1.5 h-3.5 w-3.5" />
+              Sort
+            </Button>
+          </div>
         </div>
       </div>
+      </div>
+
+      {activeView === "board" ? (
+        <div onScroll={onBoardXScroll} className="zinc-scroll min-h-0 flex-1 overflow-x-auto px-3.5 pb-4 pt-3">
+          <div className="flex h-full min-w-max gap-3.5">
+            {COLUMNS.map((col) => {
+              const tasks = columns[col.id] || [];
+              return (
+                <div key={col.id} className="flex w-[220px] shrink-0 flex-col sm:w-[236px] xl:w-[248px]">
+                  <div className="mb-0.5 flex items-center justify-between rounded-t-2xl border border-zinc-800 bg-zinc-900 px-3.5 py-2.5">
+                    <div className="flex items-center gap-2">
+                      <span className={`h-2 w-2 rounded-full ${col.dot} ${col.glow}`} />
+                      <span className={`text-xs font-bold transition-colors duration-500 ease-in-out ${col.text}`}>{col.label}</span>
+                      <span className="rounded-md bg-zinc-800 px-1.5 py-0.5 text-[10px] font-semibold text-zinc-400">
+                        {tasks.length}
+                      </span>
+                    </div>
+                    <button
+                      className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-lg text-zinc-500 transition-colors duration-300 hover:bg-zinc-800 hover:text-zinc-100"
+                    >
+                      <MoreHorizontal className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                  <Droppable droppableId={col.id}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        onScroll={onColumnScroll}
+                        className={`zinc-scroll min-h-[380px] flex-1 space-y-2.5 overflow-y-auto rounded-b-2xl border border-t-0 border-zinc-800 bg-zinc-900/50 p-2 transition-all duration-300 ${snapshot.isDraggingOver ? "bg-zinc-800/70" : ""}`}
+                      >
+                        <AnimatePresence>
+                          {tasks.map((task, i) => (
+                            <TaskCard key={task.id} task={task} index={i} />
+                          ))}
+                        </AnimatePresence>
+                        {provided.placeholder}
+                        {tasks.length === 0 && !snapshot.isDraggingOver ? (
+                          <div className="mt-1 flex h-16 items-center justify-center rounded-xl border border-dashed border-black/10 text-[11px] text-zinc-400 transition-colors duration-500 ease-in-out dark:border-white/8 dark:text-zinc-500">
+                            Drop here
+                          </div>
+                        ) : null}
+                      </div>
+                    )}
+                  </Droppable>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        <div className="flex min-h-0 flex-1 items-center justify-center px-6 py-10">
+          <div className="w-full max-w-3xl p-8 text-center">
+            <p className="text-base font-semibold tracking-tight text-zinc-100">
+              {activeView === "gantt" && "Gantt Chart View Content Coming Soon"}
+              {activeView === "timeline" && "Timeline View Content Coming Soon"}
+              {activeView === "calendar" && "Calendar View Content Coming Soon"}
+            </p>
+            <p className="mt-2 text-sm text-zinc-500">
+              This section is reserved for the {activeView} experience.
+            </p>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
