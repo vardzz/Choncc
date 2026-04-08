@@ -1,8 +1,9 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { LogOut, Moon, Settings, Sparkles, Sun, User } from "lucide-react";
+import { LogOut, Moon, Settings, Sun, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { ChonccIcon } from "@/components/ui/choncc-icon";
 
 type DashboardNavbarProps = {
   activeWorkspaceName: string;
@@ -37,9 +38,7 @@ export function DashboardNavbar({ activeWorkspaceName, isDarkMode, onToggleTheme
 
       <div className="relative flex h-full items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-xl border border-black/10 bg-gradient-to-br from-zinc-900 to-zinc-700 shadow-[0_0_18px_rgba(0,0,0,0.2)] transition-colors duration-500 ease-in-out dark:border-white/10 dark:from-zinc-700 dark:to-zinc-500 dark:shadow-[0_0_18px_rgba(255,255,255,0.08)]">
-            <Sparkles className="h-3.5 w-3.5 text-white" aria-hidden="true" />
-          </div>
+          <ChonccIcon size="sm" />
           <p className="text-base font-black tracking-tight text-zinc-950 transition-colors duration-500 ease-in-out dark:text-zinc-50">Choncc</p>
           <span className="h-4 w-px bg-black/10 transition-colors duration-500 ease-in-out dark:bg-white/10" />
           <p className="text-xs font-medium text-zinc-500 transition-colors duration-500 ease-in-out dark:text-zinc-400">{activeWorkspaceName}</p>

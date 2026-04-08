@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import ChonccLoader from "@/components/layout/choncc-loader";
+import { ChonccIcon } from "@/components/ui/choncc-icon";
 import {
   ArrowRight,
   CheckCircle2,
@@ -12,7 +13,6 @@ import {
   Minus,
   Moon,
   Plus,
-  Star,
   Zap,
 } from "lucide-react";
 
@@ -33,9 +33,7 @@ const Navbar = () => (
   <nav className="fixed left-0 right-0 top-0 z-50 border-b border-white/5 bg-zinc-950/50 backdrop-blur-xl">
     <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
       <div className="flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-zinc-200 to-zinc-400">
-          <Star className="h-4 w-4 fill-white text-white" />
-        </div>
+        <ChonccIcon size="md" />
         <span className="text-lg font-bold tracking-tight text-zinc-50">Choncc</span>
       </div>
       <div className="hidden items-center gap-8 text-sm font-medium text-zinc-400 md:flex">
@@ -424,7 +422,7 @@ const Footer = () => (
   <footer className="border-t border-white/5 bg-zinc-950 py-12">
     <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-6 md:flex-row">
       <div className="flex items-center gap-2">
-        <Star className="h-4 w-4 fill-zinc-50 text-zinc-50" />
+        <ChonccIcon size="sm" />
         <span className="font-bold tracking-tight text-zinc-50">Choncc</span>
       </div>
       <div className="text-sm text-zinc-500">© {new Date().getFullYear()} Choncc Inc. All rights reserved.</div>
