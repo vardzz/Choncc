@@ -13,7 +13,7 @@ export default function LoginPage() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    router.push("/");
+    router.push("/workspace");
   };
 
   return (
