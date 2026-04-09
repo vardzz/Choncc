@@ -38,57 +38,66 @@ export function WorkspaceSidebar({
   onNewWorkspace,
 }: WorkspaceSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const sidebarWidthClass = isCollapsed ? "w-14 sm:w-16" : "w-56 lg:w-64";
 
   return (
     <aside
-      className={`h-full border-r border-black/5 bg-white/70 transition-all duration-500 ease-in-out dark:border-white/5 dark:bg-zinc-900/55 ${sidebarWidthClass} shrink-0 overflow-hidden`}
+      className={`flex h-full shrink-0 flex-col overflow-hidden border-r border-white/5 bg-zinc-900/55 transition-all duration-300 ${
+        isCollapsed ? "w-16" : "w-60"
+      }`}
     >
-      <div className="border-b border-black/5 px-3 py-3 transition-colors duration-500 ease-in-out dark:border-white/5">
-        <div className="flex items-center gap-2 text-[11px] uppercase tracking-widest text-zinc-500 transition-colors duration-500 ease-in-out dark:text-zinc-400">
+      <div className="border-b border-white/5 px-4 py-3">
+        <div className="flex items-center justify-between gap-3">
+          {!isCollapsed ? (
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">Workspaces</p>
+            </div>
+          ) : null}
           <Button
             type="button"
             size="icon"
             variant="ghost"
-            className="h-8 w-8 shrink-0 cursor-pointer rounded-lg border border-black/10 text-zinc-500 transition-colors duration-500 ease-in-out hover:bg-black/5 hover:text-zinc-900 dark:border-white/10 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-zinc-100"
+            className="h-8 w-8 shrink-0 cursor-pointer rounded-lg border border-white/10 text-zinc-400 transition-colors duration-300 hover:bg-white/5 hover:text-zinc-50"
             onClick={() => setIsCollapsed((current) => !current)}
             aria-label={isCollapsed ? "Expand workspace sidebar" : "Collapse workspace sidebar"}
           >
             <Menu className="h-3.5 w-3.5" aria-hidden="true" />
           </Button>
-          {!isCollapsed ? <span className="select-none">Workspaces</span> : null}
         </div>
       </div>
 
-      <div className="border-b border-black/5 px-2 py-2 transition-colors duration-500 ease-in-out dark:border-white/5">
-        {!isCollapsed ? (
-          <Button
-            variant="outline"
-            className="w-full cursor-pointer justify-start border-dashed border-black/10 bg-transparent text-zinc-600 transition-colors duration-500 ease-in-out hover:border-zinc-400 hover:bg-zinc-200/40 hover:text-zinc-900 dark:border-white/15 dark:text-zinc-400 dark:hover:border-zinc-400 dark:hover:bg-zinc-800/40 dark:hover:text-zinc-100"
-            onClick={onNewWorkspace}
-          >
-            <Plus className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
-            New Workspace
-          </Button>
-        ) : (
+      {isCollapsed ? (
+        <div className="px-3 pt-3">
           <div className="flex justify-center">
             <Button
               type="button"
-              size="icon"
               variant="ghost"
-              className="h-8 w-8 cursor-pointer rounded-lg border-none text-zinc-600 transition-colors duration-500 ease-in-out hover:bg-black/5 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-white/5 dark:hover:text-zinc-100"
+              size="icon"
+              className="h-9 w-9 rounded-xl border border-white/10 text-zinc-400 hover:bg-white/5 hover:text-zinc-50"
               onClick={onNewWorkspace}
               aria-label="New Workspace"
             >
-              <Plus className="h-4 w-4" aria-hidden="true" />
+              <Plus className="h-3.5 w-3.5" aria-hidden="true" />
             </Button>
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="px-3 pt-3">
+          <Button
+            type="button"
+            variant="outline"
+            className="h-11 w-full justify-start gap-2 rounded-2xl border-dashed border-white/10 bg-transparent text-zinc-400 hover:border-white/20 hover:bg-white/5 hover:text-zinc-50"
+            onClick={onNewWorkspace}
+            aria-label="New Workspace"
+          >
+            <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+            <span className="text-sm font-medium">New Workspace</span>
+          </Button>
+        </div>
+      )}
 
-      <div className={isCollapsed ? "hidden pointer-events-none opacity-0" : "h-[calc(100%-8.25rem)] p-3 pt-2"}>
+      <div className={`min-h-0 flex-1 p-3 pt-2 transition-all duration-300 ${isCollapsed ? "pointer-events-none opacity-0" : "opacity-100"}`}>
         <ScrollArea className="h-full pr-1">
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {workspaces.map((workspace, index) => {
               const Icon = iconMap[index % iconMap.length];
               const iconColor = colorMap[index % colorMap.length];
@@ -97,10 +106,10 @@ export function WorkspaceSidebar({
               return (
                 <Card
                   key={workspace.id}
-                  className={`cursor-pointer border transition-colors duration-500 ease-in-out ${
+                  className={`cursor-pointer border transition-colors duration-300 ${
                     isActive
-                      ? "border-zinc-300/70 bg-zinc-100/80 shadow-sm shadow-zinc-200/50 dark:border-zinc-700 dark:bg-zinc-800/60 dark:shadow-none"
-                      : "border-black/5 bg-white/45 hover:border-zinc-300 hover:bg-zinc-100/70 dark:border-white/5 dark:bg-transparent dark:hover:border-zinc-700 dark:hover:bg-zinc-800/40"
+                      ? "border-white/10 bg-white/8 shadow-[0_10px_30px_rgba(0,0,0,0.18)]"
+                      : "border-white/5 bg-white/4 hover:border-white/10 hover:bg-white/6"
                   }`}
                   onClick={() => onSelectWorkspace(workspace.id)}
                 >
@@ -108,21 +117,25 @@ export function WorkspaceSidebar({
                     <div className={`inline-flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br ${iconColor}`}>
                       <Icon className="h-4 w-4 text-white" aria-hidden="true" />
                     </div>
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium tracking-tight text-zinc-900 transition-colors duration-500 ease-in-out dark:text-zinc-100">{workspace.name}</p>
-                      <p className="truncate text-xs text-zinc-500 transition-colors duration-500 ease-in-out dark:text-zinc-400">
-                        {workspace.tag ?? workspace.type ?? "Workspace"}
-                        {workspace.members !== undefined
-                          ? ` - ${workspace.members} member${workspace.members === 1 ? "" : "s"}`
-                          : workspace.health
-                            ? ` - ${workspace.health}`
-                            : ""}
-                      </p>
-                    </div>
-                    {isActive ? (
-                      <Badge variant="secondary" className="ml-auto border border-black/10 bg-zinc-200 text-zinc-700 transition-colors duration-500 ease-in-out dark:border-white/10 dark:bg-zinc-700 dark:text-zinc-100">
-                        Active
-                      </Badge>
+                    {!isCollapsed ? (
+                      <>
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-medium tracking-tight text-zinc-50">{workspace.name}</p>
+                          <p className="truncate text-xs text-zinc-400">
+                            {workspace.tag ?? workspace.type ?? "Workspace"}
+                            {workspace.members !== undefined
+                              ? ` - ${workspace.members} member${workspace.members === 1 ? "" : "s"}`
+                              : workspace.health
+                                ? ` - ${workspace.health}`
+                                : ""}
+                          </p>
+                        </div>
+                        {isActive ? (
+                          <Badge variant="secondary" className="ml-auto border border-white/10 bg-zinc-800 text-zinc-100">
+                            Active
+                          </Badge>
+                        ) : null}
+                      </>
                     ) : null}
                   </CardContent>
                 </Card>
@@ -131,6 +144,7 @@ export function WorkspaceSidebar({
           </div>
         </ScrollArea>
       </div>
+
     </aside>
   );
 }

@@ -11,7 +11,6 @@ import {
 import { DashboardNavbar } from "@/components/dashboard/navbar";
 import { type Workspace } from "@/components/dashboard/workspace";
 import { WorkspaceSidebar } from "@/components/dashboard/workspace";
-import { useScrollVisibility } from "@/hooks/use-scroll-visibility";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
@@ -201,14 +200,12 @@ export default function WorkspacePage() {
   const params = useParams<WorkspacePageParams>();
   const slugInUrl = params.workspaceSlug ?? "";
 
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [workspaces, setWorkspaces] = useState<Workspace[]>(initialWorkspaces);
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string>(String(initialWorkspaces[0]?.id ?? "ws-dentara"));
   const [sprintIndex, setSprintIndex] = useState(9);
   const [workspaceBoards, setWorkspaceBoards] = useState<Record<string, WorkspaceBoardState>>(() =>
     buildInitialBoards(initialWorkspaces, initialTasks),
   );
-  const onViewportScroll = useScrollVisibility();
 
   const workspaceSlugMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -335,12 +332,10 @@ export default function WorkspacePage() {
       return [workspace, ...current];
     });
 
-    setWorkspaceBoards((current) => {
-      return {
-        ...current,
-        [workspaceId]: createEmptyWorkspaceBoard(),
-      };
-    });
+    setWorkspaceBoards((current) => ({
+      ...current,
+      [workspaceId]: createEmptyWorkspaceBoard(),
+    }));
 
     setSelectedWorkspaceId(workspaceId);
     router.push(`/workspace/${slug}`);
@@ -356,48 +351,38 @@ export default function WorkspacePage() {
   };
 
   return (
-    <div
-      className={`${theme === "dark" ? "dark" : ""} h-screen overflow-hidden bg-zinc-50 text-zinc-950 transition-colors duration-500 ease-in-out dark:bg-zinc-950 dark:text-zinc-50`}
-    >
-      <div className="h-full bg-gradient-to-b from-zinc-100 to-white transition-colors duration-500 ease-in-out dark:from-[#050505] dark:to-zinc-950">
-        <div className="grid h-full grid-rows-[56px_1fr]">
-          <DashboardNavbar
-            activeWorkspaceName={activeWorkspace?.name ?? "Workspace"}
-            isDarkMode={theme === "dark"}
-            onToggleTheme={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+    <div className="dark h-screen w-full flex flex-col overflow-hidden bg-zinc-950 text-zinc-50">
+      <DashboardNavbar activeWorkspaceName={activeWorkspace?.name ?? "Workspace"} />
+
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="flex flex-1 overflow-hidden">
+          <WorkspaceSidebar
+            workspaces={workspaces}
+            activeWorkspaceId={activeWorkspaceId}
+            onSelectWorkspace={switchWorkspace}
+            onNewWorkspace={() => {
+              const name = window.prompt("Workspace name");
+              if (!name) return;
+              const trimmed = name.trim();
+              if (!trimmed) return;
+              createWorkspace(trimmed);
+            }}
           />
 
-          <DragDropContext onDragEnd={onDragEnd}>
-            <div onScroll={onViewportScroll} className="zinc-scroll min-h-0 overflow-x-auto overflow-y-hidden">
-              <div className="grid h-full min-h-0 min-w-[1220px] grid-cols-[auto_minmax(640px,1fr)_auto]">
-                <WorkspaceSidebar
-                  workspaces={workspaces}
-                  activeWorkspaceId={activeWorkspaceId}
-                  onSelectWorkspace={switchWorkspace}
-                  onNewWorkspace={() => {
-                    const name = window.prompt("Workspace name");
-                    if (!name) return;
-                    const trimmed = name.trim();
-                    if (!trimmed) return;
-                    createWorkspace(trimmed);
-                  }}
-                />
-                <main className="min-h-0 px-2 py-2 sm:px-3 sm:py-3">
-                  <MainBoard
-                    columns={boardColumns}
-                    sprintIndex={sprintIndex}
-                    onPrevSprint={() => setSprintIndex((current) => Math.max(0, current - 1))}
-                    onNextSprint={() => setSprintIndex((current) => Math.min(13, current + 1))}
-                    capacityUsed={capacityUsed}
-                    capacityTotal={20}
-                  />
-                </main>
-                <BacklogSidebar backlogTasks={activeBoard.backlog} onAddTask={addTask} />
-              </div>
-            </div>
-          </DragDropContext>
+          <BacklogSidebar backlogTasks={activeBoard.backlog} onAddTask={addTask} />
+
+          <main className="min-w-0 flex-1 p-0">
+            <MainBoard
+              columns={boardColumns}
+              sprintIndex={sprintIndex}
+              onPrevSprint={() => setSprintIndex((current) => Math.max(0, current - 1))}
+              onNextSprint={() => setSprintIndex((current) => Math.min(13, current + 1))}
+              capacityUsed={capacityUsed}
+              capacityTotal={20}
+            />
+          </main>
         </div>
-      </div>
+      </DragDropContext>
     </div>
   );
 }
