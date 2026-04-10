@@ -1,56 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="100%" height="100%">
-  <rect width="256" height="256" rx="56" fill="#09090B" />
-  <rect width="256" height="256" rx="56" fill="none" stroke="#27272A" stroke-width="2" />
-  <rect x="4" y="4" width="248" height="248" rx="52" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1" />
-  <g transform="translate(38, 43) scale(10)" shape-rendering="crispEdges">
-    <g fill="#3F3F46">
-      <rect x="3" y="0" width="3" height="1" />
-      <rect x="12" y="0" width="3" height="1" />
-      <rect x="2" y="1" width="5" height="1" />
-      <rect x="11" y="1" width="5" height="1" />
-      <rect x="1" y="2" width="7" height="1" />
-      <rect x="10" y="2" width="7" height="1" />
-      <rect x="1" y="3" width="1" height="1" />
-      <rect x="16" y="3" width="1" height="1" />
-      <rect x="0" y="4" width="1" height="6" />
-      <rect x="17" y="4" width="1" height="6" />
-      <rect x="1" y="10" width="1" height="1" />
-      <rect x="16" y="10" width="1" height="1" />
-      <rect x="1" y="11" width="17" height="1" />
-      <rect x="1" y="12" width="2" height="2" />
-      <rect x="4" y="12" width="10" height="3" />
-      <rect x="15" y="12" width="2" height="2" />
-      <rect x="2" y="14" width="1" height="1" />
-      <rect x="15" y="14" width="1" height="1" />
-      <rect x="4" y="15" width="4" height="1" />
-      <rect x="10" y="15" width="4" height="1" />
-      <rect x="5" y="16" width="2" height="1" />
-      <rect x="11" y="16" width="2" height="1" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Subtle Volumetric Glow for the Dusty Coal Background -->
+    <radialGradient id="bgGlow" cx="50%" cy="100%" r="100%">
+      <stop offset="0%" stop-color="#2A2A2A" />
+      <stop offset="100%" stop-color="#222222" />
+    </radialGradient>
+
+    <!-- Deep Shadow to separate the mascot from the background -->
+    <filter id="dropShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000" flood-opacity="0.5" />
+    </filter>
+
+    <!-- Squircle Clip Path to keep everything perfectly contained within the app icon shape -->
+    <clipPath id="squircle">
+      <rect width="512" height="512" rx="112" />
+    </clipPath>
+  </defs>
+
+  <!-- Main Icon Group -->
+  <g clip-path="url(#squircle)">
+    
+    <!-- Premium Dusty Coal Background -->
+    <rect width="512" height="512" fill="url(#bgGlow)" />
+
+    <!-- Slight tilt for mascot group -->
+    <g transform="rotate(-45 256 360)">
+
+    <!-- Peeking Choncc Silhouette (Matcha Mist) -->
+    <g filter="url(#dropShadow)" fill="#C2D8C4">
+      
+      <!-- Left Horn (Curved inward slightly) -->
+      <path d="M 100 320 Q 110 180 160 190 Q 180 240 180 280 Z" />
+      
+      <!-- Right Horn (Curved inward slightly) -->
+      <path d="M 412 320 Q 402 180 352 190 Q 332 240 332 280 Z" />
+      
+      <!-- Main Peeking Dome -->
+      <!-- Positioned low on the Y-axis to perfectly match the Tarsi reference -->
+      <ellipse cx="256" cy="500" rx="260" ry="220" />
+      
     </g>
-    <g fill="#E4E4E7">
-      <rect x="2" y="3" width="14" height="1" />
-      <rect x="1" y="4" width="16" height="2" />
-      <rect x="1" y="6" width="3" height="2" />
-      <rect x="6" y="6" width="6" height="2" />
-      <rect x="14" y="6" width="3" height="2" />
-      <rect x="1" y="8" width="16" height="1" />
-      <rect x="1" y="9" width="2" height="1" />
-      <rect x="5" y="9" width="3" height="1" />
-      <rect x="10" y="9" width="3" height="1" />
-      <rect x="15" y="9" width="2" height="1" />
-      <rect x="2" y="10" width="6" height="1" />
-      <rect x="10" y="10" width="6" height="1" />
+
+    <!-- Facial Features (Recessed in Dusty Coal) -->
+    
+    <!-- Happy Squinting Eyes (^ ^) -->
+    <!-- Using thick, rounded strokes for a friendly, minimalist aesthetic -->
+    <path d="M 130 360 Q 170 320 210 360" fill="none" stroke="#222222" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M 302 360 Q 342 320 382 360" fill="none" stroke="#222222" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" />
+
     </g>
-    <g fill="#09090B">
-      <rect x="4" y="6" width="2" height="2" />
-      <rect x="12" y="6" width="2" height="2" />
-    </g>
-    <g fill="#8B5CF6">
-      <rect x="3" y="9" width="2" height="1" />
-      <rect x="13" y="9" width="2" height="1" />
-    </g>
-    <g fill="#27272A">
-      <rect x="8" y="9" width="2" height="2" />
-    </g>
+
   </g>
+
+  <!-- Premium Outer Glass Border / Bevel -->
+  <rect x="4" y="4" width="504" height="504" rx="108" fill="none" stroke="#C2D8C4" stroke-opacity="0.15" stroke-width="8" />
+  <rect x="8" y="8" width="496" height="496" rx="104" fill="none" stroke="#FFFFFF" stroke-opacity="0.05" stroke-width="2" />
 </svg>
