@@ -1,358 +1,559 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
-import ChonccLoader from "@/components/layout/choncc-loader";
-import { ChonccIcon } from "@/components/ui/choncc-icon";
+import React, { useState } from "react";
+import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from "framer-motion";
 import {
-  ArrowRight,
-  CheckCircle2,
-  Command,
-  LayoutDashboard,
-  Minus,
-  Moon,
-  Plus,
-  Zap,
+  ArrowRight, ArrowUpRight, CheckCircle2, Command,
+  Gauge, LayoutDashboard, Layers3, Minus, MoveRight,
+  Plus, ShieldCheck, Timer, Zap, Hexagon
 } from "lucide-react";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
+// --- GLOBAL CONFIG & COLOR PALETTE ---
+const premiumEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
+const COAL = "#222222";
+const COAL_LIGHT = "#2A2A2A";
+const MATCHA = "#C2D8C4";
+const OFF_WHITE = "#F5F5F5";
+
+// --- DATA ---
+const trustSignals = [
+  "Privacy-first architecture",
+  "Supabase Auth + tenant isolation",
+  "RLS-backed authorization",
+  "Next.js + TypeScript runtime",
+  "Vercel-ready deployment",
+];
+
+const architectureGroups = [
+  { title: "Plan", icon: Layers3, items: ["Multi-workspace architecture", "Backlog prioritization and estimates"] },
+  { title: "Execute", icon: MoveRight, items: ["3-pane deep-focus interface", "Drag-and-drop board workflow"] },
+  { title: "Govern", icon: ShieldCheck, items: ["RBAC: Project Manager and Developer", "Tenant-aware data boundaries"] },
+  { title: "Optimize", icon: Gauge, items: ["Capacity and load tracking", "Velocity and workflow metrics"] },
+];
+
+// --- INLINE LUXURY UI COMPONENTS ---
+type MotionRevealProps = {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
 };
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.15 },
-  },
+type SectionHeadingProps = {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  align?: "left" | "center";
 };
 
-const Navbar = () => (
-  <nav className="fixed left-0 right-0 top-0 z-50 border-b border-white/5 bg-zinc-950/50 backdrop-blur-xl">
-    <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-      <div className="flex items-center gap-2">
-        <ChonccIcon size="md" />
-        <span className="text-lg font-bold tracking-tight text-zinc-50">Choncc</span>
-      </div>
-      <div className="hidden items-center gap-8 text-sm font-medium text-zinc-400 md:flex">
-        <a href="#features" className="transition-colors hover:text-zinc-50">Features</a>
-        <a href="#how-it-works" className="transition-colors hover:text-zinc-50">Method</a>
-        <a href="#pricing" className="transition-colors hover:text-zinc-50">Pricing</a>
-      </div>
-      <div className="flex items-center gap-4">
-        <Link href="/login" className="hidden text-sm font-medium text-zinc-400 transition-colors hover:text-zinc-50 md:block">
-          Log in
-        </Link>
-        <Link href="/signup" className="rounded-full bg-zinc-50 px-4 py-2 text-sm font-medium text-zinc-950 transition-colors hover:bg-zinc-200">
-          Get Started
-        </Link>
-      </div>
-    </div>
-  </nav>
+const MotionReveal = ({ children, delay = 0, className = "" }: MotionRevealProps) => (
+  <motion.div
+    initial={{ opacity: 0, y: 40 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: "-50px" }}
+    transition={{ duration: 0.8, delay, ease: premiumEase }}
+    className={className}
+  >
+    {children}
+  </motion.div>
 );
 
-const Hero = () => (
-  <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pb-32 pt-40 text-center">
-    <div className="pointer-events-none absolute left-[8%] top-[-10%] h-[500px] w-[500px] rounded-full bg-zinc-800/30 blur-[100px]" />
-    <div className="pointer-events-none absolute bottom-[-12%] right-[8%] h-[500px] w-[500px] rounded-full bg-zinc-300/10 blur-[100px]" />
-    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.05),transparent_28%),radial-gradient(circle_at_bottom,rgba(255,255,255,0.03),transparent_22%)]" />
+const SectionHeading = ({ eyebrow, title, description, align = "left" }: SectionHeadingProps) => (
+  <div className={`flex flex-col ${align === "center" ? "items-center text-center mx-auto" : "items-start text-left"}`}>
+    {eyebrow && (
+      <span 
+        className="text-xs font-bold uppercase tracking-[0.2em] mb-4"
+        style={{ color: MATCHA }}
+      >
+        {eyebrow}
+      </span>
+    )}
+    <h2 className="text-4xl md:text-6xl font-medium tracking-tight mb-6 text-[#F5F5F5]">
+      {title}
+    </h2>
+    {description && (
+      <p className="text-[#A0A0A0] text-lg md:text-xl max-w-2xl leading-relaxed font-light">
+        {description}
+      </p>
+    )}
+  </div>
+);
 
+// --- SECTIONS ---
+
+function ScrollProgressIndicator() {
+  const { scrollYProgress } = useScroll();
+  const reducedMotion = useReducedMotion();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 40, restDelta: 0.001 });
+
+  return (
+    <div className="pointer-events-none fixed left-0 top-0 z-[60] h-[3px] w-full bg-transparent">
+      <motion.div className="h-full origin-left" style={{ scaleX: reducedMotion ? scrollYProgress : scaleX, backgroundColor: MATCHA }} />
+    </div>
+  );
+}
+
+const Navbar = () => (
+  <div className="fixed left-0 right-0 top-6 z-50 flex justify-center px-6">
+    <nav className="flex h-16 w-full max-w-5xl items-center justify-between rounded-full px-6 backdrop-blur-xl border" style={{ backgroundColor: `${COAL}E6`, borderColor: `${MATCHA}33` }}>
+      <div className="flex items-center gap-2">
+        <Hexagon className="w-6 h-6" style={{ color: MATCHA, fill: MATCHA }} />
+        <span className="text-lg font-semibold tracking-tight text-[#F5F5F5]">Choncc</span>
+      </div>
+      <div className="hidden items-center gap-8 text-sm font-medium text-[#A0A0A0] md:flex">
+        <a href="#features" className="hover:text-[#F5F5F5] transition-colors">Features</a>
+        <a href="#how-it-works" className="hover:text-[#F5F5F5] transition-colors">Method</a>
+        <a href="#security" className="hover:text-[#F5F5F5] transition-colors">Security</a>
+        <a href="#pricing" className="hover:text-[#F5F5F5] transition-colors">Pricing</a>
+      </div>
+      <div className="flex items-center gap-4">
+        <a href="/login" className="hidden text-sm font-medium text-[#A0A0A0] hover:text-[#F5F5F5] md:block transition-colors">Log in</a>
+        <a href="/signup" className="rounded-full px-5 py-2.5 text-sm font-bold transition-transform hover:scale-105" style={{ backgroundColor: MATCHA, color: COAL }}>
+          Get Started
+        </a>
+      </div>
+    </nav>
+  </div>
+);
+
+const HeroShowcase = () => {
+  return (
     <motion.div
       initial="hidden"
       animate="visible"
-      variants={staggerContainer}
-      className="relative z-10 mx-auto flex max-w-4xl flex-col items-center"
+      variants={{
+        hidden: {},
+        visible: {
+          transition: { staggerChildren: 0.1, delayChildren: 0.15 },
+        },
+      }}
+      className="relative mx-auto flex aspect-square w-full max-w-lg max-h-[62svh] flex-col overflow-hidden rounded-[3rem] border p-5 shadow-2xl md:aspect-[4/3] md:max-h-[60svh] md:p-7 lg:mx-0 lg:w-full lg:max-w-none lg:aspect-[1.1/1] lg:max-h-[66svh]"
+      style={{ backgroundColor: `${COAL_LIGHT}66`, borderColor: `${MATCHA}1A` }}
     >
-      <motion.div variants={fadeUp} className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">
-        <span className="h-2 w-2 animate-pulse rounded-full bg-zinc-200" />
-        <span className="text-xs font-medium uppercase tracking-wide text-zinc-300">Choncc v2.0 is now live</span>
+      <div
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[72%] w-[72%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[100px]"
+        style={{ backgroundColor: `${MATCHA}22` }}
+      />
+
+      <motion.div
+        variants={{ hidden: { opacity: 0, y: -18 }, visible: { opacity: 1, y: 0 } }}
+        transition={{ duration: 0.8, ease: premiumEase }}
+        className="absolute right-5 top-5 z-20 w-56 rounded-[1.3rem] border p-4 shadow-[0_18px_40px_rgba(0,0,0,0.45)] backdrop-blur-xl md:right-7 md:top-7"
+        style={{ backgroundColor: `${COAL_LIGHT}E6`, borderColor: `${MATCHA}33` }}
+      >
+        <div className="mb-3 h-2 w-14 rounded-full" style={{ backgroundColor: "#A0A0A066" }} />
+        <div className="mb-4 h-6 w-28 rounded-full" style={{ backgroundColor: OFF_WHITE }} />
+        <div className="h-1.5 w-full rounded-full" style={{ backgroundColor: `${COAL}CC` }}>
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: "82%" }}
+            transition={{ duration: 1.6, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            className="h-full rounded-full shadow-[0_0_14px_rgba(194,216,196,0.55)]"
+            style={{ backgroundColor: MATCHA }}
+          />
+        </div>
       </motion.div>
 
-      <motion.h1 variants={fadeUp} className="mb-6 text-5xl font-bold leading-[1.1] tracking-tighter text-zinc-50 md:text-7xl">
-        Engineering flow, <br className="hidden md:block" />
-        <span className="bg-gradient-to-r from-zinc-50 to-zinc-500 bg-clip-text text-transparent">perfected.</span>
-      </motion.h1>
-
-      <motion.p variants={fadeUp} className="mb-10 max-w-2xl text-lg leading-relaxed text-zinc-400 md:text-xl">
-        Choncc is the uncompromising project management suite for teams who refuse to settle for bloated software. Keyboard-first,
-        stunningly dark, and relentlessly fast.
-      </motion.p>
-
-      <motion.div variants={fadeUp} className="flex w-full flex-col items-center justify-center gap-4 sm:flex-row">
-        <Link
-          href="/signup"
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-zinc-50 px-8 py-3.5 font-semibold text-zinc-950 transition-transform duration-300 hover:scale-105 sm:w-auto"
-        >
-          Start for free <ArrowRight className="h-4 w-4" />
-        </Link>
-        <Link
-          href="/login"
-          className="flex w-full items-center justify-center gap-2 rounded-full border border-zinc-800 bg-transparent px-8 py-3.5 font-medium text-zinc-300 transition-colors duration-300 hover:bg-zinc-900 sm:w-auto"
-        >
-          Book a demo
-        </Link>
-      </motion.div>
-    </motion.div>
-  </section>
-);
-
-const Features = () => {
-  const features = [
-    { icon: <Zap />, title: "Lightning Fast", desc: "Built on a modern stack. Issues open in milliseconds. Zero spinners, zero waiting." },
-    { icon: <Command />, title: "Keyboard First", desc: "Never touch your mouse. Navigate, assign, and update statuses entirely via command palette." },
-    { icon: <Moon />, title: "Native Dark Mode", desc: "Not an afterthought. A meticulously crafted, high-contrast dark aesthetic that reduces eye strain." },
-    { icon: <LayoutDashboard />, title: "Automated Sprints", desc: "Velocity tracking and sprint capacity algorithms built right into your core boards." },
-  ];
-
-  return (
-    <section id="features" className="relative py-32">
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="relative z-10 mt-14 flex min-h-0 flex-1 gap-4 md:mt-16 md:gap-5">
         <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={fadeUp}
-          className="mx-auto mb-20 max-w-2xl text-center"
+          variants={{ hidden: { opacity: 0, x: -22 }, visible: { opacity: 1, x: 0 } }}
+          transition={{ duration: 0.85, ease: premiumEase }}
+          className="hidden w-16 shrink-0 flex-col gap-2 rounded-2xl border p-2 md:flex"
+          style={{ backgroundColor: `${COAL}B3`, borderColor: `${MATCHA}1A` }}
         >
-          <h2 className="mb-4 text-3xl font-bold tracking-tight text-zinc-50 md:text-5xl">Design as a feature.</h2>
-          <p className="text-lg text-zinc-400">We stripped away the noise so you can focus on the work. Every pixel is optimized for clarity and speed.</p>
+          <div className="h-8 rounded-xl" style={{ backgroundColor: `${MATCHA}2B` }} />
+          <div className="h-8 rounded-xl" style={{ backgroundColor: `${OFF_WHITE}1F` }} />
+          <div className="h-8 rounded-xl" style={{ backgroundColor: `${OFF_WHITE}17` }} />
+          <div className="h-8 rounded-xl" style={{ backgroundColor: `${OFF_WHITE}14` }} />
         </motion.div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          {features.map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-50px" }}
-              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { delay: index * 0.1 } } }}
-              className="group rounded-3xl border border-white/5 bg-zinc-900/50 p-8 transition-colors hover:bg-zinc-900"
-            >
-              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-zinc-50 transition-transform duration-300 group-hover:scale-110">
-                {feature.icon}
-              </div>
-              <h3 className="mb-3 text-xl font-semibold text-zinc-50">{feature.title}</h3>
-              <p className="leading-relaxed text-zinc-400">{feature.desc}</p>
-            </motion.div>
-          ))}
+        <motion.div
+          variants={{ hidden: { opacity: 0, x: -16 }, visible: { opacity: 1, x: 0 } }}
+          transition={{ duration: 0.85, ease: premiumEase }}
+          className="hidden w-[32%] min-w-[150px] flex-col gap-3 rounded-2xl border p-3 lg:flex"
+          style={{ backgroundColor: `${COAL}CC`, borderColor: `${MATCHA}1A` }}
+        >
+          <div className="h-3 w-20 rounded-full" style={{ backgroundColor: "#A0A0A066" }} />
+          <div className="h-10 rounded-xl border" style={{ backgroundColor: `${COAL_LIGHT}D9`, borderColor: `${MATCHA}17` }} />
+          <div className="h-10 rounded-xl border" style={{ backgroundColor: `${COAL_LIGHT}D9`, borderColor: `${MATCHA}17` }} />
+          <div className="h-16 rounded-2xl border p-3" style={{ backgroundColor: `${COAL_LIGHT}E6`, borderColor: `${MATCHA}14` }}>
+            <div className="h-2 w-11 rounded-full" style={{ backgroundColor: MATCHA }} />
+            <div className="mt-2 h-2.5 w-4/5 rounded-full" style={{ backgroundColor: OFF_WHITE }} />
+          </div>
+          <div className="h-16 rounded-2xl border p-3" style={{ backgroundColor: `${COAL_LIGHT}E6`, borderColor: `${MATCHA}14` }}>
+            <div className="h-2 w-9 rounded-full" style={{ backgroundColor: `${OFF_WHITE}30` }} />
+            <div className="mt-2 h-2.5 w-3/5 rounded-full" style={{ backgroundColor: OFF_WHITE }} />
+          </div>
+        </motion.div>
+
+        <motion.div
+          variants={{ hidden: { opacity: 0, x: 18 }, visible: { opacity: 1, x: 0 } }}
+          transition={{ duration: 0.9, ease: premiumEase }}
+          className="flex min-w-0 flex-1 flex-col rounded-[1.7rem] border p-3 md:p-4"
+          style={{ backgroundColor: `${COAL}E0`, borderColor: `${MATCHA}1A` }}
+        >
+          <div className="mb-3 flex items-center justify-between">
+            <div className="h-3 w-24 rounded-full" style={{ backgroundColor: `${OFF_WHITE}45` }} />
+            <div className="h-6 w-6 rounded-lg" style={{ backgroundColor: `${MATCHA}33` }} />
+          </div>
+
+          <div className="grid min-h-0 flex-1 grid-cols-2 gap-3 md:grid-cols-3">
+            {[0, 1, 2].map((col) => (
+              <motion.div
+                key={col}
+                variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
+                transition={{ duration: 0.8, ease: premiumEase }}
+                className="flex min-h-0 flex-col gap-2"
+              >
+                <div className="h-2.5 w-14 rounded-full" style={{ backgroundColor: `${OFF_WHITE}45` }} />
+
+                {col === 1 ? (
+                  <motion.div
+                    animate={{ y: [-5, 5, -5] }}
+                    transition={{ duration: 4.6, repeat: Infinity, ease: "easeInOut" }}
+                    className="rounded-2xl border p-3 shadow-[0_0_15px_rgba(194,216,196,0.3)]"
+                    style={{ backgroundColor: COAL_LIGHT, borderColor: MATCHA }}
+                  >
+                    <div className="mb-2 h-2 w-11 rounded-full" style={{ backgroundColor: MATCHA }} />
+                    <div className="mb-2 h-2.5 w-full rounded-full" style={{ backgroundColor: OFF_WHITE }} />
+                    <div className="mb-3 h-2.5 w-3/5 rounded-full" style={{ backgroundColor: OFF_WHITE }} />
+                    <div className="flex items-center justify-between border-t pt-2" style={{ borderColor: `${MATCHA}1F` }}>
+                      <div className="h-5 w-5 rounded-full" style={{ backgroundColor: `${OFF_WHITE}29` }} />
+                      <div className="h-5 w-5 rounded-md" style={{ backgroundColor: `${MATCHA}4D` }} />
+                    </div>
+                  </motion.div>
+                ) : (
+                  <div className="rounded-2xl border p-3" style={{ backgroundColor: COAL_LIGHT, borderColor: `${MATCHA}14` }}>
+                    <div className="mb-2 h-2 w-10 rounded-full" style={{ backgroundColor: col === 0 ? MATCHA : `${OFF_WHITE}2E` }} />
+                    <div className="mb-2 h-2.5 w-full rounded-full" style={{ backgroundColor: OFF_WHITE }} />
+                    <div className="h-2.5 w-3/5 rounded-full" style={{ backgroundColor: OFF_WHITE }} />
+                  </div>
+                )}
+
+                <div className="rounded-2xl border p-3" style={{ backgroundColor: `${COAL_LIGHT}E6`, borderColor: `${MATCHA}14` }}>
+                  <div className="mb-2 h-2 w-8 rounded-full" style={{ backgroundColor: `${OFF_WHITE}24` }} />
+                  <div className="mb-2 h-2.5 w-full rounded-full" style={{ backgroundColor: OFF_WHITE }} />
+                  <div className="h-2.5 w-2/3 rounded-full" style={{ backgroundColor: OFF_WHITE }} />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+};
+
+const Hero = () => {
+  return (
+    <section className="relative flex min-h-[100svh] items-center overflow-hidden px-6 pb-8 pt-24 lg:pt-28">
+      <div className="mx-auto grid w-full max-w-7xl items-center gap-12 lg:grid-cols-2 lg:gap-10">
+        
+        {/* Left Side: Typography & CTAs */}
+        <div className="z-10 flex flex-col items-start text-left">
+          <motion.div
+            className="mb-8 inline-flex items-center gap-3 rounded-full px-4 py-2 border"
+            style={{ backgroundColor: `${COAL_LIGHT}80`, borderColor: `${MATCHA}33` }}
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: premiumEase }}
+          >
+            <span className="h-2 w-2 rounded-full animate-pulse" style={{ backgroundColor: MATCHA }} />
+            <span className="text-xs font-bold uppercase tracking-[0.15em]" style={{ color: MATCHA }}>Privacy-first SDLC</span>
+          </motion.div>
+
+          <motion.h1
+            className="text-5xl sm:text-6xl font-medium leading-[1.05] tracking-tighter text-[#F5F5F5] lg:text-7xl xl:text-8xl"
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 1, ease: premiumEase }}
+          >
+            Deep focus,
+            <br />
+            <span style={{ color: MATCHA }}>perfected.</span>
+          </motion.h1>
+
+          <motion.p
+            className="mt-8 max-w-xl text-lg md:text-xl leading-relaxed text-[#A0A0A0] font-light"
+            initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 1, ease: premiumEase }}
+          >
+            Choncc unifies backlog planning, sprint execution, and board flow into a single minimalist workspace. Drop the noise, keep the momentum.
+          </motion.p>
+
+          <motion.div
+            className="mt-12 flex w-full flex-col gap-4 sm:flex-row justify-start"
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 1, ease: premiumEase }}
+          >
+            <a href="/signup" className="flex items-center justify-center gap-2 rounded-full px-8 py-4 font-bold transition-transform duration-300 hover:scale-105" style={{ backgroundColor: MATCHA, color: COAL }}>
+              Start building <ArrowRight className="h-5 w-5" />
+            </a>
+            <a href="/login" className="flex items-center justify-center gap-2 rounded-full border px-8 py-4 font-medium transition-colors duration-300 hover:bg-white/5" style={{ borderColor: `${MATCHA}40`, color: OFF_WHITE }}>
+              Explore workspace <ArrowUpRight className="h-5 w-5" />
+            </a>
+          </motion.div>
         </div>
+
+        {/* Right Side: Unique UI Feature Showcase */}
+        <div className="relative w-full">
+          <MotionReveal delay={0.2}>
+            <HeroShowcase />
+          </MotionReveal>
+        </div>
+
       </div>
     </section>
   );
 };
 
-const AppPreview = () => (
-  <section id="how-it-works" className="relative overflow-hidden bg-zinc-950 py-32">
-    <div className="pointer-events-none absolute right-0 top-1/2 h-[600px] w-[600px] rounded-full bg-zinc-300/10 blur-[100px]" />
-
-    <div className="relative z-10 mx-auto max-w-7xl px-6">
-      <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="mb-16 text-center">
-        <h2 className="mb-4 text-3xl font-bold tracking-tight text-zinc-50 md:text-5xl">The ultimate workspace.</h2>
-        <p className="text-lg text-zinc-400">A sneak peek into your team&apos;s new home.</p>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-        viewport={{ once: true }}
-        className="flex h-[600px] w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-950/90 shadow-2xl backdrop-blur-2xl md:h-[700px]"
+const TrustProofBar = () => (
+  <section className="py-10 overflow-hidden flex items-center border-y" style={{ borderColor: `${MATCHA}15`, backgroundColor: `${COAL_LIGHT}40` }}>
+    <MotionReveal className="w-full">
+      <div 
+        className="relative flex w-full max-w-7xl mx-auto"
+        style={{ maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}
       >
-        <div className="h-14 shrink-0 border-b border-white/5 bg-zinc-900/20 px-6">
-          <div className="flex h-full items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="h-6 w-6 rounded-md bg-zinc-800" />
-              <div className="h-4 w-24 rounded bg-zinc-800/50" />
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="h-6 w-16 rounded-full bg-zinc-800/50" />
-              <div className="h-8 w-8 rounded-full bg-zinc-800" />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-1 overflow-hidden">
-          <div className="hidden w-56 flex-col gap-6 border-r border-white/5 bg-zinc-900/10 p-4 lg:flex">
-            <div className="flex items-center gap-3">
-              <div className="h-5 w-5 rounded bg-zinc-800/80" />
-              <div className="h-3 w-20 rounded bg-zinc-800/50" />
-            </div>
-            <div className="h-9 w-full rounded-lg border border-dashed border-zinc-700/50 bg-zinc-800/20" />
-            <div className="flex flex-col gap-3">
-              {[1, 2, 3, 4].map((item) => (
-                <div key={item} className={`flex items-center gap-3 rounded-xl p-2 ${item === 1 ? "border border-white/5 bg-zinc-800/40" : "opacity-60"}`}>
-                  <div className={`h-10 w-10 rounded-xl ${item === 1 ? "bg-zinc-700" : "bg-zinc-800"}`} />
-                  <div className="flex flex-1 flex-col gap-2">
-                    <div className="h-3 w-full rounded bg-zinc-700/50" />
-                    <div className="h-2 w-2/3 rounded bg-zinc-800/50" />
-                  </div>
+        <motion.div
+          className="flex w-max"
+          animate={{ x: ["0%", "-50%"] }}
+          transition={{ duration: 30, ease: "linear", repeat: Infinity }}
+        >
+          {[...Array(2)].map((_, i) => (
+            <div key={i} className="flex gap-16 pr-16 w-max items-center">
+              {trustSignals.map((signal, index) => (
+                <div key={`${i}-${index}`} className="flex items-center gap-3 whitespace-nowrap">
+                  <CheckCircle2 className="w-5 h-5 shrink-0" style={{ color: MATCHA }} />
+                  <span className="text-sm font-semibold tracking-wide text-[#A0A0A0] uppercase">{signal}</span>
                 </div>
               ))}
             </div>
+          ))}
+        </motion.div>
+      </div>
+    </MotionReveal>
+  </section>
+);
+
+const AppPreview = () => (
+  <section id="workspace-preview" className="relative overflow-hidden py-32">
+    <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <MotionReveal className="mb-20 text-center">
+        <SectionHeading
+          align="center"
+          eyebrow="The Interface"
+          title="The 3-Pane Triage Workflow."
+          description="Navigation, backlog grooming, and sprint execution seamlessly unified side-by-side in a zero-distraction environment."
+        />
+      </MotionReveal>
+
+      <motion.div
+        initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: premiumEase }} viewport={{ once: true }}
+        className="flex h-[600px] md:h-[750px] w-full flex-col overflow-hidden rounded-[2.5rem] shadow-2xl border"
+        style={{ backgroundColor: COAL_LIGHT, borderColor: `${MATCHA}20` }}
+      >
+        {/* Soft Navbar Mock */}
+        <div className="h-16 shrink-0 border-b px-6 flex items-center justify-between" style={{ borderColor: `${MATCHA}10` }}>
+          <div className="flex gap-2">
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: `${OFF_WHITE}20` }}/>
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: `${OFF_WHITE}20` }}/>
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: `${OFF_WHITE}20` }}/>
+          </div>
+          <div className="w-48 h-6 rounded-full" style={{ backgroundColor: `${OFF_WHITE}05` }} />
+          <div className="w-8 h-8 rounded-full" style={{ backgroundColor: MATCHA }} />
+        </div>
+
+        {/* 3-Pane Body */}
+        <div className="flex flex-1 overflow-hidden">
+          {/* Pane 1: Workspace Sidebar */}
+          <div className="hidden w-64 flex-col gap-6 border-r p-6 lg:flex" style={{ borderColor: `${MATCHA}10`, backgroundColor: `${COAL}40` }}>
+            <div className="w-full h-10 rounded-xl mb-4" style={{ backgroundColor: `${MATCHA}15` }} />
+            {[1, 2, 3].map(i => (
+              <div key={i} className={`flex gap-4 items-center ${i === 1 ? 'opacity-100' : 'opacity-40'}`}>
+                <div className="w-8 h-8 rounded-lg" style={{ backgroundColor: i===1 ? MATCHA : `${OFF_WHITE}20` }} />
+                <div className="w-24 h-3 rounded" style={{ backgroundColor: OFF_WHITE }} />
+              </div>
+            ))}
           </div>
 
-          <div className="flex min-w-0 flex-1 flex-col gap-6 overflow-hidden p-4 md:p-6">
-            <div className="flex shrink-0 items-start justify-between">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-lg bg-zinc-800/50" />
-                <div className="flex flex-col gap-2">
-                  <div className="h-5 w-32 rounded bg-zinc-700/80" />
-                  <div className="h-3 w-20 rounded bg-zinc-800/50" />
-                </div>
-                <div className="h-8 w-8 rounded-lg bg-zinc-800/50" />
+          {/* Pane 2: Backlog Middleware */}
+          <div className="hidden w-80 flex-col gap-4 border-r p-6 xl:flex" style={{ borderColor: `${MATCHA}10` }}>
+            <div className="w-24 h-4 rounded mb-4" style={{ backgroundColor: OFF_WHITE }} />
+            <div className="w-full h-12 rounded-xl border" style={{ backgroundColor: `${COAL}80`, borderColor: `${MATCHA}10` }} />
+            <div className="w-full h-12 rounded-xl border mb-6" style={{ backgroundColor: `${COAL}80`, borderColor: `${MATCHA}10` }} />
+            {[1, 2, 3].map(i => (
+              <div key={i} className="w-full rounded-2xl p-5 flex flex-col gap-4 border" style={{ backgroundColor: COAL, borderColor: `${MATCHA}05` }}>
+                <div className="w-12 h-3 rounded-full" style={{ backgroundColor: MATCHA }} />
+                <div className="w-[80%] h-4 rounded" style={{ backgroundColor: OFF_WHITE }} />
               </div>
-              <div className="flex flex-col items-end gap-2">
-                <div className="h-3 w-24 rounded bg-zinc-800/50" />
-                <div className="h-5 w-32 rounded bg-zinc-700/80" />
-              </div>
+            ))}
+          </div>
+
+          {/* Pane 3: Main Kanban */}
+          <div className="flex flex-1 flex-col p-8 gap-8 relative overflow-hidden bg-[#222222]">
+            {/* Soft Timer Widget */}
+            <div className="absolute top-8 right-8 w-56 rounded-2xl border p-5 shadow-xl" style={{ backgroundColor: COAL_LIGHT, borderColor: `${MATCHA}20` }}>
+               <div className="w-16 h-2 rounded mb-3" style={{ backgroundColor: `${OFF_WHITE}40` }} />
+               <div className="w-32 h-8 rounded" style={{ backgroundColor: OFF_WHITE }} />
+               <div className="w-full h-1.5 rounded-full mt-5" style={{ backgroundColor: `${COAL}80` }}>
+                 <div className="w-[80%] h-full rounded-full" style={{ backgroundColor: MATCHA }} />
+               </div>
             </div>
 
-            <div className="flex shrink-0 items-center gap-4">
-              <div className="h-4 w-4 rounded-sm bg-zinc-800" />
-              <div className="h-2 flex-1 overflow-hidden rounded-full bg-zinc-800/50">
-                <div className="h-full w-[85%] rounded-full bg-gradient-to-r from-zinc-300/80 to-zinc-100/90" />
-              </div>
-              <div className="h-4 w-16 rounded bg-zinc-800/50" />
-            </div>
+            <div className="w-32 h-6 rounded mb-8 mt-2" style={{ backgroundColor: `${OFF_WHITE}20` }} />
 
-            <div className="grid flex-1 grid-cols-2 gap-4 overflow-hidden md:grid-cols-4">
-              {["bg-zinc-500", "bg-indigo-500", "bg-amber-500", "bg-emerald-500"].map((color, index) => (
-                <div key={color} className="flex flex-col gap-3">
-                  <div className="flex items-center justify-between px-2">
-                    <div className="flex items-center gap-2">
-                      <div className={`h-2 w-2 rounded-full ${color}`} />
-                      <div className="h-3 w-16 rounded bg-zinc-700/50" />
-                    </div>
-                    <div className="h-1 w-4 rounded bg-zinc-800/50" />
-                  </div>
-                  {[...Array(index === 0 ? 2 : index === 1 ? 2 : 1)].map((_, cardIndex) => (
-                    <div key={cardIndex} className="flex w-full flex-col gap-3 rounded-xl border border-white/5 bg-zinc-900/60 p-4 shadow-sm">
-                      <div className="h-4 w-12 rounded-md bg-zinc-800" />
-                      <div className="flex flex-col gap-1.5">
-                        <div className="h-3.5 w-[90%] rounded bg-zinc-700" />
-                        <div className="h-3.5 w-[60%] rounded bg-zinc-700" />
-                      </div>
-                      <div className="flex gap-2">
-                        <div className="h-4 w-14 rounded-md bg-zinc-800" />
-                        <div className="h-4 w-10 rounded-md bg-zinc-800" />
-                      </div>
-                      <div className="mt-2 flex items-center justify-between border-t border-white/5 pt-3">
-                        <div className="flex items-center gap-2">
-                          <div className="h-6 w-6 rounded-full bg-zinc-800" />
-                          <div className="h-2 w-12 rounded bg-zinc-800/50" />
-                        </div>
-                        <div className="h-6 w-6 rounded-md bg-zinc-800/80" />
-                      </div>
+            {/* Kanban Columns */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 flex-1">
+              {[1, 2, 3, 4].map(col => (
+                <div key={col} className="flex flex-col gap-4">
+                  <div className="w-20 h-3 rounded mb-2" style={{ backgroundColor: `${OFF_WHITE}40` }} />
+                  {[...Array(col === 1 ? 2 : col === 2 ? 3 : 1)].map((_, cIdx) => (
+                    <div key={cIdx} className="w-full rounded-2xl p-5 flex flex-col gap-4 border" style={{ backgroundColor: COAL_LIGHT, borderColor: `${MATCHA}10` }}>
+                      <div className="w-10 h-3 rounded-full" style={{ backgroundColor: col===1 ? MATCHA : `${OFF_WHITE}20` }} />
+                      <div className="w-full h-4 rounded" style={{ backgroundColor: OFF_WHITE }} />
+                      <div className="w-[60%] h-4 rounded" style={{ backgroundColor: OFF_WHITE }} />
                     </div>
                   ))}
                 </div>
               ))}
             </div>
           </div>
-
-          <div className="hidden w-72 flex-col gap-6 border-l border-white/5 bg-zinc-900/10 p-4 xl:flex">
-            <div className="flex items-center justify-between">
-              <div className="flex flex-col gap-2">
-                <div className="h-4 w-20 rounded bg-zinc-700" />
-                <div className="h-3 w-12 rounded bg-zinc-800/50" />
-              </div>
-              <div className="h-6 w-6 rounded bg-zinc-800/50" />
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <div className="h-3 w-24 rounded bg-zinc-800/50" />
-              <div className="h-10 w-full rounded-lg border border-white/5 bg-zinc-900/80" />
-              <div className="h-10 w-full rounded-lg border border-white/5 bg-zinc-900/80" />
-              <div className="h-10 w-full rounded-lg bg-zinc-800" />
-            </div>
-
-            <div className="flex flex-1 flex-col gap-3 overflow-hidden">
-              {[1, 2].map((item) => (
-                <div key={item} className="flex w-full flex-col gap-3 rounded-xl border border-white/5 bg-zinc-900/60 p-4 shadow-sm">
-                  <div className="h-4 w-12 rounded-md bg-zinc-300/20" />
-                  <div className="h-3.5 w-[80%] rounded bg-zinc-700" />
-                  <div className="flex gap-2">
-                    <div className="h-4 w-14 rounded-md bg-zinc-800" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </motion.div>
     </div>
   </section>
 );
 
+const Features = () => {
+  const featureList = [
+    { icon: Zap, title: "Deep-focus shell", desc: "Three-pane architecture keeps navigation, sprint board, and backlog visible and tightly connected." },
+    { icon: Command, title: "Execution-first", desc: "Keyboard-first control patterns and drag-and-drop operations keep high-frequency actions frictionless." },
+    { icon: Timer, title: "Sprint awareness", desc: "Track sprint time and capacity in one place to preserve realistic commitments and reduce drift." },
+    { icon: LayoutDashboard, title: "Lifecycle control", desc: "Move sprint states from planned to archived with role-aware controls and clear workflow boundaries." },
+  ];
+
+  return (
+    <section id="features" className="relative py-32">
+      <div className="mx-auto max-w-7xl px-6">
+        <MotionReveal>
+          <SectionHeading
+            eyebrow="Features"
+            title="A foundation built for speed."
+            description="Designed as a premium operator console for SDLC delivery: clear, fast, and intentionally constrained."
+          />
+        </MotionReveal>
+
+        <div className="mt-16 grid gap-6 md:grid-cols-2">
+          {featureList.map((feature, index) => {
+            const Icon = feature.icon;
+            return (
+              <MotionReveal key={feature.title} delay={index * 0.1}>
+                <article className="group h-full rounded-[2.5rem] p-10 transition-colors duration-500 border" style={{ backgroundColor: COAL_LIGHT, borderColor: `${MATCHA}15` }}>
+                  <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl" style={{ backgroundColor: `${MATCHA}20` }}>
+                    <Icon className="h-7 w-7" style={{ color: MATCHA }} />
+                  </div>
+                  <h3 className="mb-4 text-2xl font-medium tracking-tight text-[#F5F5F5]">{feature.title}</h3>
+                  <p className="leading-relaxed text-[#A0A0A0] font-light text-lg">{feature.desc}</p>
+                </article>
+              </MotionReveal>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const FeatureArchitectureGrid = () => (
+  <section className="py-32">
+    <div className="mx-auto max-w-7xl px-6">
+      <MotionReveal>
+        <SectionHeading
+          eyebrow="Architecture"
+          title="Plan, execute, govern, optimize."
+        />
+      </MotionReveal>
+
+      <div className="mt-16 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        {architectureGroups.map((group, index) => {
+          const Icon = group.icon;
+          return (
+            <MotionReveal key={group.title} delay={index * 0.1}>
+              <article className="h-full rounded-[2rem] p-8 border" style={{ backgroundColor: COAL_LIGHT, borderColor: `${MATCHA}10` }}>
+                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl" style={{ backgroundColor: `${MATCHA}15` }}>
+                  <Icon className="h-6 w-6" style={{ color: MATCHA }} />
+                </div>
+                <h3 className="text-xl font-medium tracking-tight text-[#F5F5F5]">{group.title}</h3>
+                <ul className="mt-6 space-y-4 text-sm text-[#A0A0A0] font-light">
+                  {group.items.map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <div className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: MATCHA }} />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            </MotionReveal>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+);
+
 const Pricing = () => {
   const plans = [
-    {
-      name: "Starter",
-      price: "Free",
-      desc: "For individuals and small teams.",
-      features: ["Unlimited personal tasks", "Up to 3 collaborators", "Basic Kanban boards", "Community support"],
-    },
-    {
-      name: "Pro",
-      price: "$12",
-      period: "/mo",
-      desc: "For growing product teams.",
-      features: ["Unlimited collaborators", "Advanced Sprint tracking", "Custom workflows", "Priority support"],
-      highlighted: true,
-    },
-    {
-      name: "Enterprise",
-      price: "Custom",
-      desc: "For large scale organizations.",
-      features: ["SSO & SAML", "Dedicated success manager", "Custom SLAs", "On-premise deployment"],
-    },
+    { name: "Starter", price: "Free", desc: "For solo builders validating flow.", features: ["Single workspace", "Backlog and sprint basics", "3-pane workspace shell", "Community support"] },
+    { name: "Pro", price: "$12", period: "/mo", desc: "For high-output product squads.", features: ["Unlimited collaborators", "Sprint timer and capacity views", "Advanced board controls", "Priority support"], highlighted: true },
+    { name: "Enterprise", price: "Custom", desc: "For compliance-sensitive organizations.", features: ["Enhanced governance controls", "Deployment flexibility", "Custom SLA options", "Dedicated success channel"] },
   ];
 
   return (
     <section id="pricing" className="py-32">
       <div className="mx-auto max-w-7xl px-6">
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="mb-20 text-center">
-          <h2 className="mb-4 text-3xl font-bold tracking-tight text-zinc-50 md:text-5xl">Simple, transparent pricing.</h2>
-          <p className="text-lg text-zinc-400">Invest in your team&apos;s velocity.</p>
-        </motion.div>
+        <MotionReveal className="mb-20 text-center">
+          <SectionHeading
+            align="center"
+            eyebrow="Pricing"
+            title="Simple packages, elite value."
+            description="Start fast with solo delivery and scale into role-aware operations."
+          />
+        </MotionReveal>
 
-        <div className="mx-auto grid max-w-5xl gap-8 md:grid-cols-3">
+        <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-3">
           {plans.map((plan, index) => (
-            <motion.div
-              key={plan.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className={`relative flex flex-col rounded-3xl border p-8 ${plan.highlighted ? "border-zinc-300/40 bg-zinc-900 shadow-2xl shadow-white/5" : "border-white/5 bg-zinc-900/30"}`}
-            >
-              {plan.highlighted ? (
-                <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 rounded-full bg-zinc-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-zinc-950">
-                  Most Popular
-                </div>
-              ) : null}
-              <h3 className="mb-2 text-xl font-medium text-zinc-50">{plan.name}</h3>
-              <div className="mb-4">
-                <span className="text-4xl font-bold text-zinc-50">{plan.price}</span>
-                {plan.period ? <span className="text-zinc-400">{plan.period}</span> : null}
-              </div>
-              <p className="mb-8 border-b border-white/5 pb-8 text-sm text-zinc-400">{plan.desc}</p>
-              <ul className="mb-8 flex-1 space-y-4">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-3 text-sm text-zinc-300">
-                    <CheckCircle2 className="h-4 w-4 text-zinc-200" /> {feature}
-                  </li>
-                ))}
-              </ul>
-              <button
-                type="button"
-                className={`w-full rounded-xl py-3 font-medium transition-colors ${plan.highlighted ? "bg-zinc-50 text-zinc-950 hover:bg-zinc-200" : "bg-zinc-800 text-zinc-50 hover:bg-zinc-700"}`}
+            <MotionReveal key={plan.name} delay={index * 0.1}>
+              <div 
+                className="relative flex flex-col h-full rounded-[3rem] p-10 border overflow-hidden" 
+                style={{ 
+                  backgroundColor: plan.highlighted ? MATCHA : COAL_LIGHT, 
+                  borderColor: plan.highlighted ? MATCHA : `${MATCHA}20`,
+                  color: plan.highlighted ? COAL : OFF_WHITE
+                }}
               >
-                {plan.name === "Enterprise" ? "Contact Sales" : "Get Started"}
-              </button>
-            </motion.div>
+                {plan.highlighted && (
+                  <div className="absolute left-1/2 top-0 -translate-x-1/2 rounded-b-xl px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest" style={{ backgroundColor: COAL, color: MATCHA }}>
+                    Most Popular
+                  </div>
+                )}
+                <h3 className="mb-2 text-2xl font-medium tracking-tight mt-4">{plan.name}</h3>
+                <div className="mb-4 flex items-baseline">
+                  <span className="text-6xl font-medium tracking-tighter">{plan.price}</span>
+                  {plan.period && <span className={`font-light ml-2 ${plan.highlighted ? 'opacity-70' : 'text-[#A0A0A0]'}`}>{plan.period}</span>}
+                </div>
+                <p className={`mb-8 border-b pb-8 text-base font-light ${plan.highlighted ? 'border-black/10' : 'border-white/10 text-[#A0A0A0]'}`}>{plan.desc}</p>
+                <ul className="mb-10 flex-1 space-y-5">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className={`flex items-center gap-3 font-light ${plan.highlighted ? 'font-medium' : 'text-[#A0A0A0]'}`}>
+                      <CheckCircle2 className="h-5 w-5 shrink-0" style={{ color: plan.highlighted ? COAL : MATCHA }} /> {feature}
+                    </li>
+                  ))}
+                </ul>
+                <button 
+                  type="button" 
+                  className="w-full rounded-full py-4 font-bold transition-transform hover:scale-105"
+                  style={{ 
+                    backgroundColor: plan.highlighted ? COAL : MATCHA, 
+                    color: plan.highlighted ? MATCHA : COAL 
+                  }}
+                >
+                  {plan.name === "Enterprise" ? "Contact Sales" : "Get Started"}
+                </button>
+              </div>
+            </MotionReveal>
           ))}
         </div>
       </div>
@@ -362,55 +563,46 @@ const Pricing = () => {
 
 const FAQ = () => {
   const faqs = [
-    {
-      q: "How is Choncc different from Jira?",
-      a: "Choncc is built for speed and aesthetics. We removed the clutter, implemented full keyboard navigation, and focused strictly on what elite teams need to ship fast, without the administrative overhead.",
-    },
-    { q: "Can I import my existing tasks?", a: "Yes. Choncc offers one-click imports from Jira, Asana, Linear, and Trello." },
-    { q: "Is there a dark mode?", a: "Choncc is dark-mode native. We designed it specifically for low-light developer environments, utilizing a luxurious zinc color palette." },
-    { q: "Do you offer a free trial?", a: "Our Starter plan is completely free forever for small teams. No credit card required." },
+    { q: "What makes Choncc different from traditional PM suites?", a: "Choncc is designed around deep-focus SDLC execution, not generic workflow bloat. The 3-pane shell, sprint lifecycle controls, and backlog-to-board flow keep operators in one high-signal surface." },
+    { q: "How does security work in Choncc?", a: "Security posture is layered: Supabase Auth, role-based access control, tenant isolation, and row-level security policy patterns for strict data boundaries." },
+    { q: "Which roles are supported at launch?", a: "Choncc v1 centers on two operational roles: Project Manager and Developer, with permission-sensitive workflows and auditable actions." },
   ];
 
   const [open, setOpen] = useState(0);
 
   return (
-    <section className="border-t border-white/5 bg-zinc-900/20 py-32">
-      <div className="mx-auto max-w-3xl px-6">
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="mb-16 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-zinc-50">Frequently Asked Questions</h2>
-        </motion.div>
+    <section className="py-32">
+      <div className="mx-auto max-w-4xl px-6">
+        <MotionReveal className="mb-16">
+          <SectionHeading eyebrow="FAQ" title="Common inquiries." />
+        </MotionReveal>
 
         <div className="space-y-4">
           {faqs.map((faq, index) => (
-            <motion.div
-              key={faq.q}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="overflow-hidden rounded-2xl border border-white/5 bg-zinc-900/50"
-            >
-              <button
-                type="button"
-                onClick={() => setOpen(open === index ? -1 : index)}
-                className="flex w-full items-center justify-between px-6 py-5 text-left font-medium text-zinc-50 transition-colors hover:bg-zinc-800/50"
-              >
-                {faq.q}
-                {open === index ? <Minus className="h-4 w-4 text-zinc-400" /> : <Plus className="h-4 w-4 text-zinc-400" />}
-              </button>
-              <AnimatePresence>
-                {open === index ? (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="px-6 pb-5 text-sm leading-relaxed text-zinc-400"
-                  >
-                    {faq.a}
-                  </motion.div>
-                ) : null}
-              </AnimatePresence>
-            </motion.div>
+            <MotionReveal key={faq.q} delay={index * 0.05}>
+              <div className="overflow-hidden rounded-3xl border transition-colors" style={{ backgroundColor: COAL_LIGHT, borderColor: `${MATCHA}10` }}>
+                <button
+                  type="button"
+                  onClick={() => setOpen(open === index ? -1 : index)}
+                  className="flex w-full items-center justify-between px-8 py-8 text-left text-xl font-medium tracking-tight text-[#F5F5F5]"
+                >
+                  {faq.q}
+                  <div className="rounded-full p-2" style={{ backgroundColor: `${MATCHA}20`, color: MATCHA }}>
+                    {open === index ? <Minus className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
+                  </div>
+                </button>
+                <AnimatePresence>
+                  {open === index && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                      className="px-8 pb-8 text-lg font-light leading-relaxed text-[#A0A0A0]"
+                    >
+                      {faq.a}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </MotionReveal>
           ))}
         </div>
       </div>
@@ -419,53 +611,60 @@ const FAQ = () => {
 };
 
 const Footer = () => (
-  <footer className="border-t border-white/5 bg-zinc-950 py-12">
-    <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-6 md:flex-row">
-      <div className="flex items-center gap-2">
-        <ChonccIcon size="sm" />
-        <span className="font-bold tracking-tight text-zinc-50">Choncc</span>
+  <footer className="py-24" style={{ backgroundColor: COAL_LIGHT }}>
+    <div className="mx-auto max-w-7xl px-6">
+      <div className="grid gap-12 md:grid-cols-2 xl:grid-cols-5">
+        <div className="xl:col-span-2">
+          <div className="flex items-center gap-2 mb-6">
+            <Hexagon className="w-8 h-8" style={{ color: MATCHA, fill: MATCHA }} />
+            <span className="text-2xl font-medium tracking-tight text-[#F5F5F5]">Choncc</span>
+          </div>
+          <p className="max-w-md text-base font-light leading-relaxed text-[#A0A0A0]">
+            Privacy-first, Web3-powered SDLC workspace focused on deep execution quality for solo builders and elite teams.
+          </p>
+        </div>
+
+        {[
+          { title: "Product", links: ["Features", "How it works", "Pricing"] },
+          { title: "Docs", links: ["Architecture", "Security manifesto", "API strategy"] },
+          { title: "Legal", links: ["Terms", "Privacy", "X / Twitter", "GitHub"] }
+        ].map(col => (
+          <div key={col.title}>
+            <p className="text-xs font-bold uppercase tracking-[0.2em]" style={{ color: MATCHA }}>{col.title}</p>
+            <ul className="mt-6 space-y-4 text-base font-light text-[#A0A0A0]">
+              {col.links.map(link => (
+                <li key={link}><a href="#" className="hover:text-[#F5F5F5] transition-colors">{link}</a></li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
-      <div className="text-sm text-zinc-500">© {new Date().getFullYear()} Choncc Inc. All rights reserved.</div>
-      <div className="flex gap-6 text-sm font-medium text-zinc-400">
-        <a href="#" className="transition-colors hover:text-zinc-50">Twitter</a>
-        <a href="#" className="transition-colors hover:text-zinc-50">GitHub</a>
-        <a href="#" className="transition-colors hover:text-zinc-50">Terms</a>
+
+      <div className="mt-24 flex flex-col gap-4 border-t pt-8 text-sm font-light text-[#A0A0A0] md:flex-row md:items-center md:justify-between" style={{ borderColor: `${MATCHA}20` }}>
+        <p>© {new Date().getFullYear()} Choncc. All rights reserved.</p>
+        <p>Engineered with Next.js & Supabase.</p>
       </div>
     </div>
   </footer>
 );
 
 export default function LandingPage() {
-  const [isBootLoading, setIsBootLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setIsBootLoading(false);
-    }, 2000);
-
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  if (isBootLoading) {
-    return <ChonccLoader />;
-  }
-
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-zinc-950 via-zinc-900 to-black font-sans text-zinc-50 selection:bg-zinc-200/30 selection:text-zinc-100">
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute left-[8%] top-[-10%] h-[500px] w-[500px] rounded-full bg-zinc-800/30 blur-[100px]" />
-        <div className="absolute bottom-[-12%] right-[8%] h-[500px] w-[500px] rounded-full bg-zinc-300/10 blur-[100px]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.05),transparent_28%),radial-gradient(circle_at_bottom,rgba(255,255,255,0.03),transparent_22%)]" />
-      </div>
+    <div className="relative min-h-screen font-sans selection:bg-[#C2D8C4] selection:text-[#222222]" style={{ backgroundColor: COAL }}>
+      <ScrollProgressIndicator />
       <Navbar />
-      <div className="relative z-10">
+
+      <main className="relative z-10 pt-0">
         <Hero />
-        <Features />
+        <TrustProofBar />
         <AppPreview />
+        <Features />
+        <FeatureArchitectureGrid />
         <Pricing />
         <FAQ />
-        <Footer />
-      </div>
+      </main>
+      
+      <Footer />
     </div>
   );
 }
