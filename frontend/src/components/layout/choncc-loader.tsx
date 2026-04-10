@@ -86,11 +86,11 @@ const FRAME_JUMP = [
 const FRAMES = [FRAME_IDLE_1, FRAME_IDLE_2, FRAME_PREP, FRAME_JUMP] as const;
 
 const COLOR_PALETTE: Record<string, string> = {
-  X: "#3F3F46",
-  W: "#E4E4E7",
-  E: "#09090B",
-  A: "#8B5CF6",
-  M: "#27272A",
+  X: "#000000",
+  W: "#F5F5F5",
+  E: "#111111",
+  A: "#C2D8C4",
+  M: "#222222",
 };
 
 type MascotSVGProps = {
@@ -108,7 +108,7 @@ function MascotSVG({ pixelMap }: MascotSVGProps) {
       height={rows * PIXEL_SIZE}
       viewBox={`0 0 ${cols * PIXEL_SIZE} ${rows * PIXEL_SIZE}`}
       xmlns="http://www.w3.org/2000/svg"
-      className="drop-shadow-xl"
+      className="drop-shadow-2xl"
       aria-hidden="true"
     >
       {pixelMap.map((row, rowIndex) =>
@@ -151,14 +151,17 @@ export default function ChonccLoader() {
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden bg-zinc-950 font-sans">
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-600/10 blur-[100px]" />
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden font-sans" style={{ backgroundColor: "#222222" }}>
+      <div
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[100px]"
+        style={{ backgroundColor: "rgba(194, 216, 196, 0.15)" }}
+      />
 
       <div className="relative z-10 flex h-32 flex-col items-center justify-center">
         <div className="relative flex flex-col items-center pb-2">
           <motion.div
-            className="absolute bottom-0 h-1 w-3 rounded-full bg-zinc-400 opacity-0"
-            style={{ left: "30%" }}
+            className="absolute bottom-0 h-1 w-3 rounded-full opacity-0"
+            style={{ left: "30%", backgroundColor: "#C2D8C4" }}
             animate={{
               x: ["0px", "-40px", "-40px"],
               y: ["0px", "-8px", "0px"],
@@ -168,8 +171,8 @@ export default function ChonccLoader() {
             transition={{ duration: JUMP_DURATION, repeat: Number.POSITIVE_INFINITY, times: [0, 0.25, 1], ease: "easeOut" }}
           />
           <motion.div
-            className="absolute bottom-1 h-2 w-2 rounded-full bg-zinc-500 opacity-0"
-            style={{ left: "40%" }}
+            className="absolute bottom-1 h-2 w-2 rounded-full opacity-0"
+            style={{ left: "40%", backgroundColor: "#F5F5F5" }}
             animate={{
               x: ["0px", "-25px", "-25px"],
               y: ["0px", "-15px", "-15px"],
@@ -180,8 +183,8 @@ export default function ChonccLoader() {
           />
 
           <motion.div
-            className="absolute bottom-0 h-1 w-3 rounded-full bg-zinc-400 opacity-0"
-            style={{ right: "30%" }}
+            className="absolute bottom-0 h-1 w-3 rounded-full opacity-0"
+            style={{ right: "30%", backgroundColor: "#C2D8C4" }}
             animate={{
               x: ["0px", "40px", "40px"],
               y: ["0px", "-8px", "0px"],
@@ -191,8 +194,8 @@ export default function ChonccLoader() {
             transition={{ duration: JUMP_DURATION, repeat: Number.POSITIVE_INFINITY, times: [0, 0.25, 1], ease: "easeOut" }}
           />
           <motion.div
-            className="absolute bottom-1 h-2 w-2 rounded-full bg-zinc-500 opacity-0"
-            style={{ right: "40%" }}
+            className="absolute bottom-1 h-2 w-2 rounded-full opacity-0"
+            style={{ right: "40%", backgroundColor: "#F5F5F5" }}
             animate={{
               x: ["0px", "25px", "25px"],
               y: ["0px", "-15px", "-15px"],
@@ -219,7 +222,7 @@ export default function ChonccLoader() {
           <motion.div
             animate={{
               scale: [1, 1, 1, 0.4, 1],
-              opacity: [0.5, 0.5, 0.5, 0.1, 0.5],
+              opacity: [0.3, 0.3, 0.3, 0.05, 0.3],
             }}
             transition={{
               duration: JUMP_DURATION,

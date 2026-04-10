@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from "framer-motion";
 import {
   ArrowRight, ArrowUpRight, CheckCircle2, Command,
   Gauge, LayoutDashboard, Layers3, Minus, MoveRight,
   Plus, ShieldCheck, Timer, Zap, Hexagon
 } from "lucide-react";
+import ChonccLoader from "@/components/layout/choncc-loader";
 
 // --- GLOBAL CONFIG & COLOR PALETTE ---
 const premiumEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -649,6 +650,20 @@ const Footer = () => (
 );
 
 export default function LandingPage() {
+  const [isBootLoading, setIsBootLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setIsBootLoading(false);
+    }, 2100);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  if (isBootLoading) {
+    return <ChonccLoader />;
+  }
+
   return (
     <div className="relative min-h-screen font-sans selection:bg-[#C2D8C4] selection:text-[#222222]" style={{ backgroundColor: COAL }}>
       <ScrollProgressIndicator />
