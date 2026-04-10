@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #222222;
+  --foreground: #f5f5f5;
+  --coal: #222222;
+  --coal-light: #2a2a2a;
+  --matcha: #c2d8c4;
+  --matcha-soft: #d7e5d8;
 }
 
 @theme inline {
@@ -14,13 +18,13 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #222222;
+    --foreground: #f5f5f5;
   }
 }
 
 body {
-  background: var(--background);
+  background: radial-gradient(circle at top, #2a2a2a 0%, var(--background) 55%);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -47,17 +51,17 @@ body {
 }
 
 .zinc-scroll.is-scrolling {
-  scrollbar-color: rgba(39, 39, 42, 0.72) transparent;
+  scrollbar-color: rgba(194, 216, 196, 0.45) transparent;
 }
 
 .zinc-scroll.is-scrolling::-webkit-scrollbar-thumb {
-  background: rgba(39, 39, 42, 0.72);
+  background: rgba(194, 216, 196, 0.45);
 }
 
 .dark .zinc-scroll.is-scrolling {
-  scrollbar-color: rgba(113, 113, 122, 0.78) transparent;
+  scrollbar-color: rgba(194, 216, 196, 0.6) transparent;
 }
 
 .dark .zinc-scroll.is-scrolling::-webkit-scrollbar-thumb {
-  background: rgba(113, 113, 122, 0.78);
+  background: rgba(194, 216, 196, 0.6);
 }

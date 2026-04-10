@@ -351,7 +351,7 @@ export default function WorkspacePage() {
   };
 
   return (
-    <div className="dark h-screen w-full flex flex-col overflow-hidden bg-zinc-950 text-zinc-50">
+    <div className="dark h-screen w-full flex flex-col overflow-hidden bg-[#222222] text-[#F5F5F5]">
       <DashboardNavbar activeWorkspaceName={activeWorkspace?.name ?? "Workspace"} />
 
       <DragDropContext onDragEnd={onDragEnd}>

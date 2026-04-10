@@ -9,7 +9,7 @@ import { Bolt, ChevronLeft, ChevronRight, Ellipsis, Minus } from "lucide-react";
 const board = [
   {
     title: "To Do",
-    dot: "bg-zinc-400",
+    dot: "bg-[#7E967F]",
     tasks: [
       {
         priority: "HIGH",
@@ -33,7 +33,7 @@ const board = [
   },
   {
     title: "In Progress",
-    dot: "bg-sky-400",
+    dot: "bg-[#9CB49E]",
     tasks: [
       {
         priority: "MEDIUM",
@@ -57,7 +57,7 @@ const board = [
   },
   {
     title: "Review",
-    dot: "bg-violet-400",
+    dot: "bg-[#AFC5B1]",
     tasks: [
       {
         priority: "LOW",
@@ -72,7 +72,7 @@ const board = [
   },
   {
     title: "Done",
-    dot: "bg-emerald-400",
+    dot: "bg-[#C2D8C4]",
     tasks: [
       {
         priority: "LOW",
@@ -97,83 +97,83 @@ const board = [
 ];
 
 function priorityClass(priority: string) {
-  if (priority === "HIGH") return "border-red-500/40 bg-red-500/10 text-red-300";
-  if (priority === "MEDIUM") return "border-amber-500/40 bg-amber-500/10 text-amber-300";
-  return "border-sky-500/40 bg-sky-500/10 text-sky-300";
+  if (priority === "HIGH") return "border-[#C2D8C4]/35 bg-[#C2D8C4]/18 text-[#E7EFE8]";
+  if (priority === "MEDIUM") return "border-[#C2D8C4]/35 bg-[#C2D8C4]/18 text-[#E7EFE8]";
+  return "border-[#C2D8C4]/35 bg-[#C2D8C4]/18 text-[#E7EFE8]";
 }
 
 function tagClass(tag: string) {
-  if (tag === "Backend") return "bg-emerald-500/20 text-emerald-300";
-  if (tag === "Frontend") return "bg-sky-500/20 text-sky-300";
-  if (tag === "UI/UX") return "bg-violet-500/20 text-violet-300";
-  if (tag === "Database") return "bg-amber-500/20 text-amber-300";
-  return "bg-zinc-500/20 text-zinc-300";
+  if (tag === "Backend") return "bg-[#C2D8C4]/20 text-[#DDE8DE]";
+  if (tag === "Frontend") return "bg-[#C2D8C4]/20 text-[#DDE8DE]";
+  if (tag === "UI/UX") return "bg-[#C2D8C4]/20 text-[#DDE8DE]";
+  if (tag === "Database") return "bg-[#C2D8C4]/20 text-[#DDE8DE]";
+  return "bg-[#C2D8C4]/16 text-[#CAD6CB]";
 }
 
 export default function WorkspaceBoardPage() {
   return (
-    <div className="flex h-full min-h-0 flex-col rounded-2xl border border-white/10 bg-slate-950/35">
-      <div className="border-b border-white/10 px-4 py-3">
+    <div className="flex h-full min-h-0 flex-col rounded-2xl border border-[#C2D8C4]/18 bg-[#222222]/72">
+      <div className="border-b border-[#C2D8C4]/18 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="rounded-full border border-white/10">
+              <Button variant="ghost" size="icon" className="rounded-full border border-[#C2D8C4]/20">
                 <ChevronLeft className="h-4 w-4" aria-hidden="true" />
               </Button>
               <div>
-                <h1 className="text-2xl font-semibold text-zinc-100">Sprint 10</h1>
-                <p className="text-xs text-zinc-500">of 14 total</p>
+                <h1 className="text-2xl font-semibold text-[#F5F5F5]">Sprint 10</h1>
+                <p className="text-xs text-[#9BA59B]">of 14 total</p>
               </div>
-              <Button variant="ghost" size="icon" className="rounded-full border border-white/10">
+              <Button variant="ghost" size="icon" className="rounded-full border border-[#C2D8C4]/20">
                 <ChevronRight className="h-4 w-4" aria-hidden="true" />
               </Button>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-xs text-zinc-500">Apr 7 - Apr 21, 2026</p>
-            <p className="font-mono text-2xl font-semibold text-violet-400">167:29:43</p>
+            <p className="text-xs text-[#9BA59B]">Apr 7 - Apr 21, 2026</p>
+            <p className="font-mono text-2xl font-semibold text-[#C2D8C4]">167:29:43</p>
           </div>
         </div>
       </div>
 
-      <div className="border-b border-white/10 px-4 py-3">
+      <div className="border-b border-[#C2D8C4]/18 px-4 py-3">
         <div className="flex items-center gap-3">
-          <Bolt className="h-4 w-4 text-orange-400" aria-hidden="true" />
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">Sprint Capacity</p>
+          <Bolt className="h-4 w-4 text-[#C2D8C4]" aria-hidden="true" />
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#9BA59B]">Sprint Capacity</p>
           <Progress
             value={96}
             className="h-2.5"
-            indicatorClassName="bg-gradient-to-r from-orange-500 via-orange-400 to-red-500"
+            indicatorClassName="bg-gradient-to-r from-[#8EA98F] via-[#AFC5B1] to-[#C2D8C4]"
           />
-          <p className="text-sm font-semibold text-orange-300">24</p>
-          <p className="text-sm text-zinc-500">/ 20 SP</p>
-          <Badge className="border-red-500/40 bg-red-500/10 text-red-300">Overloaded</Badge>
+          <p className="text-sm font-semibold text-[#DDE8DE]">24</p>
+          <p className="text-sm text-[#9BA59B]">/ 20 SP</p>
+          <Badge className="border-[#C2D8C4]/35 bg-[#C2D8C4]/18 text-[#EAF1EA]">Overloaded</Badge>
         </div>
       </div>
 
       <ScrollArea className="min-h-0 flex-1 p-3">
         <div className="grid min-w-[980px] gap-3 xl:grid-cols-4">
           {board.map((column) => (
-            <section key={column.title} className="rounded-xl border border-white/10 bg-zinc-900/55">
-              <div className="flex items-center justify-between border-b border-white/10 px-3 py-2.5">
+            <section key={column.title} className="rounded-xl border border-[#C2D8C4]/18 bg-[#2A2A2A]/70">
+              <div className="flex items-center justify-between border-b border-[#C2D8C4]/18 px-3 py-2.5">
                 <div className="flex items-center gap-2">
                   <span className={`h-2 w-2 rounded-full ${column.dot}`} />
-                  <h2 className="text-sm font-semibold text-zinc-100">{column.title}</h2>
-                  <span className="text-xs text-zinc-500">{column.tasks.length}</span>
+                  <h2 className="text-sm font-semibold text-[#F5F5F5]">{column.title}</h2>
+                  <span className="text-xs text-[#9BA59B]">{column.tasks.length}</span>
                 </div>
-                <Button variant="ghost" size="icon" className="h-7 w-7 text-zinc-500 hover:text-zinc-200">
+                <Button variant="ghost" size="icon" className="h-7 w-7 text-[#9BA59B] hover:text-[#DDE8DE]">
                   <Ellipsis className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </div>
 
               <div className="space-y-3 p-2.5">
                 {column.tasks.map((task) => (
-                  <Card key={task.title} className="rounded-xl border-white/15 bg-zinc-700/35">
+                  <Card key={task.title} className="rounded-xl border-[#C2D8C4]/20 bg-[#222222]/75">
                     <CardContent className="space-y-3 p-3">
                       <Badge className={priorityClass(task.priority)}>{task.priority}</Badge>
                       <div>
-                        <p className="text-sm font-semibold leading-tight text-zinc-100">{task.title}</p>
-                        <p className="mt-1 text-xs text-zinc-400 line-clamp-2">{task.description}</p>
+                        <p className="text-sm font-semibold leading-tight text-[#F5F5F5]">{task.title}</p>
+                        <p className="mt-1 text-xs text-[#AAB4AA] line-clamp-2">{task.description}</p>
                       </div>
                       <div className="flex flex-wrap gap-1.5">
                         {task.tags.map((tag) => (
@@ -183,21 +183,21 @@ export default function WorkspaceBoardPage() {
                         ))}
                       </div>
                     </CardContent>
-                    <CardFooter className="items-center justify-between border-t border-white/10 px-3 py-2">
+                    <CardFooter className="items-center justify-between border-t border-[#C2D8C4]/18 px-3 py-2">
                       <div className="flex items-center gap-1.5">
                         <Avatar className="h-5 w-5">
-                          <AvatarFallback className="bg-orange-500 text-[9px] text-white">{task.initials}</AvatarFallback>
+                          <AvatarFallback className="bg-[#5F7361] text-[9px] text-white">{task.initials}</AvatarFallback>
                         </Avatar>
-                        <p className="text-[11px] text-zinc-500">{task.date}</p>
+                        <p className="text-[11px] text-[#9BA59B]">{task.date}</p>
                       </div>
-                      <div className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-violet-500/30 text-[11px] text-violet-200">
+                      <div className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#C2D8C4]/30 text-[11px] text-[#EAF1EA]">
                         {task.points}
                       </div>
                     </CardFooter>
                   </Card>
                 ))}
                 {column.tasks.length === 0 ? (
-                  <div className="flex h-24 items-center justify-center rounded-xl border border-dashed border-white/15 text-sm text-zinc-500">
+                  <div className="flex h-24 items-center justify-center rounded-xl border border-dashed border-[#C2D8C4]/20 text-sm text-[#9BA59B]">
                     <Minus className="mr-1 h-4 w-4" aria-hidden="true" /> Empty
                   </div>
                 ) : null}

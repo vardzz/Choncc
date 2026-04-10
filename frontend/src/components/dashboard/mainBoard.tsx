@@ -49,55 +49,55 @@ const COLUMNS: Array<{
   {
     id: "todo",
     label: "To Do",
-    dot: "bg-zinc-500",
-    text: "text-zinc-700 dark:text-zinc-200",
-    glow: "shadow-[0_0_10px_rgba(113,113,122,0.55)]",
+    dot: "bg-[#7E967F]",
+    text: "text-[#D7E5D8]",
+    glow: "shadow-[0_0_10px_rgba(194,216,196,0.4)]",
   },
   {
     id: "inprogress",
     label: "In Progress",
-    dot: "bg-zinc-400",
-    text: "text-zinc-700 dark:text-zinc-300",
-    glow: "shadow-[0_0_10px_rgba(113,113,122,0.45)]",
+    dot: "bg-[#A6BEA8]",
+    text: "text-[#D7E5D8]",
+    glow: "shadow-[0_0_10px_rgba(194,216,196,0.35)]",
   },
   {
     id: "review",
     label: "Review",
-    dot: "bg-zinc-400",
-    text: "text-zinc-700 dark:text-zinc-300",
-    glow: "shadow-[0_0_10px_rgba(113,113,122,0.45)]",
+    dot: "bg-[#8EA98F]",
+    text: "text-[#D7E5D8]",
+    glow: "shadow-[0_0_10px_rgba(194,216,196,0.35)]",
   },
   {
     id: "done",
     label: "Done",
-    dot: "bg-zinc-300",
-    text: "text-zinc-700 dark:text-zinc-300",
-    glow: "shadow-[0_0_10px_rgba(113,113,122,0.4)]",
+    dot: "bg-[#C2D8C4]",
+    text: "text-[#E7EFE8]",
+    glow: "shadow-[0_0_10px_rgba(194,216,196,0.45)]",
   },
 ];
 
 const CAT = {
-  Frontend: "border border-black/5 bg-black/5 text-zinc-700 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300",
-  Backend: "border border-black/5 bg-black/5 text-zinc-700 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300",
-  "UI/UX": "border border-black/5 bg-black/5 text-zinc-700 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300",
-  "DevOps/Infra": "border border-black/5 bg-black/5 text-zinc-700 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300",
-  DevOps: "border border-black/5 bg-black/5 text-zinc-700 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300",
-  Infra: "border border-black/5 bg-black/5 text-zinc-700 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300",
-  Database: "border border-black/5 bg-black/5 text-zinc-700 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300",
+  Frontend: "border border-[#C2D8C4]/25 bg-[#C2D8C4]/12 text-[#D7E5D8]",
+  Backend: "border border-[#C2D8C4]/25 bg-[#C2D8C4]/12 text-[#D7E5D8]",
+  "UI/UX": "border border-[#C2D8C4]/25 bg-[#C2D8C4]/12 text-[#D7E5D8]",
+  "DevOps/Infra": "border border-[#C2D8C4]/25 bg-[#C2D8C4]/12 text-[#D7E5D8]",
+  DevOps: "border border-[#C2D8C4]/25 bg-[#C2D8C4]/12 text-[#D7E5D8]",
+  Infra: "border border-[#C2D8C4]/25 bg-[#C2D8C4]/12 text-[#D7E5D8]",
+  Database: "border border-[#C2D8C4]/25 bg-[#C2D8C4]/12 text-[#D7E5D8]",
 };
 const PRI = {
-  HIGH: "border border-black/5 bg-black/5 text-zinc-700 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300",
-  MEDIUM: "border border-black/5 bg-black/5 text-zinc-700 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300",
-  LOW: "border border-black/5 bg-black/5 text-zinc-700 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300",
+  HIGH: "border border-[#C2D8C4]/25 bg-[#C2D8C4]/10 text-[#D7E5D8]",
+  MEDIUM: "border border-[#C2D8C4]/25 bg-[#C2D8C4]/10 text-[#D7E5D8]",
+  LOW: "border border-[#C2D8C4]/25 bg-[#C2D8C4]/10 text-[#D7E5D8]",
 };
 
 const SP_MAP: Record<string, number> = { "k-1": 5, "k-2": 3, "k-3": 4, "k-4": 5, "k-5": 2, "k-6": 2, "k-7": 3 };
 const GRAD = [
-  "from-zinc-700 to-zinc-900",
-  "from-zinc-700 to-zinc-900",
-  "from-zinc-700 to-zinc-900",
-  "from-zinc-700 to-zinc-900",
-  "from-zinc-700 to-zinc-900",
+  "from-[#425243] to-[#2A2A2A]",
+  "from-[#4B5E4C] to-[#222222]",
+  "from-[#3E4F3F] to-[#1D1D1D]",
+  "from-[#617663] to-[#2A2A2A]",
+  "from-[#546856] to-[#222222]",
 ];
 
 function getGrad(name: string) {
@@ -230,31 +230,31 @@ export function MainBoard({
   ];
 
   return (
-    <section className="relative flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-zinc-950/80">
+    <section className="relative flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-[#222222]/90">
       <div className="group absolute right-6 top-6 z-20">
         <div className="relative flex items-start justify-end">
           <button
             type="button"
             aria-label="Sprint timer"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-zinc-900/90 text-zinc-300 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-white/20 hover:text-zinc-50 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_50px_rgba(0,0,0,0.55)]"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#C2D8C4]/20 bg-[#2A2A2A]/90 text-[#C8D6C9] shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-[#C2D8C4]/40 hover:text-[#F5F5F5] hover:shadow-[0_0_0_1px_rgba(194,216,196,0.14),0_20px_50px_rgba(0,0,0,0.55)]"
           >
             <Clock3 className="h-4 w-4 animate-pulse" />
           </button>
 
           <div className="pointer-events-none absolute right-0 top-12 w-[240px] translate-y-[-4px] scale-[0.96] opacity-0 transition-all duration-300 ease-out group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:scale-100 group-focus-within:opacity-100">
-            <div className="rounded-2xl border border-white/10 bg-zinc-900/80 p-4 shadow-2xl backdrop-blur-xl">
+            <div className="rounded-2xl border border-[#C2D8C4]/18 bg-[#2A2A2A]/85 p-4 shadow-2xl backdrop-blur-xl">
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.24em] text-zinc-400">Sprint {sprintNum}</p>
-                    <p className="mt-2 font-mono text-2xl font-semibold tabular-nums text-zinc-50">{timer}</p>
+                    <p className="text-xs uppercase tracking-[0.24em] text-[#B2BBB2]">Sprint {sprintNum}</p>
+                    <p className="mt-2 font-mono text-2xl font-semibold tabular-nums text-[#F5F5F5]">{timer}</p>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <button
                       type="button"
                       onClick={onPrevSprint}
                       aria-label="Previous sprint"
-                      className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-zinc-300 transition-colors hover:bg-white/10 hover:text-zinc-50"
+                      className="flex h-8 w-8 items-center justify-center rounded-full border border-[#C2D8C4]/20 bg-[#C2D8C4]/8 text-[#C8D6C9] transition-colors hover:bg-[#C2D8C4]/14 hover:text-[#F5F5F5]"
                     >
                       <ChevronLeft className="h-4 w-4" />
                     </button>
@@ -262,7 +262,7 @@ export function MainBoard({
                       type="button"
                       onClick={onNextSprint}
                       aria-label="Next sprint"
-                      className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-zinc-300 transition-colors hover:bg-white/10 hover:text-zinc-50"
+                      className="flex h-8 w-8 items-center justify-center rounded-full border border-[#C2D8C4]/20 bg-[#C2D8C4]/8 text-[#C8D6C9] transition-colors hover:bg-[#C2D8C4]/14 hover:text-[#F5F5F5]"
                     >
                       <ChevronRight className="h-4 w-4" />
                     </button>
@@ -271,18 +271,18 @@ export function MainBoard({
 
                 <div>
                   <div className="mb-2 flex items-center justify-between gap-3">
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">Velocity</p>
-                    <p className={`text-sm font-semibold ${overloaded ? "text-zinc-100" : "text-zinc-300"}`}>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-[#9CA69C]">Velocity</p>
+                    <p className={`text-sm font-semibold ${overloaded ? "text-[#F5F5F5]" : "text-[#C8D6C9]"}`}>
                       {capacityUsed} / {capacityTotal} SP
                     </p>
                   </div>
-                  <div className="h-1 overflow-hidden rounded-full bg-white/5">
+                  <div className="h-1 overflow-hidden rounded-full bg-[#C2D8C4]/10">
                     <div
-                      className={`h-full rounded-full transition-all duration-700 ${overloaded ? "bg-violet-400" : "bg-violet-500"}`}
+                      className={`h-full rounded-full transition-all duration-700 ${overloaded ? "bg-[#9CB49E]" : "bg-[#C2D8C4]"}`}
                       style={{ width: `${pct}%` }}
                     />
                   </div>
-                  {overloaded ? <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-violet-300">Overloaded</p> : null}
+                  {overloaded ? <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-[#D7E5D8]">Overloaded</p> : null}
                 </div>
               </div>
             </div>
@@ -290,9 +290,9 @@ export function MainBoard({
         </div>
       </div>
 
-      <div className="shrink-0 border-b border-white/5 bg-zinc-950/60 px-6 py-4 pr-72 backdrop-blur-md">
+      <div className="shrink-0 border-b border-[#C2D8C4]/12 bg-[#222222]/78 px-6 py-4 pr-72 backdrop-blur-md">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="inline-flex items-center gap-1 rounded-2xl border border-white/5 bg-white/5 p-1">
+          <div className="inline-flex items-center gap-1 rounded-2xl border border-[#C2D8C4]/15 bg-[#2A2A2A]/72 p-1">
             {views.map(({ id, label, icon: Icon }) => {
               const active = activeView === id;
 
@@ -302,7 +302,7 @@ export function MainBoard({
                   type="button"
                   onClick={() => setActiveView(id)}
                   className={`inline-flex cursor-pointer items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors ${
-                    active ? "bg-zinc-50 text-zinc-950" : "text-zinc-400 hover:bg-white/5 hover:text-zinc-50"
+                    active ? "bg-[#C2D8C4] text-[#222222]" : "text-[#B3BDB3] hover:bg-[#C2D8C4]/10 hover:text-[#F5F5F5]"
                   }`}
                 >
                   <Icon className="h-3.5 w-3.5" />
@@ -317,7 +317,7 @@ export function MainBoard({
               type="button"
               variant="outline"
               size="sm"
-              className="h-8 border-white/10 bg-zinc-900/40 text-zinc-300 hover:bg-white/5 hover:text-zinc-50"
+              className="h-8 border-[#C2D8C4]/20 bg-[#2A2A2A]/65 text-[#CAD7CB] hover:bg-[#C2D8C4]/10 hover:text-[#F5F5F5]"
             >
               <Filter className="mr-1.5 h-3.5 w-3.5" />
               Filter
@@ -326,7 +326,7 @@ export function MainBoard({
               type="button"
               variant="outline"
               size="sm"
-              className="h-8 border-white/10 bg-zinc-900/40 text-zinc-300 hover:bg-white/5 hover:text-zinc-50"
+              className="h-8 border-[#C2D8C4]/20 bg-[#2A2A2A]/65 text-[#CAD7CB] hover:bg-[#C2D8C4]/10 hover:text-[#F5F5F5]"
             >
               <ArrowUpDown className="mr-1.5 h-3.5 w-3.5" />
               Sort
@@ -336,7 +336,7 @@ export function MainBoard({
       </div>
 
       {activeView === "board" ? (
-        <div onScroll={onBoardXScroll} className="zinc-scroll min-h-0 flex-1 overflow-x-auto bg-zinc-950/40 px-6 pb-6 pt-5">
+        <div onScroll={onBoardXScroll} className="zinc-scroll min-h-0 flex-1 overflow-x-auto bg-[#222222]/65 px-6 pb-6 pt-5">
           <div className="flex h-full min-w-max gap-4">
             {COLUMNS.map((col) => {
               const tasks = columns[col.id] || [];
