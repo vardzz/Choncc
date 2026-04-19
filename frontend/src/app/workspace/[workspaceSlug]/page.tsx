@@ -5,6 +5,7 @@ import { DashboardNavbar } from "@/components/workspace/navbar";
 import { WorkspaceSidebar } from "@/components/workspace/sidebar";
 import { BacklogPane } from "@/components/workspace/backlog";
 import { BoardPane } from "@/components/workspace/board";
+import { WorkspaceThemeProvider } from "@/components/workspace/workspace-theme-provider";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import type { KanbanTask, Workspace, WorkspaceMember, WorkspaceContext } from "@/lib/types";
@@ -151,54 +152,58 @@ export default function WorkspacePage() {
 
   if (!workspace || !currentMember) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#222222]">
-        <div className="text-[#A0A0A0]">Loading workspace...</div>
-      </div>
+      <WorkspaceThemeProvider>
+        <div className="flex h-screen items-center justify-center bg-[var(--ws-bg)]">
+          <div className="text-[var(--ws-muted)]">Loading workspace...</div>
+        </div>
+      </WorkspaceThemeProvider>
     );
   }
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="flex h-screen flex-col bg-[#222222]">
-        {/* Navbar */}
-        <DashboardNavbar 
-          activeWorkspaceName={workspace.name}
-          workspaceSlug={workspaceSlug}
-        />
-
-        {/* 3-Pane Layout */}
-        <div className="flex flex-1 overflow-hidden">
-          {/* Left Pane: Workspace Sidebar */}
-          <WorkspaceSidebar workspaces={mockWorkspaces} activeSlug={workspaceSlug} />
-
-          {/* Center Pane: Backlog */}
-          <BacklogPane 
-            backlogTasks={workspaceTasks.filter((t) => t.status === "Backlog")}
-            onAddTask={(title, category) => {
-              const newTask: KanbanTask = {
-                id: `tsk-${Date.now()}`,
-                title,
-                category,
-                status: "Backlog",
-                priority: "MEDIUM",
-                storyPoints: 0,
-                assignee: "",
-                tags: [],
-                dateRange: "",
-                workspaceId: workspace.id,
-              };
-              setTasks((prevTasks) => [...prevTasks, newTask]);
-            }}
-            currentRole={currentMember.role}
+    <WorkspaceThemeProvider>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <div className="flex h-screen flex-col bg-[var(--ws-bg)] text-[var(--ws-text)]">
+          {/* Navbar */}
+          <DashboardNavbar 
+            activeWorkspaceName={workspace.name}
+            workspaceSlug={workspaceSlug}
           />
 
-          {/* Right Pane: Kanban Board */}
-          <BoardPane 
-            tasks={workspaceTasks}
-            currentRole={currentMember.role}
-          />
+          {/* 3-Pane Layout */}
+          <div className="flex flex-1 overflow-hidden">
+            {/* Left Pane: Workspace Sidebar */}
+            <WorkspaceSidebar workspaces={mockWorkspaces} activeSlug={workspaceSlug} />
+
+            {/* Center Pane: Backlog */}
+            <BacklogPane 
+              backlogTasks={workspaceTasks.filter((t) => t.status === "Backlog")}
+              onAddTask={(title, category) => {
+                const newTask: KanbanTask = {
+                  id: `tsk-${Date.now()}`,
+                  title,
+                  category,
+                  status: "Backlog",
+                  priority: "MEDIUM",
+                  storyPoints: 0,
+                  assignee: "",
+                  tags: [],
+                  dateRange: "",
+                  workspaceId: workspace.id,
+                };
+                setTasks((prevTasks) => [...prevTasks, newTask]);
+              }}
+              currentRole={currentMember.role}
+            />
+
+            {/* Right Pane: Kanban Board */}
+            <BoardPane 
+              tasks={workspaceTasks}
+              currentRole={currentMember.role}
+            />
+          </div>
         </div>
-      </div>
-    </DragDropContext>
+      </DragDropContext>
+    </WorkspaceThemeProvider>
   );
 }

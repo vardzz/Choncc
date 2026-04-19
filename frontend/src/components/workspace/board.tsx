@@ -29,16 +29,16 @@ export function BoardPane({ tasks, currentRole }: BoardPaneProps) {
   const canMoveCards = hasPermission(currentRole, "move-board-cards");
 
   return (
-    <main className="flex-1 overflow-hidden flex flex-col bg-[#222222]">
+    <main className="flex-1 overflow-hidden flex flex-col bg-[var(--ws-bg)]">
       {/* Header: Sprint Capacity + View Switcher */}
-      <div className="shrink-0 border-b border-[#C2D8C4]/12 bg-[#222222]/50 px-5 py-4 flex items-center justify-between gap-4">
+      <div className="shrink-0 border-b border-[var(--ws-border)] bg-[var(--ws-surface-2)] px-5 py-4 flex items-center justify-between gap-4">
         {/* Sprint Capacity Bar */}
         <div className="flex-1 space-y-1.5">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold text-[#C2D8C4]">SPRINT CAPACITY</p>
-            <p className="text-xs text-[#A0A0A0]">26 / 40 sp</p>
+            <p className="text-xs font-semibold text-[var(--ws-accent)]">SPRINT CAPACITY</p>
+            <p className="text-xs text-[var(--ws-muted)]">26 / 40 sp</p>
           </div>
-          <div className="h-2 rounded-full bg-[#222222] overflow-hidden">
+          <div className="h-2 rounded-full bg-[var(--ws-bg)] overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-[#C2D8C4] to-orange-500 transition-all"
               style={{ width: "65%" }}
@@ -55,7 +55,7 @@ export function BoardPane({ tasks, currentRole }: BoardPaneProps) {
               className={`px-3 py-1.5 rounded-lg transition flex items-center gap-2 text-xs font-medium ${
                 activeView === id
                   ? "bg-[#C2D8C4]/20 border border-[#C2D8C4]/40 text-[#C2D8C4]"
-                  : "bg-transparent border border-[#C2D8C4]/10 text-[#A0A0A0] hover:border-[#C2D8C4]/30"
+                  : "bg-transparent border border-[var(--ws-border)] text-[var(--ws-muted)] hover:border-[#C2D8C4]/30"
               }`}
               title={label}
             >

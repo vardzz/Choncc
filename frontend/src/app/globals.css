@@ -96,3 +96,25 @@ textarea:disabled,
 .dark .zinc-scroll.is-scrolling::-webkit-scrollbar-thumb {
   background: rgba(194, 216, 196, 0.6);
 }
+
+.workspace-theme-root {
+  --ws-bg: #222222;
+  --ws-surface: #2a2a2acc;
+  --ws-surface-2: #222222cc;
+  --ws-border: rgba(194, 216, 196, 0.15);
+  --ws-text: #f5f5f5;
+  --ws-muted: #a0a0a0;
+  --ws-accent: #c2d8c4;
+  --ws-accent-soft: rgba(194, 216, 196, 0.12);
+}
+
+.workspace-theme-root[data-theme="light"] {
+  --ws-bg: #f4f6f8;
+  --ws-surface: #ffffffd9;
+  --ws-surface-2: #eef2f6d9;
+  --ws-border: rgba(80, 99, 122, 0.18);
+  --ws-text: #1d2a36;
+  --ws-muted: #5d6a78;
+  --ws-accent: #4c7a57;
+  --ws-accent-soft: rgba(76, 122, 87, 0.12);
+}

@@ -34,7 +34,7 @@ export function BacklogPane({ backlogTasks, onAddTask, currentRole }: BacklogPan
 
   return (
     <aside
-      className={`flex shrink-0 flex-col overflow-hidden border-r border-[#C2D8C4]/12 bg-[#2A2A2A]/70 transition-all duration-300 ${
+      className={`flex shrink-0 flex-col overflow-hidden border-r border-[var(--ws-border)] bg-[var(--ws-surface)] transition-all duration-300 ${
         isCollapsed ? "w-14" : "w-80"
       }`}
     >
@@ -47,7 +47,7 @@ export function BacklogPane({ backlogTasks, onAddTask, currentRole }: BacklogPan
         >
           <div className="flex flex-1 items-center justify-center">
             <span
-              className="select-none text-[10px] font-semibold uppercase tracking-[0.34em] text-[#AEB7AE]"
+              className="select-none text-[10px] font-semibold uppercase tracking-[0.34em] text-[var(--ws-muted)]"
               style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
             >
               Backlog
@@ -57,12 +57,12 @@ export function BacklogPane({ backlogTasks, onAddTask, currentRole }: BacklogPan
       ) : (
         <>
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-[#C2D8C4]/12 bg-[#222222]/50 px-4 py-3">
-            <h3 className="text-sm font-semibold text-[#F5F5F5]">Backlog</h3>
+          <div className="flex items-center justify-between border-b border-[var(--ws-border)] bg-[var(--ws-surface-2)] px-4 py-3">
+            <h3 className="text-sm font-semibold text-[var(--ws-text)]">Backlog</h3>
             <button
               type="button"
               onClick={() => setIsCollapsed(true)}
-              className="p-1 hover:bg-[#C2D8C4]/10 rounded transition"
+              className="p-1 hover:bg-[var(--ws-accent-soft)] rounded transition"
               aria-label="Collapse backlog"
             >
               ✕
@@ -70,7 +70,7 @@ export function BacklogPane({ backlogTasks, onAddTask, currentRole }: BacklogPan
           </div>
 
           {/* Create Task Form */}
-          <form onSubmit={handleSubmit} className="border-b border-[#C2D8C4]/12 p-4 space-y-3">
+          <form onSubmit={handleSubmit} className="border-b border-[var(--ws-border)] p-4 space-y-3">
             <div
               className={`space-y-2 ${getRestrictionClass(!canCreateTask)}`}
               title={
@@ -85,7 +85,7 @@ export function BacklogPane({ backlogTasks, onAddTask, currentRole }: BacklogPan
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Task title..."
                 disabled={!canCreateTask}
-                className="w-full rounded-lg bg-[#222222]/70 border border-[#C2D8C4]/20 px-3 py-2 text-sm text-[#F5F5F5] placeholder:text-[#A0A0A0] outline-none transition focus:border-[#C2D8C4]/50 focus:bg-[#222222] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full rounded-lg bg-[var(--ws-surface-2)] border border-[var(--ws-border)] px-3 py-2 text-sm text-[var(--ws-text)] placeholder:text-[var(--ws-muted)] outline-none transition focus:border-[var(--ws-accent)] disabled:opacity-50 disabled:cursor-not-allowed"
               />
 
               <div className="flex gap-2">
@@ -93,7 +93,7 @@ export function BacklogPane({ backlogTasks, onAddTask, currentRole }: BacklogPan
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                   disabled={!canCreateTask}
-                  className="flex-1 rounded-lg bg-[#222222]/70 border border-[#C2D8C4]/20 px-2 py-2 text-xs text-[#F5F5F5] outline-none transition focus:border-[#C2D8C4]/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 rounded-lg bg-[var(--ws-surface-2)] border border-[var(--ws-border)] px-2 py-2 text-xs text-[var(--ws-text)] outline-none transition focus:border-[var(--ws-accent)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {CATEGORIES.map((cat) => (
                     <option key={cat} value={cat}>
@@ -105,7 +105,7 @@ export function BacklogPane({ backlogTasks, onAddTask, currentRole }: BacklogPan
                 <button
                   type="submit"
                   disabled={!canCreateTask || !title.trim()}
-                  className="px-3 py-2 rounded-lg bg-[#C2D8C4] text-[#222222] font-semibold text-sm hover:bg-[#C2D8C4]/90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                  className="px-3 py-2 rounded-lg bg-[var(--ws-accent)] text-[var(--ws-bg)] font-semibold text-sm hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
                 >
                   <Plus className="h-4 w-4" />
                 </button>
@@ -113,7 +113,7 @@ export function BacklogPane({ backlogTasks, onAddTask, currentRole }: BacklogPan
             </div>
 
             {!canCreateTask && (
-              <p className="text-xs text-[#A0A0A0]">
+              <p className="text-xs text-[var(--ws-muted)]">
                 Only Product Owner can create tasks
               </p>
             )}
@@ -129,7 +129,7 @@ export function BacklogPane({ backlogTasks, onAddTask, currentRole }: BacklogPan
                 ref={provided.innerRef}
                 {...provided.droppableProps}
                 className={`flex-1 overflow-y-auto p-3 space-y-2 ${
-                  snapshot.isDraggingOver ? "bg-[#C2D8C4]/5" : ""
+                  snapshot.isDraggingOver ? "bg-[var(--ws-accent-soft)]" : ""
                 } ${getRestrictionClass(!canReorderBacklog && backlogTasks.length > 0)}`}
                 title={
                   !canReorderBacklog && backlogTasks.length > 0
@@ -138,7 +138,7 @@ export function BacklogPane({ backlogTasks, onAddTask, currentRole }: BacklogPan
                 }
               >
                 {backlogTasks.length === 0 ? (
-                  <div className="flex items-center justify-center h-32 text-[#A0A0A0]">
+                  <div className="flex items-center justify-center h-32 text-[var(--ws-muted)]">
                     <p className="text-xs text-center">
                       No backlog tasks yet.<br/>
                       {canCreateTask ? "Create one to get started!" : "Awaiting tasks from Product Owner"}

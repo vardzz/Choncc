@@ -64,8 +64,8 @@ export function SprintTimer({
         onClick={() => setIsOpen((prev) => !prev)}
         className={`rounded-lg border px-3 py-1.5 transition flex items-center gap-2 text-xs font-medium ${
           isOpen
-            ? "bg-[#C2D8C4]/20 border-[#C2D8C4]/40 text-[#C2D8C4]"
-            : "bg-transparent border-[#C2D8C4]/10 text-[#A0A0A0] hover:border-[#C2D8C4]/30"
+            ? "bg-[var(--ws-accent-soft)] border-[#C2D8C4]/40 text-[var(--ws-accent)]"
+            : "bg-transparent border-[var(--ws-border)] text-[var(--ws-muted)] hover:border-[#C2D8C4]/30"
         }`}
         aria-expanded={isOpen}
         aria-label="Toggle sprint timer"
@@ -76,12 +76,12 @@ export function SprintTimer({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-[calc(100%+10px)] z-40 w-48 rounded-2xl border border-[#C2D8C4]/30 bg-[#2A2A2A]/95 backdrop-blur-xl shadow-2xl select-none text-left">
-          <div className="flex items-center justify-end border-b border-[#C2D8C4]/20 px-3 py-2">
+        <div className="absolute right-0 top-[calc(100%+10px)] z-40 w-48 rounded-2xl border border-[var(--ws-border)] bg-[var(--ws-surface)] backdrop-blur-xl shadow-2xl select-none text-left">
+          <div className="flex items-center justify-end border-b border-[var(--ws-border)] px-3 py-2">
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="rounded p-1 text-[#A0A0A0] transition hover:bg-[#C2D8C4]/10 hover:text-[#C2D8C4]"
+              className="rounded p-1 text-[var(--ws-muted)] transition hover:bg-[var(--ws-accent-soft)] hover:text-[var(--ws-accent)]"
               aria-label="Collapse sprint timer details"
             >
               <Minimize2 className="h-3.5 w-3.5" />
@@ -89,15 +89,15 @@ export function SprintTimer({
           </div>
 
           <div className="p-4 space-y-3 text-center">
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-[#C2D8C4]">
+            <h3 className="text-xs font-semibold uppercase tracking-widest text-[var(--ws-accent)]">
               {sprintName}
             </h3>
 
-            <div className="font-mono text-3xl font-bold text-[#C2D8C4]">
+            <div className="font-mono text-3xl font-bold text-[var(--ws-accent)]">
               {String(minutes).padStart(2, "0")}:{String(secs).padStart(2, "0")}
             </div>
 
-            <p className="text-xs text-[#A0A0A0]">{sprintDates}</p>
+            <p className="text-xs text-[var(--ws-muted)]">{sprintDates}</p>
           </div>
         </div>
       )}

@@ -5,6 +5,7 @@ import { LogOut, Settings, User, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ChonccIcon } from "@/components/ui/choncc-icon";
 import { MembersModal } from "@/components/workspace/members-modal";
+import { SettingsModal } from "@/components/workspace/settings-modal";
 import type { Workspace, WorkspaceMember } from "@/lib/types";
 
 type DashboardNavbarProps = {
@@ -75,6 +76,7 @@ const mockWorkspace: Workspace = {
 export function DashboardNavbar({ activeWorkspaceName, workspaceSlug }: DashboardNavbarProps) {
   const [dropOpen, setDropOpen] = useState(false);
   const [membersModalOpen, setMembersModalOpen] = useState(false);
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -92,8 +94,7 @@ export function DashboardNavbar({ activeWorkspaceName, workspaceSlug }: Dashboar
     if (id === "members") {
       setMembersModalOpen(true);
     } else if (id === "settings") {
-      // Navigate to settings
-      console.log("Navigate to settings");
+      setSettingsModalOpen(true);
     } else if (id === "logout") {
       // Handle logout
       console.log("Logout");
@@ -102,7 +103,7 @@ export function DashboardNavbar({ activeWorkspaceName, workspaceSlug }: Dashboar
 
   return (
     <>
-      <header className="relative h-14 shrink-0 overflow-visible border-b border-[#C2D8C4]/15 bg-[#222222]/85 px-5 backdrop-blur-xl">
+      <header className="relative h-14 shrink-0 overflow-visible border-b border-[var(--ws-border)] bg-[var(--ws-surface)] px-5 backdrop-blur-xl">
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-[linear-gradient(90deg,rgba(34,34,34,0.14)_0%,rgba(194,216,196,0.2)_45%,rgba(34,34,34,0.14)_100%)] opacity-90 blur-lg" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#C2D8C4]/35 to-transparent" />
 
@@ -112,7 +113,7 @@ export function DashboardNavbar({ activeWorkspaceName, workspaceSlug }: Dashboar
             <div className="flex items-center gap-3">
               <p className="text-base font-black tracking-tight text-[#F5F5F5]">Choncc</p>
               <span className="h-4 w-px bg-[#C2D8C4]/20" />
-              <p className="text-xs font-medium text-[#B3BCB3]">{activeWorkspaceName}</p>
+              <p className="text-xs font-medium text-[var(--ws-muted)]">{activeWorkspaceName}</p>
             </div>
           </div>
 
@@ -121,7 +122,7 @@ export function DashboardNavbar({ activeWorkspaceName, workspaceSlug }: Dashboar
               <button
                 type="button"
                 onClick={() => setDropOpen(!dropOpen)}
-                className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#C2D8C4]/20 bg-[#2A2A2A]/60 px-2.5 py-1.5 text-xs font-medium text-[#F5F5F5] backdrop-blur-md transition hover:border-[#C2D8C4]/40 hover:bg-[#2A2A2A] focus:outline-none"
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--ws-border)] bg-[var(--ws-surface-2)] px-2.5 py-1.5 text-xs font-medium text-[var(--ws-text)] backdrop-blur-md transition hover:border-[#C2D8C4]/40 focus:outline-none"
               >
                 <User className="h-3.5 w-3.5" />
                 Menu
@@ -133,7 +134,7 @@ export function DashboardNavbar({ activeWorkspaceName, workspaceSlug }: Dashboar
                     initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
-                    className="absolute right-0 top-full z-50 mt-2 w-48 rounded-2xl border border-[#C2D8C4]/15 bg-[#2A2A2A]/95 backdrop-blur-xl overflow-hidden shadow-xl"
+                    className="absolute right-0 top-full z-50 mt-2 w-48 rounded-2xl border border-[var(--ws-border)] bg-[var(--ws-surface)] backdrop-blur-xl overflow-hidden shadow-xl"
                   >
                     {MENU_ITEMS.map((item) => {
                       const Icon = item.icon;
@@ -144,7 +145,7 @@ export function DashboardNavbar({ activeWorkspaceName, workspaceSlug }: Dashboar
                           className={`w-full px-4 py-3 text-left text-sm font-medium transition ${
                             item.danger
                               ? "text-red-400 hover:bg-red-500/10"
-                              : "text-[#F5F5F5] hover:bg-[#C2D8C4]/10"
+                              : "text-[var(--ws-text)] hover:bg-[var(--ws-accent-soft)]"
                           }`}
                         >
                           <div className="flex items-center gap-3">
@@ -169,6 +170,11 @@ export function DashboardNavbar({ activeWorkspaceName, workspaceSlug }: Dashboar
         workspace={mockWorkspace}
         currentUser={mockCurrentUser}
         currentMember={mockWorkspace.members[0]}
+      />
+
+      <SettingsModal
+        isOpen={settingsModalOpen}
+        onClose={() => setSettingsModalOpen(false)}
       />
     </>
   );
