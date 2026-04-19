@@ -9,6 +9,12 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import type { KanbanTask, Workspace, WorkspaceMember, WorkspaceContext } from "@/lib/types";
 
+const BOARD_STATUSES: Array<KanbanTask["status"]> = ["Backlog", "To Do", "In Progress", "Review", "Done"];
+
+function isBoardStatus(status: string): status is KanbanTask["status"] {
+  return BOARD_STATUSES.includes(status as KanbanTask["status"]);
+}
+
 // Mock data - in production, fetch from backend
 const mockWorkspaces: Workspace[] = [
   {
@@ -107,16 +113,18 @@ export default function WorkspacePage() {
       return;
     }
 
+    if (!isBoardStatus(destination.droppableId)) return;
+    const nextStatus = destination.droppableId as KanbanTask["status"];
+
     setTasks((prevTasks) =>
-      prevTasks.map((task) => {
-        if (task.id === draggableId) {
-          return {
-            ...task,
-            status: destination.droppableId as any,
-          };
-        }
-        return task;
-      })
+      prevTasks.map((task) =>
+        task.id === draggableId
+          ? {
+              ...task,
+              status: nextStatus,
+            }
+          : task
+      )
     );
   };
 
@@ -160,7 +168,7 @@ export default function WorkspacePage() {
                 dateRange: "",
                 workspaceId: workspace.id,
               };
-              setTasks([...tasks, newTask]);
+              setTasks((prevTasks) => [...prevTasks, newTask]);
             }}
             currentRole={currentMember.role}
           />

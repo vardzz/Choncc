@@ -4,8 +4,8 @@ import { Droppable } from "@hello-pangea/dnd";
 import { Plus } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import type { KanbanTask, UserRole } from "@/lib/types";
+import { TaskCard } from "@/components/workspace/board-kanban";
 import { hasPermission, getRestrictionClass } from "@/lib/rbac";
-import { TaskCard } from "@/components/workspace/board";
 
 type BacklogPaneProps = {
   backlogTasks: KanbanTask[];
