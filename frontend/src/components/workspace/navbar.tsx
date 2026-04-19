@@ -103,7 +103,7 @@ export function DashboardNavbar({ activeWorkspaceName, workspaceSlug }: Dashboar
 
   return (
     <>
-      <header className="relative h-14 shrink-0 overflow-visible border-b border-[#DDE5DD] bg-[rgba(255,255,255,0.86)] px-5 backdrop-blur-[20px] dark:border-[rgba(194,216,196,0.05)] dark:bg-[rgba(34,34,34,0.8)] dark:backdrop-blur-[20px]">
+      <header className="relative z-[70] h-14 shrink-0 overflow-visible border-b border-[#DDE5DD] bg-[rgba(255,255,255,0.86)] px-5 backdrop-blur-[20px] dark:border-[rgba(194,216,196,0.05)] dark:bg-[rgba(34,34,34,0.8)] dark:backdrop-blur-[20px]">
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-[linear-gradient(90deg,rgba(34,34,34,0.14)_0%,rgba(194,216,196,0.2)_45%,rgba(34,34,34,0.14)_100%)] opacity-90 blur-lg" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#C2D8C4]/35 to-transparent" />
 
@@ -118,7 +118,7 @@ export function DashboardNavbar({ activeWorkspaceName, workspaceSlug }: Dashboar
           </div>
 
           <div className="ml-auto flex items-center gap-3">
-            <div className="relative" ref={menuRef}>
+            <div className="relative z-[80]" ref={menuRef}>
               <button
                 type="button"
                 onClick={() => setDropOpen(!dropOpen)}
@@ -134,7 +134,7 @@ export function DashboardNavbar({ activeWorkspaceName, workspaceSlug }: Dashboar
                     initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
-                    className="absolute right-0 top-full z-50 mt-2 w-48 rounded-2xl border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] shadow-[0_10px_30px_rgba(194,216,196,0.15)] overflow-hidden dark:border-[rgba(194,216,196,0.15)] dark:bg-[rgba(42,42,42,0.6)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
+                    className="absolute right-0 top-full z-[90] mt-2 w-48 rounded-2xl border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] shadow-[0_10px_30px_rgba(194,216,196,0.15)] overflow-hidden dark:border-[rgba(194,216,196,0.15)] dark:bg-[rgba(42,42,42,0.6)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
                   >
                     {MENU_ITEMS.map((item) => {
                       const Icon = item.icon;
