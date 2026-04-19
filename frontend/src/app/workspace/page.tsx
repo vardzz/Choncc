@@ -3,7 +3,25 @@
 import { useRouter } from "next/navigation";
 import { Plus, ArrowRight } from "lucide-react";
 import { useState } from "react";
-import type { Workspace } from "@/lib/types";
+import type { Workspace, WorkspaceMember } from "@/lib/types";
+
+const mockCurrentUser = {
+  id: "user-1",
+  email: "po@example.com",
+  name: "PO User",
+  createdAt: new Date(),
+};
+
+function buildOwnerMember(workspaceId: string): WorkspaceMember {
+  return {
+    id: `mem-${workspaceId}-${mockCurrentUser.id}`,
+    userId: mockCurrentUser.id,
+    workspaceId,
+    role: "PRODUCT_OWNER",
+    joinedAt: new Date(),
+    user: mockCurrentUser,
+  };
+}
 
 // Mock workspaces
 const mockWorkspaces: Workspace[] = [
@@ -14,7 +32,7 @@ const mockWorkspaces: Workspace[] = [
     description: "Health platform",
     createdBy: "user-1",
     createdAt: new Date(),
-    members: [],
+    members: [buildOwnerMember("ws-dentara")],
     invites: [],
   },
   {
@@ -24,7 +42,7 @@ const mockWorkspaces: Workspace[] = [
     description: "AI/ML project",
     createdBy: "user-1",
     createdAt: new Date(),
-    members: [],
+    members: [buildOwnerMember("ws-horizon")],
     invites: [],
   },
   {
@@ -34,7 +52,7 @@ const mockWorkspaces: Workspace[] = [
     description: "Web project",
     createdBy: "user-1",
     createdAt: new Date(),
-    members: [],
+    members: [buildOwnerMember("ws-portfolio")],
     invites: [],
   },
 ];
@@ -50,15 +68,16 @@ export default function WorkspacesPage() {
     e.preventDefault();
     if (!newWSName.trim()) return;
 
+    const id = `ws-${Date.now()}`;
     const slug = newWSName.toLowerCase().replace(/\s+/g, "-");
     const newWS: Workspace = {
-      id: `ws-${Date.now()}`,
+      id,
       slug,
       name: newWSName,
       description: newWSDesc,
       createdBy: "user-1",
       createdAt: new Date(),
-      members: [],
+      members: [buildOwnerMember(id)],
       invites: [],
     };
 

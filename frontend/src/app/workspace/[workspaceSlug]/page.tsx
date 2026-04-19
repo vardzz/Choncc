@@ -75,6 +75,13 @@ const mockTasks: KanbanTask[] = [
   },
 ];
 
+const mockCurrentUser = {
+  id: "user-1",
+  email: "po@example.com",
+  name: "PO User",
+  createdAt: new Date(),
+};
+
 type WorkspacePageParams = {
   workspaceSlug: string;
 };
@@ -93,8 +100,20 @@ export default function WorkspacePage() {
     const ws = mockWorkspaces.find((w) => w.slug === workspaceSlug);
     if (ws) {
       setWorkspace(ws);
-      // In production, fetch current user's member record
-      const member = ws.members[0];
+      // In production, fetch current user's member record.
+      // Fallback to creator-as-PO for local mock workspaces with empty member lists.
+      const member =
+        ws.members.find((m) => m.userId === mockCurrentUser.id) ??
+        ws.members[0] ??
+        {
+          id: `mem-${ws.id}-${mockCurrentUser.id}`,
+          userId: mockCurrentUser.id,
+          workspaceId: ws.id,
+          role: "PRODUCT_OWNER" as const,
+          joinedAt: ws.createdAt,
+          user: mockCurrentUser,
+        };
+
       setCurrentMember(member);
     } else {
       router.push("/workspace");

@@ -59,11 +59,11 @@ export function canViewMembers(userRole: UserRole): boolean {
   return true;
 }
 
-// UI Helper: Return opacity/cursor state for restricted actions
-export function getRestrictionClass(isAllowed: boolean): string {
-  return isAllowed ? '' : 'opacity-50 cursor-not-allowed pointer-events-none';
+// UI Helper: when restricted=true, disable interaction and dim the UI.
+export function getRestrictionClass(restricted: boolean): string {
+  return restricted ? 'opacity-50 cursor-not-allowed pointer-events-none' : '';
 }
 
-export function getRestrictionStyle(isAllowed: boolean): React.CSSProperties {
-  return isAllowed ? {} : { opacity: 0.5, cursor: 'not-allowed', pointerEvents: 'none' };
+export function getRestrictionStyle(restricted: boolean): React.CSSProperties {
+  return restricted ? { opacity: 0.5, cursor: 'not-allowed', pointerEvents: 'none' } : {};
 }
