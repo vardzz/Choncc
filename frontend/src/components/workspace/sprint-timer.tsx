@@ -7,14 +7,12 @@ type SprintTimerProps = {
   initialMinutes?: number;
   sprintName?: string;
   sprintDates?: string;
-  disabled?: boolean;
 };
 
 export function SprintTimer({
   initialMinutes = 15,
   sprintName = "SPRINT 10",
   sprintDates = "Apr 7 - Apr 21, 2026",
-  disabled = false,
 }: SprintTimerProps) {
   const [seconds, setSeconds] = useState(initialMinutes * 60);
   const [isOpen, setIsOpen] = useState(false);
@@ -63,13 +61,12 @@ export function SprintTimer({
     <div ref={containerRef} className="relative">
       <button
         type="button"
-        disabled={disabled}
         onClick={() => setIsOpen((prev) => !prev)}
         className={`rounded-lg border px-3 py-1.5 transition flex items-center gap-2 text-xs font-medium ${
           isOpen
             ? "bg-[rgba(194,216,196,0.2)] border-[#C2D8C4] text-[#222222] dark:bg-[rgba(194,216,196,0.2)] dark:border-[rgba(194,216,196,0.4)] dark:text-[#C2D8C4]"
             : "bg-transparent border-[#DDE5DD] text-[rgba(34,34,34,0.8)] hover:border-[#C2D8C4] dark:border-[rgba(194,216,196,0.2)] dark:text-[rgba(194,216,196,0.4)] dark:hover:border-[rgba(194,216,196,0.35)]"
-        } disabled:opacity-40 disabled:cursor-not-allowed`}
+        }`}
         aria-expanded={isOpen}
         aria-label="Toggle sprint timer"
         title="Sprint timer"
@@ -78,7 +75,7 @@ export function SprintTimer({
         <span className="hidden sm:inline">Sprint</span>
       </button>
 
-      {isOpen && !disabled && (
+      {isOpen && (
         <div className="absolute right-0 top-[calc(100%+10px)] z-40 w-48 rounded-2xl border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] shadow-[0_10px_30px_rgba(194,216,196,0.15)] backdrop-blur-xl select-none text-left dark:border-[rgba(194,216,196,0.15)] dark:bg-[rgba(42,42,42,0.6)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]">
           <div className="flex items-center justify-end border-b border-[#DDE5DD] px-3 py-2 dark:border-[rgba(194,216,196,0.05)]">
             <button
