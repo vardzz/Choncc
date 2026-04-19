@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import type { KanbanTask, UserRole } from "@/lib/types";
 import { TaskCard } from "@/components/workspace/board-kanban";
+import { Select } from "@/components/ui/select";
 import { hasPermission, getRestrictionClass } from "@/lib/rbac";
 
 type BacklogPaneProps = {
@@ -88,24 +89,26 @@ export function BacklogPane({ backlogTasks, onAddTask, currentRole }: BacklogPan
                     className="w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-3 py-2 text-sm text-[#222222] placeholder:text-[rgba(34,34,34,0.5)] outline-none transition focus:border-[#C2D8C4] disabled:opacity-50 disabled:cursor-not-allowed dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:placeholder:text-[rgba(194,216,196,0.4)] dark:focus:border-[#C2D8C4] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
               />
 
-              <div className="flex gap-2">
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  disabled={!canCreateTask}
-                  className="flex-1 rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-2 py-2 text-xs text-[#222222] outline-none transition focus:border-[#C2D8C4] disabled:opacity-50 disabled:cursor-not-allowed dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:focus:border-[#C2D8C4]"
-                >
-                  {CATEGORIES.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
+              <div className="flex items-center gap-1.5">
+                <div className="flex-1">
+                  <Select
+                    value={category}
+                    onValueChange={setCategory}
+                    disabled={!canCreateTask}
+                    className="h-9 w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-2 py-2 text-xs text-[#222222] shadow-none transition focus:border-[#C2D8C4] hover:bg-[#FFFFFF] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:focus:border-[#C2D8C4]"
+                  >
+                    {CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
 
                 <button
                   type="submit"
                   disabled={!canCreateTask || !title.trim()}
-                  className="px-3 py-2 rounded-lg bg-[#C2D8C4] text-[#222222] font-semibold text-sm hover:bg-[#B1C7B3] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 dark:bg-gradient-to-r dark:from-[#C2D8C4] dark:to-[#A8BDAA] dark:text-[#222222]"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#C2D8C4] text-[#222222] font-semibold text-sm hover:bg-[#B1C7B3] transition disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gradient-to-r dark:from-[#C2D8C4] dark:to-[#A8BDAA] dark:text-[#222222]"
                 >
                   <Plus className="h-4 w-4" />
                 </button>

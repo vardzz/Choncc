@@ -71,7 +71,7 @@ export function Select({ className, children, value, defaultValue, onChange, onV
       </button>
 
       {open ? (
-        <div className="absolute left-0 right-0 top-full z-50 mt-1.5 overflow-hidden rounded-xl border border-black/5 bg-white/95 shadow-xl backdrop-blur-xl transition-colors duration-500 ease-in-out dark:border-white/10 dark:bg-zinc-900/95">
+        <div className="absolute left-0 right-0 top-full z-[160] mt-1.5 overflow-hidden rounded-xl border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF]/95 shadow-[0_16px_36px_rgba(194,216,196,0.22)] backdrop-blur-[14px] transition-colors duration-300 ease-out dark:border-[rgba(194,216,196,0.16)] dark:bg-[rgba(34,34,34,0.95)] dark:shadow-[0_20px_44px_rgba(0,0,0,0.48)]">
           <div className="max-h-56 overflow-y-auto p-1 zinc-scroll" role="listbox" aria-labelledby={id}>
             {optionElements.map((option, index) => {
               const optionValue = String(option.props.value ?? "");
@@ -86,8 +86,8 @@ export function Select({ className, children, value, defaultValue, onChange, onV
                   className={cn(
                     "flex w-full cursor-pointer items-center rounded-lg px-2.5 py-2 text-left text-xs font-medium transition-colors duration-200",
                     selected
-                      ? "bg-zinc-900 text-zinc-50 dark:bg-zinc-100 dark:text-zinc-900"
-                      : "text-zinc-600 hover:bg-black/5 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-white/8 dark:hover:text-zinc-50",
+                      ? "bg-[#C2D8C4] text-[#222222] dark:bg-[rgba(194,216,196,0.9)] dark:text-[#1F1F1F]"
+                      : "text-zinc-600 hover:bg-[rgba(194,216,196,0.16)] hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-white/8 dark:hover:text-zinc-50",
                     option.props.disabled ? "cursor-not-allowed opacity-45" : "",
                   )}
                   disabled={option.props.disabled}
