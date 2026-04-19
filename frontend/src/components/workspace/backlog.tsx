@@ -120,7 +120,7 @@ export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentR
                       >
                         <option value="HIGH">High</option>
                         <option value="MEDIUM">Medium</option>
-                        <option value="LOW">Easy</option>
+                        <option value="LOW">Low</option>
                       </Select>
                     </div>
 
