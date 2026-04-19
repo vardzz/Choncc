@@ -28,7 +28,7 @@ const THEME_OPTIONS: ThemeOption[] = [
 function ThemePreview({ option }: { option: WorkspaceThemePreference }) {
   if (option === "dark") {
     return (
-      <div className="rounded-xl border border-[#C2D8C4]/20 bg-[#222222] p-3">
+      <div className="rounded-xl border border-[rgba(194,216,196,0.2)] bg-[#222222] p-3">
         <div className="space-y-2 animate-pulse">
           <div className="h-2 w-2/3 rounded bg-[#C2D8C4]/35" />
           <div className="h-2 w-1/2 rounded bg-[#A0A0A0]/35" />
@@ -40,11 +40,11 @@ function ThemePreview({ option }: { option: WorkspaceThemePreference }) {
 
   if (option === "light") {
     return (
-      <div className="rounded-xl border border-[#D7DDE4] bg-[#F6F8FA] p-3">
+      <div className="rounded-xl border border-[#DDE5DD] bg-[#F9FAF9] p-3">
         <div className="space-y-2 animate-pulse">
-          <div className="h-2 w-2/3 rounded bg-[#5B6675]/25" />
-          <div className="h-2 w-1/2 rounded bg-[#8D97A4]/20" />
-          <div className="h-8 rounded bg-white" />
+          <div className="h-2 w-2/3 rounded bg-[rgba(34,34,34,0.25)]" />
+          <div className="h-2 w-1/2 rounded bg-[rgba(34,34,34,0.18)]" />
+          <div className="h-8 rounded bg-[#FFFFFF]" />
         </div>
       </div>
     );
@@ -59,10 +59,10 @@ function ThemePreview({ option }: { option: WorkspaceThemePreference }) {
             <div className="h-2 w-1/2 rounded bg-[#A0A0A0]/35" />
           </div>
         </div>
-        <div className="bg-[#F6F8FA] p-3">
+        <div className="bg-[#F9FAF9] p-3">
           <div className="space-y-2 animate-pulse">
-            <div className="h-2 w-2/3 rounded bg-[#5B6675]/20" />
-            <div className="h-2 w-1/2 rounded bg-[#8D97A4]/20" />
+            <div className="h-2 w-2/3 rounded bg-[rgba(34,34,34,0.2)]" />
+            <div className="h-2 w-1/2 rounded bg-[rgba(34,34,34,0.2)]" />
           </div>
         </div>
       </div>
@@ -96,7 +96,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-40 bg-[rgba(0,0,0,0.5)] backdrop-blur-sm"
           />
 
           <motion.div
@@ -105,26 +105,26 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 400 }}
             transition={{ type: "spring", damping: 30, stiffness: 200 }}
-            className="fixed right-0 top-0 z-50 h-screen w-full max-w-md overflow-y-auto rounded-l-3xl border-l border-[var(--ws-border)] bg-[var(--ws-surface)] shadow-2xl"
+            className="fixed right-0 top-0 z-50 h-screen w-full max-w-md overflow-y-auto rounded-l-3xl border-l border-[#DDE5DD] bg-[#FFFFFF] shadow-[0_10px_30px_rgba(194,216,196,0.15)] dark:border-[rgba(194,216,196,0.15)] dark:bg-[#2A2A2A] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
           >
-            <div className="sticky top-0 flex items-center justify-between border-b border-[var(--ws-border)] bg-[var(--ws-surface-2)] px-6 py-4 backdrop-blur-md">
-              <h2 className="text-lg font-bold text-[var(--ws-text)]">Workspace Settings</h2>
-              <button onClick={onClose} className="text-[var(--ws-muted)] hover:text-[var(--ws-text)] transition">
+            <div className="sticky top-0 flex items-center justify-between border-b border-[#DDE5DD] bg-[#FFFFFF] px-6 py-4 backdrop-blur-md dark:border-[rgba(194,216,196,0.15)] dark:bg-[rgba(34,34,34,0.8)] dark:backdrop-blur-[20px]">
+              <h2 className="text-lg font-bold text-[#222222] dark:text-[#C2D8C4]">Workspace Settings</h2>
+              <button onClick={onClose} className="text-[rgba(34,34,34,0.5)] hover:text-[#222222] transition dark:text-[rgba(194,216,196,0.4)] dark:hover:text-[#C2D8C4]">
                 ✕
               </button>
             </div>
 
             <div className="space-y-6 p-6">
-              <div className="rounded-2xl border border-[var(--ws-border)] bg-[var(--ws-surface-2)] p-4">
+              <div className="rounded-2xl border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] p-4 shadow-[0_4px_20px_rgba(194,216,196,0.15)] dark:border-[rgba(194,216,196,0.15)] dark:bg-[rgba(42,42,42,0.6)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-[var(--ws-text)]">Theme Toggle</p>
-                    <p className="text-xs text-[var(--ws-muted)]">Quickly switch between dark and light mode</p>
+                    <p className="text-sm font-semibold text-[#222222] dark:text-[#C2D8C4]">Theme Toggle</p>
+                    <p className="text-xs text-[rgba(34,34,34,0.8)] dark:text-[rgba(194,216,196,0.7)]">Quickly switch between dark and light mode</p>
                   </div>
                   <button
                     type="button"
                     onClick={toggleTheme}
-                    className="rounded-lg border border-[var(--ws-border)] px-3 py-1.5 text-xs font-semibold text-[var(--ws-text)] hover:border-[var(--ws-accent)] hover:bg-[var(--ws-accent-soft)] transition"
+                    className="rounded-lg border border-[#222222] px-3 py-1.5 text-xs font-semibold text-[#222222] transition hover:bg-[rgba(194,216,196,0.2)] dark:border-[rgba(194,216,196,0.2)] dark:text-[#C2D8C4] dark:hover:border-[rgba(194,216,196,0.4)] dark:hover:bg-[rgba(194,216,196,0.12)]"
                   >
                     Toggle ({effectiveTheme})
                   </button>
@@ -132,7 +132,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-[var(--ws-accent)]">Theme</h3>
+                <h3 className="text-sm font-semibold border-b-2 border-[#C2D8C4] pb-1 text-[#222222] dark:text-[#C2D8C4]">Theme</h3>
                 <div className="space-y-3">
                   {THEME_OPTIONS.map(({ id, label, icon: Icon }) => {
                     const isSelected = preference === id;
@@ -146,17 +146,17 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                         onClick={() => setPreference(id)}
                         className={`w-full rounded-2xl border p-3 text-left transition ${
                           isSelected
-                            ? "border-[var(--ws-accent)] bg-[var(--ws-accent-soft)]"
-                            : "border-[var(--ws-border)] bg-[var(--ws-surface-2)] hover:border-[var(--ws-accent)]/60"
+                            ? "border-[#C2D8C4] bg-[rgba(194,216,196,0.2)] dark:border-[rgba(194,216,196,0.4)] dark:bg-[rgba(194,216,196,0.12)]"
+                            : "border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] hover:border-[#C2D8C4] dark:border-[rgba(194,216,196,0.15)] dark:bg-[rgba(42,42,42,0.6)] dark:hover:border-[rgba(194,216,196,0.4)]"
                         }`}
                       >
                         <div className="mb-3 flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <Icon className="h-4 w-4 text-[var(--ws-accent)]" />
-                            <span className="text-sm font-semibold text-[var(--ws-text)]">{label}{systemLabel}</span>
+                            <Icon className="h-4 w-4 text-[#C2D8C4]" />
+                            <span className="text-sm font-semibold text-[#222222] dark:text-[#C2D8C4]">{label}{systemLabel}</span>
                           </div>
                           {isSelected && (
-                            <span className="rounded-full bg-[var(--ws-accent)] px-2 py-0.5 text-[10px] font-bold text-[var(--ws-bg)]">
+                            <span className="rounded-full bg-[#C2D8C4] px-2 py-0.5 text-[10px] font-bold text-[#222222]">
                               Active
                             </span>
                           )}

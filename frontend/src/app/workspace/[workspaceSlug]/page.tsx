@@ -153,8 +153,8 @@ export default function WorkspacePage() {
   if (!workspace || !currentMember) {
     return (
       <WorkspaceThemeProvider>
-        <div className="flex h-screen items-center justify-center bg-[var(--ws-bg)]">
-          <div className="text-[var(--ws-muted)]">Loading workspace...</div>
+        <div className="flex h-screen items-center justify-center bg-[#F9FAF9] dark:bg-[#222222]">
+          <div className="text-[rgba(34,34,34,0.5)] dark:text-[rgba(194,216,196,0.4)]">Loading workspace...</div>
         </div>
       </WorkspaceThemeProvider>
     );
@@ -163,7 +163,7 @@ export default function WorkspacePage() {
   return (
     <WorkspaceThemeProvider>
       <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="flex h-screen flex-col bg-[var(--ws-bg)] text-[var(--ws-text)]">
+        <div className="flex h-screen flex-col bg-[#F9FAF9] text-[#222222] dark:bg-[#222222] dark:text-[#C2D8C4]">
           {/* Navbar */}
           <DashboardNavbar 
             activeWorkspaceName={workspace.name}

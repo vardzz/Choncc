@@ -11,10 +11,10 @@ type BoardKanbanProps = {
 };
 
 const BOARD_COLUMNS = [
-  { id: "To Do", label: "To Do", color: "bg-[#C2D8C4]/10" },
-  { id: "In Progress", label: "In Progress", color: "bg-[#C2D8C4]/20" },
-  { id: "Review", label: "Review", color: "bg-[#C2D8C4]/15" },
-  { id: "Done", label: "Done", color: "bg-[#C2D8C4]/10" },
+  { id: "To Do", label: "To Do", color: "bg-[rgba(194,216,196,0.12)] dark:bg-[rgba(42,42,42,0.6)]" },
+  { id: "In Progress", label: "In Progress", color: "bg-[rgba(194,216,196,0.16)] dark:bg-[rgba(42,42,42,0.6)]" },
+  { id: "Review", label: "Review", color: "bg-[rgba(194,216,196,0.14)] dark:bg-[rgba(42,42,42,0.6)]" },
+  { id: "Done", label: "Done", color: "bg-[rgba(194,216,196,0.12)] dark:bg-[rgba(42,42,42,0.6)]" },
 ];
 
 function getPremiumDragStyle(
@@ -46,35 +46,35 @@ export function TaskCard({ task, index }: { task: KanbanTask; index: number }) {
           style={getPremiumDragStyle(provided.draggableProps.style, snapshot.isDragging)}
           data-draggable="true"
           data-dragging={snapshot.isDragging ? "true" : "false"}
-          className={`drag-handle rounded-lg border border-[#C2D8C4]/20 bg-[#222222]/70 p-3 space-y-2 transition will-change-transform ${
+          className={`drag-handle rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] p-3 space-y-2 shadow-[0_4px_20px_rgba(194,216,196,0.15)] transition will-change-transform dark:border-[rgba(194,216,196,0.15)] dark:bg-[#2A2A2A] dark:hover:border-[rgba(194,216,196,0.2)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] ${
             snapshot.isDragging
-              ? "bg-[#2A2A2A] border-[#C2D8C4]/40 ring-1 ring-[#C2D8C4]/45"
-              : "hover:border-[#C2D8C4]/35"
+              ? "border-[#C2D8C4] ring-1 ring-[rgba(194,216,196,0.45)]"
+              : "hover:border-[#C2D8C4]"
           }`}
         >
           <div className="flex items-start justify-between gap-2">
-            <p className="text-sm font-medium text-[#F5F5F5] flex-1">{task.title}</p>
+            <p className="text-sm font-medium text-[#222222] dark:text-[#C2D8C4] flex-1">{task.title}</p>
             <div
               className={`px-2 py-1 rounded text-xs font-semibold ${
                 task.priority === "HIGH"
-                  ? "bg-red-500/20 text-red-400"
+                  ? "bg-[rgba(217,75,75,0.18)] text-[#D94B4B]"
                   : task.priority === "MEDIUM"
                   ? "bg-[#C2D8C4]/20 text-[#C2D8C4]"
-                  : "bg-[#A0A0A0]/20 text-[#A0A0A0]"
+                  : "bg-[rgba(34,34,34,0.1)] text-[rgba(34,34,34,0.5)] dark:bg-[rgba(194,216,196,0.12)] dark:text-[rgba(194,216,196,0.4)]"
               }`}
             >
               {task.priority}
             </div>
           </div>
 
-          <p className="text-xs text-[#A0A0A0]">{task.category}</p>
+          <p className="text-xs text-[rgba(34,34,34,0.8)] dark:text-[rgba(194,216,196,0.7)]">{task.category}</p>
 
           <div className="flex items-center gap-2">
             <span className="inline-block px-2 py-1 rounded text-xs bg-[#C2D8C4]/10 text-[#C2D8C4]">
               {task.storyPoints} pts
             </span>
             {task.assignee && (
-              <span className="inline-block px-2 py-1 rounded text-xs bg-[#222222]/50 text-[#A0A0A0]">
+              <span className="inline-block px-2 py-1 rounded text-xs bg-[rgba(34,34,34,0.08)] text-[rgba(34,34,34,0.5)] dark:bg-[rgba(194,216,196,0.12)] dark:text-[rgba(194,216,196,0.4)]">
                 {task.assignee}
               </span>
             )}
@@ -104,12 +104,12 @@ export function BoardKanban({ tasks, currentRole }: BoardKanbanProps) {
                 } ${snapshot.isDraggingOver ? "ring-2 ring-[#C2D8C4]/50" : ""}`}
               >
                 {/* Column Header */}
-                <div className="sticky top-0 px-4 py-3 border-b border-[#C2D8C4]/12 bg-[#222222]/70 backdrop-blur-md">
+                <div className="sticky top-0 px-4 py-3 border-b border-[#DDE5DD] bg-[#FFFFFF] backdrop-blur-md dark:border-[rgba(194,216,196,0.05)] dark:bg-[rgba(34,34,34,0.8)] dark:backdrop-blur-[20px]">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-[#F5F5F5]">
+                    <h3 className="text-sm font-semibold text-[#222222] dark:text-[#C2D8C4]">
                       {column.label}
                     </h3>
-                    <span className="text-xs font-semibold text-[#A0A0A0] bg-[#222222]/50 px-2 py-1 rounded">
+                    <span className="text-xs font-semibold text-[rgba(34,34,34,0.5)] bg-[rgba(194,216,196,0.16)] px-2 py-1 rounded dark:text-[rgba(194,216,196,0.4)] dark:bg-[rgba(194,216,196,0.1)]">
                       {columnTasks.length}
                     </span>
                   </div>
@@ -118,7 +118,7 @@ export function BoardKanban({ tasks, currentRole }: BoardKanbanProps) {
                 {/* Column Content */}
                 <div className="flex-1 overflow-y-auto p-3 space-y-2">
                   {columnTasks.length === 0 ? (
-                    <div className="flex items-center justify-center h-40 text-[#A0A0A0]">
+                    <div className="flex items-center justify-center h-40 text-[rgba(34,34,34,0.5)] dark:text-[rgba(194,216,196,0.4)]">
                       <p className="text-xs text-center">No tasks</p>
                     </div>
                   ) : (

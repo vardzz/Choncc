@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { LayoutGrid, BarChart3, LineChart, Calendar, Users } from "lucide-react";
+import { LayoutGrid, BarChart3, LineChart, Calendar } from "lucide-react";
 import type { KanbanTask, UserRole } from "@/lib/types";
-import { hasPermission } from "@/lib/rbac";
 import { BoardKanban } from "@/components/workspace/board-kanban";
 import { BoardGantt } from "@/components/workspace/board-gantt";
 import { BoardTimeline } from "@/components/workspace/board-timeline";
@@ -26,21 +25,20 @@ const VIEW_OPTIONS: Array<{ id: ViewType; label: string; icon: any }> = [
 
 export function BoardPane({ tasks, currentRole }: BoardPaneProps) {
   const [activeView, setActiveView] = useState<ViewType>("kanban");
-  const canMoveCards = hasPermission(currentRole, "move-board-cards");
 
   return (
-    <main className="flex-1 overflow-hidden flex flex-col bg-[var(--ws-bg)]">
+    <main className="flex-1 overflow-hidden flex flex-col bg-[#F9FAF9] dark:bg-[#222222]">
       {/* Header: Sprint Capacity + View Switcher */}
-      <div className="shrink-0 border-b border-[var(--ws-border)] bg-[var(--ws-surface-2)] px-5 py-4 flex items-center justify-between gap-4">
+      <div className="shrink-0 border-b border-[#DDE5DD] bg-[#FFFFFF] px-5 py-4 flex items-center justify-between gap-4 dark:border-[rgba(194,216,196,0.05)] dark:bg-[rgba(34,34,34,0.8)] dark:backdrop-blur-[20px]">
         {/* Sprint Capacity Bar */}
         <div className="flex-1 space-y-1.5">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold text-[var(--ws-accent)]">SPRINT CAPACITY</p>
-            <p className="text-xs text-[var(--ws-muted)]">26 / 40 sp</p>
+            <p className="text-xs font-semibold text-[#222222] dark:text-[#C2D8C4]">SPRINT CAPACITY</p>
+            <p className="text-xs text-[rgba(34,34,34,0.5)] dark:text-[rgba(194,216,196,0.4)]">26 / 40 sp</p>
           </div>
-          <div className="h-2 rounded-full bg-[var(--ws-bg)] overflow-hidden">
+          <div className="h-2 rounded-full bg-[#E8EDE8] overflow-hidden dark:bg-[#333333]">
             <div
-              className="h-full bg-gradient-to-r from-[#C2D8C4] to-orange-500 transition-all"
+              className="h-full bg-[#C2D8C4] shadow-none transition-all dark:bg-[linear-gradient(90deg,#C2D8C4_0%,rgba(194,216,196,0.6)_100%)] dark:shadow-[0_0_15px_rgba(194,216,196,0.3)]"
               style={{ width: "65%" }}
             />
           </div>
@@ -54,8 +52,8 @@ export function BoardPane({ tasks, currentRole }: BoardPaneProps) {
               onClick={() => setActiveView(id)}
               className={`px-3 py-1.5 rounded-lg transition flex items-center gap-2 text-xs font-medium ${
                 activeView === id
-                  ? "bg-[#C2D8C4]/20 border border-[#C2D8C4]/40 text-[#C2D8C4]"
-                  : "bg-transparent border border-[var(--ws-border)] text-[var(--ws-muted)] hover:border-[#C2D8C4]/30"
+                  ? "bg-[#C2D8C4] border border-[#C2D8C4] text-[#222222] dark:bg-[rgba(194,216,196,0.2)] dark:border-[rgba(194,216,196,0.4)] dark:text-[#C2D8C4]"
+                  : "bg-transparent border border-[#DDE5DD] text-[rgba(34,34,34,0.8)] hover:border-[#C2D8C4] dark:border-[rgba(194,216,196,0.2)] dark:text-[rgba(194,216,196,0.4)] dark:hover:border-[rgba(194,216,196,0.35)]"
               }`}
               title={label}
             >

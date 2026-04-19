@@ -103,7 +103,7 @@ export function DashboardNavbar({ activeWorkspaceName, workspaceSlug }: Dashboar
 
   return (
     <>
-      <header className="relative h-14 shrink-0 overflow-visible border-b border-[var(--ws-border)] bg-[var(--ws-surface)] px-5 backdrop-blur-xl">
+      <header className="relative h-14 shrink-0 overflow-visible border-b border-[#DDE5DD] bg-[rgba(255,255,255,0.86)] px-5 backdrop-blur-[20px] dark:border-[rgba(194,216,196,0.05)] dark:bg-[rgba(34,34,34,0.8)] dark:backdrop-blur-[20px]">
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-[linear-gradient(90deg,rgba(34,34,34,0.14)_0%,rgba(194,216,196,0.2)_45%,rgba(34,34,34,0.14)_100%)] opacity-90 blur-lg" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#C2D8C4]/35 to-transparent" />
 
@@ -111,9 +111,9 @@ export function DashboardNavbar({ activeWorkspaceName, workspaceSlug }: Dashboar
           <div className="flex items-center gap-3.5">
             <ChonccIcon size="sm" />
             <div className="flex items-center gap-3">
-              <p className="text-base font-black tracking-tight text-[#F5F5F5]">Choncc</p>
-              <span className="h-4 w-px bg-[#C2D8C4]/20" />
-              <p className="text-xs font-medium text-[var(--ws-muted)]">{activeWorkspaceName}</p>
+              <p className="text-base font-black tracking-tight text-[#222222] dark:text-[#C2D8C4]">Choncc</p>
+              <span className="h-4 w-px bg-[rgba(34,34,34,0.12)] dark:bg-[rgba(194,216,196,0.2)]" />
+              <p className="text-xs font-medium text-[rgba(34,34,34,0.5)] dark:text-[rgba(194,216,196,0.7)]">{activeWorkspaceName}</p>
             </div>
           </div>
 
@@ -122,7 +122,7 @@ export function DashboardNavbar({ activeWorkspaceName, workspaceSlug }: Dashboar
               <button
                 type="button"
                 onClick={() => setDropOpen(!dropOpen)}
-                className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--ws-border)] bg-[var(--ws-surface-2)] px-2.5 py-1.5 text-xs font-medium text-[var(--ws-text)] backdrop-blur-md transition hover:border-[#C2D8C4]/40 focus:outline-none"
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-2.5 py-1.5 text-xs font-medium text-[#222222] shadow-[0_4px_20px_rgba(194,216,196,0.15)] transition hover:border-[#C2D8C4] focus:outline-none dark:border-[rgba(194,216,196,0.15)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
               >
                 <User className="h-3.5 w-3.5" />
                 Menu
@@ -134,7 +134,7 @@ export function DashboardNavbar({ activeWorkspaceName, workspaceSlug }: Dashboar
                     initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
-                    className="absolute right-0 top-full z-50 mt-2 w-48 rounded-2xl border border-[var(--ws-border)] bg-[var(--ws-surface)] backdrop-blur-xl overflow-hidden shadow-xl"
+                    className="absolute right-0 top-full z-50 mt-2 w-48 rounded-2xl border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] shadow-[0_10px_30px_rgba(194,216,196,0.15)] overflow-hidden dark:border-[rgba(194,216,196,0.15)] dark:bg-[rgba(42,42,42,0.6)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
                   >
                     {MENU_ITEMS.map((item) => {
                       const Icon = item.icon;
@@ -144,8 +144,8 @@ export function DashboardNavbar({ activeWorkspaceName, workspaceSlug }: Dashboar
                           onClick={() => handleMenuClick(item.id)}
                           className={`w-full px-4 py-3 text-left text-sm font-medium transition ${
                             item.danger
-                              ? "text-red-400 hover:bg-red-500/10"
-                              : "text-[var(--ws-text)] hover:bg-[var(--ws-accent-soft)]"
+                              ? "text-[#D94B4B] hover:bg-[rgba(217,75,75,0.1)]"
+                              : "text-[#222222] hover:bg-[rgba(194,216,196,0.18)] dark:text-[#C2D8C4] dark:hover:bg-[rgba(194,216,196,0.12)]"
                           }`}
                         >
                           <div className="flex items-center gap-3">

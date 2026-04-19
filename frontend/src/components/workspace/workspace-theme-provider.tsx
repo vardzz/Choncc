@@ -80,7 +80,10 @@ export function WorkspaceThemeProvider({ children }: { children: ReactNode }) {
 
   return (
     <WorkspaceThemeContext.Provider value={value}>
-      <div className="workspace-theme-root h-full" data-theme={effectiveTheme}>
+      <div
+        className={`workspace-theme-root h-full ${effectiveTheme === "dark" ? "dark" : ""}`}
+        data-theme={effectiveTheme}
+      >
         {children}
       </div>
     </WorkspaceThemeContext.Provider>
