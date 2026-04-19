@@ -19,7 +19,7 @@ const RBAC_MATRIX: Record<PermissionAction, Set<UserRole>> = {
   'create-backlog-task': new Set(['PRODUCT_OWNER']),
   'reorder-backlog': new Set(['PRODUCT_OWNER']),
   'create-sprint-subtask': new Set(['SCRUM_MASTER']),
-  'move-board-cards': new Set(['DEVELOPER']),
+  'move-board-cards': new Set(['SCRUM_MASTER', 'DEVELOPER']),
   'view-board': new Set(['PRODUCT_OWNER', 'SCRUM_MASTER', 'DEVELOPER']),
   'manage-sprint-timer': new Set(['SCRUM_MASTER']),
 };

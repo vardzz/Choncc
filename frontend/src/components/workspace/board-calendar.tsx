@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import type { KanbanTask, UserRole } from "@/lib/types";
-import { hasPermission, getRestrictionClass } from "@/lib/rbac";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type BoardCalendarProps = {
@@ -11,9 +10,6 @@ type BoardCalendarProps = {
 };
 
 export function BoardCalendar({ tasks, currentRole }: BoardCalendarProps) {
-  const canMoveCards = hasPermission(currentRole, "move-board-cards");
-  const isReadOnly = !canMoveCards;
-
   const [currentDate, setCurrentDate] = useState(new Date(2026, 3, 19)); // Apr 19, 2026
 
   const monthNames = [
@@ -63,7 +59,7 @@ export function BoardCalendar({ tasks, currentRole }: BoardCalendarProps) {
   };
 
   return (
-    <div className={`flex-1 overflow-auto p-5 ${getRestrictionClass(isReadOnly)}`}>
+    <div className="flex-1 overflow-auto p-5">
       <div className="space-y-4">
         {/* Calendar Header */}
         <div className="flex items-center justify-between">

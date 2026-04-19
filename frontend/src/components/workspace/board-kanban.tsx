@@ -1,9 +1,9 @@
 "use client";
 
 import { Draggable, Droppable } from "@hello-pangea/dnd";
-import type { CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import type { KanbanTask, UserRole } from "@/lib/types";
-import { hasPermission, getRestrictionClass } from "@/lib/rbac";
+import { hasPermission } from "@/lib/rbac";
 
 type BoardKanbanProps = {
   tasks: KanbanTask[];
@@ -35,22 +35,44 @@ function getPremiumDragStyle(
   };
 }
 
-export function TaskCard({ task, index }: { task: KanbanTask; index: number }) {
+export function TaskCard({
+  task,
+  index,
+  canMoveCards,
+  isShaking,
+  onBlockedDragAttempt,
+}: {
+  task: KanbanTask;
+  index: number;
+  canMoveCards: boolean;
+  isShaking: boolean;
+  onBlockedDragAttempt?: () => void;
+}) {
   return (
-    <Draggable draggableId={task.id} index={index}>
+    <Draggable draggableId={task.id} index={index} isDragDisabled={!canMoveCards}>
       {(provided, snapshot) => (
         <div
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          style={getPremiumDragStyle(provided.draggableProps.style, snapshot.isDragging)}
+          style={{
+            ...getPremiumDragStyle(provided.draggableProps.style, snapshot.isDragging),
+            animation: isShaking ? "role-shake 420ms ease-in-out" : undefined,
+          }}
           data-draggable="true"
           data-dragging={snapshot.isDragging ? "true" : "false"}
           className={`drag-handle rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] p-3 space-y-2 shadow-[0_4px_20px_rgba(194,216,196,0.15)] transition will-change-transform dark:border-[rgba(194,216,196,0.15)] dark:bg-[#2A2A2A] dark:hover:border-[rgba(194,216,196,0.2)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] ${
             snapshot.isDragging
               ? "border-[#C2D8C4] ring-1 ring-[rgba(194,216,196,0.45)]"
-              : "hover:border-[#C2D8C4]"
+              : canMoveCards
+              ? "hover:border-[#C2D8C4] cursor-grab"
+              : "cursor-not-allowed"
           }`}
+          onMouseDownCapture={() => {
+            if (!canMoveCards) {
+              onBlockedDragAttempt?.();
+            }
+          }}
         >
           <div className="flex items-start justify-between gap-2">
             <p className="text-sm font-medium text-[#222222] dark:text-[#C2D8C4] flex-1">{task.title}</p>
@@ -87,14 +109,36 @@ export function TaskCard({ task, index }: { task: KanbanTask; index: number }) {
 
 export function BoardKanban({ tasks, currentRole }: BoardKanbanProps) {
   const canMoveCards = hasPermission(currentRole, "move-board-cards");
-  const isReadOnly = !canMoveCards;
+  const [shakingTaskId, setShakingTaskId] = useState<string | null>(null);
+  const shakeTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (shakeTimerRef.current) {
+        window.clearTimeout(shakeTimerRef.current);
+      }
+    };
+  }, []);
+
+  const triggerShake = (taskId: string) => {
+    if (shakeTimerRef.current) {
+      window.clearTimeout(shakeTimerRef.current);
+    }
+
+    setShakingTaskId(null);
+    window.setTimeout(() => setShakingTaskId(taskId), 0);
+    shakeTimerRef.current = window.setTimeout(() => {
+      setShakingTaskId(null);
+      shakeTimerRef.current = null;
+    }, 420);
+  };
 
   return (
-    <div className={`flex-1 overflow-x-auto p-5 space-x-4 flex ${getRestrictionClass(isReadOnly)}`}>
+    <div className="flex-1 overflow-x-auto p-5 space-x-4 flex">
       {BOARD_COLUMNS.map((column) => {
         const columnTasks = tasks.filter((t) => t.status === column.id);
         return (
-          <Droppable key={column.id} droppableId={column.id} isDropDisabled={isReadOnly}>
+          <Droppable key={column.id} droppableId={column.id} isDropDisabled={!canMoveCards}>
             {(provided, snapshot) => (
               <div
                 ref={provided.innerRef}
@@ -123,7 +167,14 @@ export function BoardKanban({ tasks, currentRole }: BoardKanbanProps) {
                     </div>
                   ) : (
                     columnTasks.map((task, idx) => (
-                      <TaskCard key={task.id} task={task} index={idx} />
+                      <TaskCard
+                        key={task.id}
+                        task={task}
+                        index={idx}
+                        canMoveCards={canMoveCards}
+                        isShaking={shakingTaskId === task.id}
+                        onBlockedDragAttempt={() => triggerShake(task.id)}
+                      />
                     ))
                   )}
                   {provided.placeholder}

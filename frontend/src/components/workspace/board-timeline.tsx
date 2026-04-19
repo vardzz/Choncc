@@ -1,7 +1,6 @@
 "use client";
 
 import type { KanbanTask, UserRole } from "@/lib/types";
-import { hasPermission, getRestrictionClass } from "@/lib/rbac";
 
 type BoardTimelineProps = {
   tasks: KanbanTask[];
@@ -11,11 +10,8 @@ type BoardTimelineProps = {
 const STATUS_ORDER = ["Backlog", "To Do", "In Progress", "Review", "Done"];
 
 export function BoardTimeline({ tasks, currentRole }: BoardTimelineProps) {
-  const canMoveCards = hasPermission(currentRole, "move-board-cards");
-  const isReadOnly = !canMoveCards;
-
   return (
-    <div className={`flex-1 overflow-auto p-5 ${getRestrictionClass(isReadOnly)}`}>
+    <div className="flex-1 overflow-auto p-5">
       <div className="space-y-8">
         {/* Timeline */}
         <div className="space-y-4">

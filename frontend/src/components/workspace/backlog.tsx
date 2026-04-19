@@ -216,7 +216,13 @@ export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentR
                   </div>
                 ) : (
                   backlogTasks.map((task, idx) => (
-                    <TaskCard key={task.id} task={task} index={idx} />
+                    <TaskCard
+                      key={task.id}
+                      task={task}
+                      index={idx}
+                      canMoveCards={canReorderBacklog}
+                      isShaking={false}
+                    />
                   ))
                 )}
                 {provided.placeholder}

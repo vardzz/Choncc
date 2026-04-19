@@ -1,7 +1,6 @@
 "use client";
 
 import type { KanbanTask, UserRole } from "@/lib/types";
-import { hasPermission, getRestrictionClass } from "@/lib/rbac";
 
 type BoardGanttProps = {
   tasks: KanbanTask[];
@@ -9,9 +8,6 @@ type BoardGanttProps = {
 };
 
 export function BoardGantt({ tasks, currentRole }: BoardGanttProps) {
-  const canMoveCards = hasPermission(currentRole, "move-board-cards");
-  const isReadOnly = !canMoveCards;
-
   // Sort tasks by assignee
   const tasksByAssignee = tasks.reduce(
     (acc, task) => {
@@ -24,7 +20,7 @@ export function BoardGantt({ tasks, currentRole }: BoardGanttProps) {
   );
 
   return (
-    <div className={`flex-1 overflow-auto p-5 ${getRestrictionClass(isReadOnly)}`}>
+    <div className="flex-1 overflow-auto p-5">
       <div className="space-y-6">
         {/* Timeline Header */}
         <div className="sticky top-0 bg-[#F9FAF9] pb-4 dark:bg-[#222222]">

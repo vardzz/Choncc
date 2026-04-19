@@ -71,7 +71,12 @@ export function BoardPane({ tasks, currentRole }: BoardPaneProps) {
       </div>
 
       {/* View Content */}
-      {activeView === "kanban" && <BoardKanban tasks={tasks} currentRole={currentRole} />}
+      {activeView === "kanban" && (
+        <BoardKanban
+          tasks={tasks}
+          currentRole={currentRole}
+        />
+      )}
       {activeView === "gantt" && <BoardGantt tasks={tasks} currentRole={currentRole} />}
       {activeView === "timeline" && (
         <BoardTimeline tasks={tasks} currentRole={currentRole} />
