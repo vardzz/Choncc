@@ -8,6 +8,7 @@ import { BoardGantt } from "@/components/workspace/board-gantt";
 import { BoardTimeline } from "@/components/workspace/board-timeline";
 import { BoardCalendar } from "@/components/workspace/board-calendar";
 import { SprintTimer } from "@/components/workspace/sprint-timer";
+import { hasPermission, getRestrictionClass } from "@/lib/rbac";
 
 type BoardPaneProps = {
   tasks: KanbanTask[];
@@ -25,6 +26,7 @@ const VIEW_OPTIONS: Array<{ id: ViewType; label: string; icon: any }> = [
 
 export function BoardPane({ tasks, currentRole }: BoardPaneProps) {
   const [activeView, setActiveView] = useState<ViewType>("kanban");
+  const canManageSprintTimer = hasPermission(currentRole, "manage-sprint-timer");
 
   return (
     <main className="flex-1 overflow-hidden flex flex-col bg-[#F9FAF9] dark:bg-[#222222]">
@@ -33,7 +35,7 @@ export function BoardPane({ tasks, currentRole }: BoardPaneProps) {
         {/* Sprint Capacity Bar */}
         <div className="flex-1 space-y-1.5">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold text-[#222222] dark:text-[#C2D8C4]">SPRINT CAPACITY</p>
+            <p className="text-xs font-semibold text-[#222222] dark:text-[#C2D8C4]">SPRINT BACKLOG CAPACITY</p>
             <p className="text-xs text-[rgba(34,34,34,0.5)] dark:text-[rgba(194,216,196,0.4)]">26 / 40 sp</p>
           </div>
           <div className="h-2 rounded-full bg-[#E8EDE8] overflow-hidden dark:bg-[#333333]">
@@ -62,11 +64,17 @@ export function BoardPane({ tasks, currentRole }: BoardPaneProps) {
             </button>
           ))}
 
-          <SprintTimer
-            initialMinutes={15}
-            sprintName="SPRINT 10"
-            sprintDates="Apr 7 - Apr 21, 2026"
-          />
+          <div
+            className={getRestrictionClass(!canManageSprintTimer)}
+            title={!canManageSprintTimer ? "Only Scrum Master can manage sprint timer" : undefined}
+          >
+            <SprintTimer
+              initialMinutes={15}
+              sprintName="SPRINT 10"
+              sprintDates="Apr 7 - Apr 21, 2026"
+              disabled={!canManageSprintTimer}
+            />
+          </div>
         </div>
       </div>
 

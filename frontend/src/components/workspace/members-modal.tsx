@@ -1,11 +1,11 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Copy, ExternalLink } from "lucide-react";
+import { Copy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { Workspace, WorkspaceMember, User } from "@/lib/types";
-import { canManageMembers, canCreateInviteLink } from "@/lib/rbac";
-import { generateInviteToken, formatInviteLink, calculateExpiryDate } from "@/lib/invite";
+import { canManageMembers, canCreateInviteLink, getRestrictionClass } from "@/lib/rbac";
+import { generateInviteToken, formatInviteLink } from "@/lib/invite";
 
 type MembersModalProps = {
   isOpen: boolean;
@@ -140,7 +140,10 @@ export function MembersModal({
                   Members ({workspace.members.length})
                 </h3>
                 <div className="space-y-2">
-                  {workspace.members.map((member) => (
+                  {workspace.members.map((member) => {
+                    const isRoleEditable = isProductOwner && member.userId !== currentUser.id;
+
+                    return (
                     <div
                       key={member.id}
                       className="flex items-center justify-between p-3 rounded-lg bg-[#FFFFFF] border border-[rgba(34,34,34,0.08)] hover:border-[#C2D8C4] transition shadow-[0_4px_20px_rgba(194,216,196,0.15)] dark:bg-[rgba(42,42,42,0.6)] dark:border-[rgba(194,216,196,0.15)] dark:hover:border-[rgba(194,216,196,0.2)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
@@ -163,10 +166,14 @@ export function MembersModal({
                           </p>
                         </div>
 
-                        {/* Role Dropdown - Only for PO to manage others */}
-                        {isProductOwner && member.userId !== currentUser.id && (
+                        {/* Role Dropdown: visible for all, editable only by PO for other members */}
+                        <div
+                          className={getRestrictionClass(!isRoleEditable)}
+                          title={!isRoleEditable ? "Only Product Owner can reassign roles" : undefined}
+                        >
                           <select
                             defaultValue={member.role}
+                            disabled={!isRoleEditable}
                             onChange={(e) => {
                               console.log(`Change ${member.user.name} role to ${e.target.value}`);
                             }}
@@ -175,12 +182,12 @@ export function MembersModal({
                             <option value="PRODUCT_OWNER">Product Owner</option>
                             <option value="SCRUM_MASTER">Scrum Master</option>
                             <option value="DEVELOPER">Developer</option>
-                            <option value="STAKEHOLDER">Stakeholder</option>
                           </select>
-                        )}
+                        </div>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 

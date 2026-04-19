@@ -11,14 +11,17 @@ import { hasPermission, getRestrictionClass } from "@/lib/rbac";
 type BacklogPaneProps = {
   backlogTasks: KanbanTask[];
   onAddTask: (title: string, category: string) => void;
+  onCreateSubtask: (parentTaskId: string, title: string, category: string) => void;
   currentRole: UserRole;
 };
 
 const CATEGORIES = ["Frontend", "Backend", "Design", "DevOps", "Documentation"];
 
-export function BacklogPane({ backlogTasks, onAddTask, currentRole }: BacklogPaneProps) {
+export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentRole }: BacklogPaneProps) {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState(CATEGORIES[0]);
+  const [subtaskTitle, setSubtaskTitle] = useState("");
+  const [selectedParentId, setSelectedParentId] = useState("");
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -32,6 +35,16 @@ export function BacklogPane({ backlogTasks, onAddTask, currentRole }: BacklogPan
 
   const canCreateTask = hasPermission(currentRole, "create-backlog-task");
   const canReorderBacklog = hasPermission(currentRole, "reorder-backlog");
+  const canCreateSprintSubtasks = hasPermission(currentRole, "create-sprint-subtask");
+
+  const handleSubtaskSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const trimmedTitle = subtaskTitle.trim();
+    if (!trimmedTitle || !selectedParentId) return;
+
+    onCreateSubtask(selectedParentId, trimmedTitle, category);
+    setSubtaskTitle("");
+  };
 
   return (
     <aside
@@ -71,56 +84,83 @@ export function BacklogPane({ backlogTasks, onAddTask, currentRole }: BacklogPan
           </div>
 
           {/* Create Task Form */}
-          <form onSubmit={handleSubmit} className="border-b border-[#DDE5DD] p-4 space-y-3 dark:border-[rgba(194,216,196,0.05)]">
-            <div
-              className={`space-y-2 ${getRestrictionClass(!canCreateTask)}`}
-              title={
-                !canCreateTask
-                  ? "Only Product Owner can create tasks"
-                  : undefined
-              }
-            >
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Task title..."
-                disabled={!canCreateTask}
-                    className="w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-3 py-2 text-sm text-[#222222] placeholder:text-[rgba(34,34,34,0.5)] outline-none transition focus:border-[#C2D8C4] disabled:opacity-50 disabled:cursor-not-allowed dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:placeholder:text-[rgba(194,216,196,0.4)] dark:focus:border-[#C2D8C4] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
-              />
+          {(canCreateTask || canCreateSprintSubtasks) && (
+            <div className="border-b border-[#DDE5DD] p-4 space-y-3 dark:border-[rgba(194,216,196,0.05)]">
+              {canCreateTask && (
+                <form onSubmit={handleSubmit} className="space-y-3">
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="Task title..."
+                      className="w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-3 py-2 text-sm text-[#222222] placeholder:text-[rgba(34,34,34,0.5)] outline-none transition focus:border-[#C2D8C4] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:placeholder:text-[rgba(194,216,196,0.4)] dark:focus:border-[#C2D8C4] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
+                    />
 
-              <div className="flex items-center gap-1.5">
-                <div className="flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <div className="flex-1">
+                        <Select
+                          value={category}
+                          onValueChange={setCategory}
+                          className="h-9 w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-2 py-2 text-xs text-[#222222] shadow-none transition focus:border-[#C2D8C4] hover:bg-[#FFFFFF] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:focus:border-[#C2D8C4]"
+                        >
+                          {CATEGORIES.map((cat) => (
+                            <option key={cat} value={cat}>
+                              {cat}
+                            </option>
+                          ))}
+                        </Select>
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={!title.trim()}
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#C2D8C4] text-[#222222] font-semibold text-sm hover:bg-[#B1C7B3] transition disabled:opacity-40 disabled:cursor-not-allowed dark:bg-gradient-to-r dark:from-[#C2D8C4] dark:to-[#A8BDAA] dark:text-[#222222]"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              )}
+
+              {canCreateTask && canCreateSprintSubtasks && (
+                <div className="pt-1 border-t border-[#DDE5DD] dark:border-[rgba(194,216,196,0.05)]" />
+              )}
+
+              {canCreateSprintSubtasks && (
+                <form onSubmit={handleSubtaskSubmit} className="space-y-2">
+                  <p className="text-xs font-semibold text-[#222222] dark:text-[#C2D8C4]">Sprint Breakdown (Scrum Master)</p>
                   <Select
-                    value={category}
-                    onValueChange={setCategory}
-                    disabled={!canCreateTask}
+                    value={selectedParentId}
+                    onValueChange={setSelectedParentId}
                     className="h-9 w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-2 py-2 text-xs text-[#222222] shadow-none transition focus:border-[#C2D8C4] hover:bg-[#FFFFFF] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:focus:border-[#C2D8C4]"
                   >
-                    {CATEGORIES.map((cat) => (
-                      <option key={cat} value={cat}>
-                        {cat}
+                    <option value="">Select product backlog item</option>
+                    {backlogTasks.map((task) => (
+                      <option key={task.id} value={task.id}>
+                        {task.title}
                       </option>
                     ))}
                   </Select>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={!canCreateTask || !title.trim()}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#C2D8C4] text-[#222222] font-semibold text-sm hover:bg-[#B1C7B3] transition disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gradient-to-r dark:from-[#C2D8C4] dark:to-[#A8BDAA] dark:text-[#222222]"
-                >
-                  <Plus className="h-4 w-4" />
-                </button>
-              </div>
+                  <input
+                    type="text"
+                    value={subtaskTitle}
+                    onChange={(e) => setSubtaskTitle(e.target.value)}
+                    placeholder="Specific subtask..."
+                    className="w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-3 py-2 text-sm text-[#222222] placeholder:text-[rgba(34,34,34,0.5)] outline-none transition focus:border-[#C2D8C4] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:placeholder:text-[rgba(194,216,196,0.4)] dark:focus:border-[#C2D8C4]"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!selectedParentId || !subtaskTitle.trim()}
+                    className="w-full rounded-lg border border-[#C2D8C4] bg-[rgba(194,216,196,0.2)] px-3 py-2 text-xs font-semibold text-[#222222] transition hover:bg-[rgba(194,216,196,0.3)] disabled:opacity-40 disabled:cursor-not-allowed dark:border-[rgba(194,216,196,0.3)] dark:bg-[rgba(194,216,196,0.12)] dark:text-[#C2D8C4] dark:hover:bg-[rgba(194,216,196,0.18)]"
+                  >
+                    Add Sprint Subtask
+                  </button>
+                </form>
+              )}
             </div>
-
-            {!canCreateTask && (
-              <p className="text-xs text-[rgba(34,34,34,0.5)] dark:text-[rgba(194,216,196,0.4)]">
-                Only Product Owner can create tasks
-              </p>
-            )}
-          </form>
+          )}
 
           {/* Backlog Tasks */}
           <Droppable
@@ -136,7 +176,7 @@ export function BacklogPane({ backlogTasks, onAddTask, currentRole }: BacklogPan
                 } ${getRestrictionClass(!canReorderBacklog && backlogTasks.length > 0)}`}
                 title={
                   !canReorderBacklog && backlogTasks.length > 0
-                    ? "Only Product Owner and Scrum Master can reorder backlog"
+                    ? "Only Product Owner can reorder backlog"
                     : undefined
                 }
               >

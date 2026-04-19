@@ -4,7 +4,9 @@
  */
 
 // Role definitions for workspace members
-export type UserRole = 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER' | 'STAKEHOLDER';
+export type UserRole = 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER';
+
+export type TaskType = 'PRODUCT_BACKLOG_ITEM' | 'SPRINT_SUBTASK';
 
 // User base type
 export type User = {
@@ -53,6 +55,8 @@ export type Workspace = {
 export type KanbanTask = {
   id: string;
   title: string;
+  taskType: TaskType;
+  parentTaskId?: string;
   status: 'Backlog' | 'To Do' | 'In Progress' | 'Review' | 'Done';
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   category: string;
@@ -71,5 +75,4 @@ export type WorkspaceContext = {
   isProductOwner: boolean;
   isScrumMaster: boolean;
   isDeveloper: boolean;
-  isStakeholder: boolean;
 };

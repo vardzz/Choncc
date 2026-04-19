@@ -7,8 +7,9 @@ import { BacklogPane } from "@/components/workspace/backlog";
 import { BoardPane } from "@/components/workspace/board";
 import { WorkspaceThemeProvider } from "@/components/workspace/workspace-theme-provider";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import type { KanbanTask, Workspace, WorkspaceMember, WorkspaceContext } from "@/lib/types";
+import { useEffect, useState } from "react";
+import type { KanbanTask, Workspace, WorkspaceMember } from "@/lib/types";
+import { hasPermission } from "@/lib/rbac";
 
 const BOARD_STATUSES: Array<KanbanTask["status"]> = ["Backlog", "To Do", "In Progress", "Review", "Done"];
 
@@ -51,8 +52,23 @@ const mockWorkspaces: Workspace[] = [
 
 const mockTasks: KanbanTask[] = [
   {
+    id: "tsk-100",
+    title: "Implement role-based sprint workflow",
+    taskType: "PRODUCT_BACKLOG_ITEM",
+    status: "In Progress",
+    priority: "HIGH",
+    category: "Backend",
+    storyPoints: 8,
+    assignee: "",
+    tags: ["Scrum"],
+    dateRange: "Apr 08 - Apr 21",
+    workspaceId: "ws-dentara",
+  },
+  {
     id: "tsk-101",
-    title: "Setup CI/CD pipeline",
+    title: "Define RBAC matrix in policy layer",
+    taskType: "SPRINT_SUBTASK",
+    parentTaskId: "tsk-100",
     status: "To Do",
     priority: "HIGH",
     category: "Backend",
@@ -64,14 +80,29 @@ const mockTasks: KanbanTask[] = [
   },
   {
     id: "tsk-102",
-    title: "Responsive nav sidebar",
-    status: "To Do",
+    title: "Apply role locks in workspace UI",
+    taskType: "SPRINT_SUBTASK",
+    parentTaskId: "tsk-100",
+    status: "In Progress",
     priority: "MEDIUM",
     category: "Frontend",
     storyPoints: 3,
     assignee: "Ava Kim",
     tags: ["UI"],
     dateRange: "Apr 08 - Apr 12",
+    workspaceId: "ws-dentara",
+  },
+  {
+    id: "tsk-103",
+    title: "Document Definition of Done",
+    taskType: "PRODUCT_BACKLOG_ITEM",
+    status: "Backlog",
+    priority: "MEDIUM",
+    category: "Documentation",
+    storyPoints: 3,
+    assignee: "",
+    tags: ["Scrum"],
+    dateRange: "Apr 14 - Apr 21",
     workspaceId: "ws-dentara",
   },
 ];
@@ -95,6 +126,43 @@ export default function WorkspacePage() {
   const [tasks, setTasks] = useState<KanbanTask[]>(mockTasks);
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [currentMember, setCurrentMember] = useState<WorkspaceMember | null>(null);
+
+  const reconcileParentStatuses = (allTasks: KanbanTask[]): KanbanTask[] => {
+    const subtasksByParent = allTasks.reduce<Record<string, KanbanTask[]>>((acc, task) => {
+      if (task.taskType !== "SPRINT_SUBTASK" || !task.parentTaskId) {
+        return acc;
+      }
+
+      if (!acc[task.parentTaskId]) {
+        acc[task.parentTaskId] = [];
+      }
+
+      acc[task.parentTaskId].push(task);
+      return acc;
+    }, {});
+
+    return allTasks.map((task) => {
+      if (task.taskType !== "PRODUCT_BACKLOG_ITEM") {
+        return task;
+      }
+
+      const relatedSubtasks = subtasksByParent[task.id] ?? [];
+      if (relatedSubtasks.length === 0) {
+        return task;
+      }
+
+      const allDone = relatedSubtasks.every((subtask) => subtask.status === "Done");
+      if (allDone && task.status !== "Done") {
+        return { ...task, status: "Done" };
+      }
+
+      if (!allDone && (task.status === "Done" || task.status === "Backlog")) {
+        return { ...task, status: "In Progress" };
+      }
+
+      return task;
+    });
+  };
 
   // Load workspace data
   useEffect(() => {
@@ -136,19 +204,29 @@ export default function WorkspacePage() {
     if (!isBoardStatus(destination.droppableId)) return;
     const nextStatus = destination.droppableId as KanbanTask["status"];
 
+    if (!currentMember || !hasPermission(currentMember.role, "move-board-cards")) {
+      return;
+    }
+
     setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === draggableId
-          ? {
-              ...task,
-              status: nextStatus,
-            }
-          : task
+      reconcileParentStatuses(
+        prevTasks.map((task) =>
+          task.id === draggableId && task.taskType === "SPRINT_SUBTASK"
+            ? {
+                ...task,
+                status: nextStatus,
+              }
+            : task
+        )
       )
     );
   };
 
   const workspaceTasks = tasks.filter((t) => t.workspaceId === workspace?.id);
+  const productBacklogItems = workspaceTasks.filter((task) => task.taskType === "PRODUCT_BACKLOG_ITEM");
+  const sprintBacklogItems = workspaceTasks.filter(
+    (task) => task.taskType === "SPRINT_SUBTASK" && task.status !== "Backlog"
+  );
 
   if (!workspace || !currentMember) {
     return (
@@ -177,11 +255,12 @@ export default function WorkspacePage() {
 
             {/* Center Pane: Backlog */}
             <BacklogPane 
-              backlogTasks={workspaceTasks.filter((t) => t.status === "Backlog")}
+              backlogTasks={productBacklogItems}
               onAddTask={(title, category) => {
                 const newTask: KanbanTask = {
                   id: `tsk-${Date.now()}`,
                   title,
+                  taskType: "PRODUCT_BACKLOG_ITEM",
                   category,
                   status: "Backlog",
                   priority: "MEDIUM",
@@ -193,12 +272,30 @@ export default function WorkspacePage() {
                 };
                 setTasks((prevTasks) => [...prevTasks, newTask]);
               }}
+              onCreateSubtask={(parentTaskId, title, category) => {
+                const newSubtask: KanbanTask = {
+                  id: `sub-${Date.now()}`,
+                  title,
+                  taskType: "SPRINT_SUBTASK",
+                  parentTaskId,
+                  category,
+                  status: "To Do",
+                  priority: "MEDIUM",
+                  storyPoints: 1,
+                  assignee: "",
+                  tags: ["Subtask"],
+                  dateRange: "",
+                  workspaceId: workspace.id,
+                };
+
+                setTasks((prevTasks) => reconcileParentStatuses([...prevTasks, newSubtask]));
+              }}
               currentRole={currentMember.role}
             />
 
             {/* Right Pane: Kanban Board */}
             <BoardPane 
-              tasks={workspaceTasks}
+              tasks={sprintBacklogItems}
               currentRole={currentMember.role}
             />
           </div>

@@ -3,20 +3,25 @@
  * Defines permissions for each action based on user role
  */
 
-import type { UserRole } from './types';
+import type { CSSProperties } from "react";
+import type { UserRole } from "./types";
 
 export type PermissionAction = 
   | 'create-backlog-task'
   | 'reorder-backlog'
+  | 'create-sprint-subtask'
   | 'move-board-cards'
-  | 'view-board';
+  | 'view-board'
+  | 'manage-sprint-timer';
 
 // RBAC Permission Matrix
 const RBAC_MATRIX: Record<PermissionAction, Set<UserRole>> = {
   'create-backlog-task': new Set(['PRODUCT_OWNER']),
-  'reorder-backlog': new Set(['PRODUCT_OWNER', 'SCRUM_MASTER']),
-  'move-board-cards': new Set(['PRODUCT_OWNER', 'SCRUM_MASTER', 'DEVELOPER']),
-  'view-board': new Set(['PRODUCT_OWNER', 'SCRUM_MASTER', 'DEVELOPER', 'STAKEHOLDER']),
+  'reorder-backlog': new Set(['PRODUCT_OWNER']),
+  'create-sprint-subtask': new Set(['SCRUM_MASTER']),
+  'move-board-cards': new Set(['DEVELOPER']),
+  'view-board': new Set(['PRODUCT_OWNER', 'SCRUM_MASTER', 'DEVELOPER']),
+  'manage-sprint-timer': new Set(['SCRUM_MASTER']),
 };
 
 /**
@@ -61,9 +66,9 @@ export function canViewMembers(userRole: UserRole): boolean {
 
 // UI Helper: when restricted=true, disable interaction and dim the UI.
 export function getRestrictionClass(restricted: boolean): string {
-  return restricted ? 'opacity-50 cursor-not-allowed pointer-events-none' : '';
+  return restricted ? 'opacity-40 cursor-not-allowed pointer-events-none' : '';
 }
 
-export function getRestrictionStyle(restricted: boolean): React.CSSProperties {
-  return restricted ? { opacity: 0.5, cursor: 'not-allowed', pointerEvents: 'none' } : {};
+export function getRestrictionStyle(restricted: boolean): CSSProperties {
+  return restricted ? { opacity: 0.4, cursor: 'not-allowed', pointerEvents: 'none' } : {};
 }
