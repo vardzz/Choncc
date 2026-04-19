@@ -63,6 +63,12 @@ export function BoardPane({ tasks, currentRole }: BoardPaneProps) {
               <span className="hidden sm:inline">{label}</span>
             </button>
           ))}
+
+          <SprintTimer
+            initialMinutes={15}
+            sprintName="SPRINT 10"
+            sprintDates="Apr 7 - Apr 21, 2026"
+          />
         </div>
       </div>
 
@@ -76,12 +82,6 @@ export function BoardPane({ tasks, currentRole }: BoardPaneProps) {
         <BoardCalendar tasks={tasks} currentRole={currentRole} />
       )}
 
-      {/* Floatable Sprint Timer */}
-      <SprintTimer
-        initialMinutes={15}
-        sprintName="SPRINT 10"
-        sprintDates="Apr 7 - Apr 21, 2026"
-      />
     </main>
   );
 }

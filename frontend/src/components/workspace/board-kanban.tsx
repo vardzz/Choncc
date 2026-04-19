@@ -1,7 +1,7 @@
 "use client";
 
 import { Draggable, Droppable } from "@hello-pangea/dnd";
-import { AlertCircle, Clock, Users } from "lucide-react";
+import type { CSSProperties } from "react";
 import type { KanbanTask, UserRole } from "@/lib/types";
 import { hasPermission, getRestrictionClass } from "@/lib/rbac";
 
@@ -17,6 +17,24 @@ const BOARD_COLUMNS = [
   { id: "Done", label: "Done", color: "bg-[#C2D8C4]/10" },
 ];
 
+function getPremiumDragStyle(
+  style: CSSProperties | undefined,
+  isDragging: boolean
+): CSSProperties | undefined {
+  if (!style || !isDragging) return style;
+
+  return {
+    ...style,
+    // Keep the cursor visually above the card so the card trails underneath while dragging.
+    transform: style.transform ? `${style.transform} translate3d(0px, 12px, 0px)` : undefined,
+    transition: "transform 40ms linear",
+    boxShadow: "0 24px 56px rgba(0, 0, 0, 0.45)",
+    zIndex: 1200,
+    cursor: "grabbing",
+    willChange: "transform",
+  };
+}
+
 export function TaskCard({ task, index }: { task: KanbanTask; index: number }) {
   return (
     <Draggable draggableId={task.id} index={index}>
@@ -25,8 +43,13 @@ export function TaskCard({ task, index }: { task: KanbanTask; index: number }) {
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={`rounded-lg border border-[#C2D8C4]/20 bg-[#222222]/70 p-3 space-y-2 transition ${
-            snapshot.isDragging ? "shadow-lg bg-[#2A2A2A] border-[#C2D8C4]/40" : ""
+          style={getPremiumDragStyle(provided.draggableProps.style, snapshot.isDragging)}
+          data-draggable="true"
+          data-dragging={snapshot.isDragging ? "true" : "false"}
+          className={`drag-handle rounded-lg border border-[#C2D8C4]/20 bg-[#222222]/70 p-3 space-y-2 transition will-change-transform ${
+            snapshot.isDragging
+              ? "bg-[#2A2A2A] border-[#C2D8C4]/40 ring-1 ring-[#C2D8C4]/45"
+              : "hover:border-[#C2D8C4]/35"
           }`}
         >
           <div className="flex items-start justify-between gap-2">
