@@ -2,11 +2,11 @@
 
 import { Droppable } from "@hello-pangea/dnd";
 import { Plus } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { KanbanTask, UserRole } from "@/lib/types";
 import { TaskCard } from "@/components/workspace/board-kanban";
 import { Select } from "@/components/ui/select";
-import { hasPermission, getRestrictionClass } from "@/lib/rbac";
+import { hasPermission } from "@/lib/rbac";
 
 type BacklogPaneProps = {
   backlogTasks: KanbanTask[];
@@ -25,6 +25,8 @@ export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentR
   const [subtaskTitle, setSubtaskTitle] = useState("");
   const [selectedParentId, setSelectedParentId] = useState("");
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [shakingTaskId, setShakingTaskId] = useState<string | null>(null);
+  const shakeTimerRef = useRef<number | null>(null);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -42,6 +44,27 @@ export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentR
   const canCreateTask = hasPermission(currentRole, "create-backlog-task");
   const canReorderBacklog = hasPermission(currentRole, "reorder-backlog");
   const canCreateSprintSubtasks = hasPermission(currentRole, "create-sprint-subtask");
+
+  useEffect(() => {
+    return () => {
+      if (shakeTimerRef.current) {
+        window.clearTimeout(shakeTimerRef.current);
+      }
+    };
+  }, []);
+
+  const triggerShake = (taskId: string) => {
+    if (shakeTimerRef.current) {
+      window.clearTimeout(shakeTimerRef.current);
+    }
+
+    setShakingTaskId(null);
+    window.setTimeout(() => setShakingTaskId(taskId), 0);
+    shakeTimerRef.current = window.setTimeout(() => {
+      setShakingTaskId(null);
+      shakeTimerRef.current = null;
+    }, 420);
+  };
 
   const handleSubtaskSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -67,7 +90,7 @@ export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentR
         >
           <div className="flex flex-1 items-center justify-center">
             <span
-              className="select-none text-[10px] font-semibold uppercase tracking-[0.34em] text-[rgba(34,34,34,0.5)] dark:text-[rgba(194,216,196,0.4)]"
+              className="select-none type-tiny uppercase tracking-[0.34em] text-[rgba(34,34,34,0.5)] dark:text-[rgba(194,216,196,0.4)]"
               style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
             >
               Backlog
@@ -78,7 +101,7 @@ export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentR
         <>
           {/* Header */}
           <div className="flex items-center justify-between border-b border-[#DDE5DD] bg-[#FFFFFF] px-4 py-3 dark:border-[rgba(194,216,196,0.05)] dark:bg-[rgba(34,34,34,0.8)] dark:backdrop-blur-[20px]">
-            <h3 className="text-sm font-semibold text-[#222222] dark:text-[#C2D8C4]">Backlog</h3>
+            <h3 className="type-h3 text-[#222222] dark:text-[#C2D8C4]">Backlog</h3>
             <button
               type="button"
               onClick={() => setIsCollapsed(true)}
@@ -100,7 +123,7 @@ export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentR
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       placeholder="Task title..."
-                      className="w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-3 py-2 text-sm text-[#222222] placeholder:text-[rgba(34,34,34,0.5)] outline-none transition focus:border-[#C2D8C4] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:placeholder:text-[rgba(194,216,196,0.4)] dark:focus:border-[#C2D8C4] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
+                      className="w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-3 py-2 text-[0.9375rem] leading-[1.35] tracking-[0em] font-medium text-[#222222] placeholder:text-[rgba(34,34,34,0.5)] outline-none transition focus:border-[#C2D8C4] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:placeholder:text-[rgba(194,216,196,0.4)] dark:focus:border-[#C2D8C4] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
                     />
 
                     <div className="grid grid-cols-2 gap-2">
@@ -110,13 +133,13 @@ export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentR
                         value={storyPoints}
                         onChange={(e) => setStoryPoints(e.target.value)}
                         placeholder="Story points"
-                        className="h-9 w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-3 py-2 text-xs text-[#222222] outline-none transition focus:border-[#C2D8C4] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:focus:border-[#C2D8C4]"
+                        className="h-9 w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-3 py-2 text-[0.8125rem] leading-[1.5] tracking-[0.01em] font-medium text-[#222222] outline-none transition focus:border-[#C2D8C4] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:focus:border-[#C2D8C4]"
                       />
 
                       <Select
                         value={priority}
                         onValueChange={(value) => setPriority(value as KanbanTask["priority"])}
-                        className="h-9 w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-2 py-2 text-xs text-[#222222] shadow-none transition focus:border-[#C2D8C4] hover:bg-[#FFFFFF] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:focus:border-[#C2D8C4]"
+                        className="h-9 w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-2 py-2 text-[0.8125rem] leading-[1.5] tracking-[0.01em] font-medium text-[#222222] shadow-none transition focus:border-[#C2D8C4] hover:bg-[#FFFFFF] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:focus:border-[#C2D8C4]"
                       >
                         <option value="HIGH">High</option>
                         <option value="MEDIUM">Medium</option>
@@ -129,7 +152,7 @@ export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentR
                         <Select
                           value={category}
                           onValueChange={setCategory}
-                          className="h-9 w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-2 py-2 text-xs text-[#222222] shadow-none transition focus:border-[#C2D8C4] hover:bg-[#FFFFFF] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:focus:border-[#C2D8C4]"
+                          className="h-9 w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-2 py-2 text-[0.8125rem] leading-[1.5] tracking-[0.01em] font-medium text-[#222222] shadow-none transition focus:border-[#C2D8C4] hover:bg-[#FFFFFF] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:focus:border-[#C2D8C4]"
                         >
                           {CATEGORIES.map((cat) => (
                             <option key={cat} value={cat}>
@@ -142,7 +165,7 @@ export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentR
                       <button
                         type="submit"
                         disabled={!title.trim()}
-                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#C2D8C4] text-[#222222] font-semibold text-sm hover:bg-[#B1C7B3] transition disabled:opacity-40 disabled:cursor-not-allowed dark:bg-gradient-to-r dark:from-[#C2D8C4] dark:to-[#A8BDAA] dark:text-[#222222]"
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#C2D8C4] text-[#222222] font-semibold text-[0.8125rem] tracking-[0.01em] hover:bg-[#B1C7B3] transition disabled:opacity-40 disabled:cursor-not-allowed dark:bg-gradient-to-r dark:from-[#C2D8C4] dark:to-[#A8BDAA] dark:text-[#222222]"
                       >
                         <Plus className="h-4 w-4" />
                       </button>
@@ -157,11 +180,13 @@ export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentR
 
               {canCreateSprintSubtasks && (
                 <form onSubmit={handleSubtaskSubmit} className="space-y-2">
-                  <p className="text-xs font-semibold text-[#222222] dark:text-[#C2D8C4]">Sprint Breakdown (Scrum Master)</p>
+                  <p className="text-[0.8125rem] leading-[1.5] tracking-[0.01em] font-semibold text-[#222222] dark:text-[#C2D8C4]">
+                    Sprint Breakdown (Scrum Master)
+                  </p>
                   <Select
                     value={selectedParentId}
                     onValueChange={setSelectedParentId}
-                    className="h-9 w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-2 py-2 text-xs text-[#222222] shadow-none transition focus:border-[#C2D8C4] hover:bg-[#FFFFFF] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:focus:border-[#C2D8C4]"
+                    className="h-9 w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-2 py-2 text-[0.8125rem] leading-[1.5] tracking-[0.01em] font-medium text-[#222222] shadow-none transition focus:border-[#C2D8C4] hover:bg-[#FFFFFF] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:focus:border-[#C2D8C4]"
                   >
                     <option value="">Select product backlog item</option>
                     {backlogTasks.map((task) => (
@@ -175,12 +200,12 @@ export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentR
                     value={subtaskTitle}
                     onChange={(e) => setSubtaskTitle(e.target.value)}
                     placeholder="Specific subtask..."
-                    className="w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-3 py-2 text-sm text-[#222222] placeholder:text-[rgba(34,34,34,0.5)] outline-none transition focus:border-[#C2D8C4] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:placeholder:text-[rgba(194,216,196,0.4)] dark:focus:border-[#C2D8C4]"
+                    className="w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-3 py-2 text-[0.875rem] leading-[1.45] tracking-[0em] font-medium text-[#222222] placeholder:text-[rgba(34,34,34,0.5)] outline-none transition focus:border-[#C2D8C4] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:placeholder:text-[rgba(194,216,196,0.4)] dark:focus:border-[#C2D8C4]"
                   />
                   <button
                     type="submit"
                     disabled={!selectedParentId || !subtaskTitle.trim()}
-                    className="w-full rounded-lg border border-[#C2D8C4] bg-[rgba(194,216,196,0.2)] px-3 py-2 text-xs font-semibold text-[#222222] transition hover:bg-[rgba(194,216,196,0.3)] disabled:opacity-40 disabled:cursor-not-allowed dark:border-[rgba(194,216,196,0.3)] dark:bg-[rgba(194,216,196,0.12)] dark:text-[#C2D8C4] dark:hover:bg-[rgba(194,216,196,0.18)]"
+                    className="w-full rounded-lg border border-[#C2D8C4] bg-[rgba(194,216,196,0.2)] px-3 py-2 text-[0.75rem] leading-[1.35] tracking-[0.02em] font-semibold text-[#222222] transition hover:bg-[rgba(194,216,196,0.3)] disabled:opacity-40 disabled:cursor-not-allowed dark:border-[rgba(194,216,196,0.3)] dark:bg-[rgba(194,216,196,0.12)] dark:text-[#C2D8C4] dark:hover:bg-[rgba(194,216,196,0.18)]"
                   >
                     Add Sprint Subtask
                   </button>
@@ -200,7 +225,7 @@ export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentR
                 {...provided.droppableProps}
                 className={`flex-1 overflow-y-auto p-3 space-y-2 ${
                   snapshot.isDraggingOver ? "bg-[rgba(194,216,196,0.14)] dark:bg-[rgba(194,216,196,0.08)]" : ""
-                } ${getRestrictionClass(!canReorderBacklog && backlogTasks.length > 0)}`}
+                } ${!canReorderBacklog && backlogTasks.length > 0 ? "opacity-40" : ""}`}
                 title={
                   !canReorderBacklog && backlogTasks.length > 0
                     ? "Only Product Owner can reorder backlog"
@@ -209,7 +234,7 @@ export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentR
               >
                 {backlogTasks.length === 0 ? (
                   <div className="flex items-center justify-center h-32 text-[rgba(34,34,34,0.5)] dark:text-[rgba(194,216,196,0.4)]">
-                    <p className="text-xs text-center">
+                    <p className="text-[0.8125rem] leading-[1.5] tracking-[0.01em] text-center">
                       No backlog tasks yet.<br/>
                       {canCreateTask ? "Create one to get started!" : "Awaiting tasks from Product Owner"}
                     </p>
@@ -221,7 +246,8 @@ export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentR
                       task={task}
                       index={idx}
                       canMoveCards={canReorderBacklog}
-                      isShaking={false}
+                      isShaking={shakingTaskId === task.id}
+                      onBlockedDragAttempt={() => triggerShake(task.id)}
                     />
                   ))
                 )}

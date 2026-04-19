@@ -33,8 +33,8 @@ export function BoardPane({ tasks, currentRole }: BoardPaneProps) {
         {/* Sprint Capacity Bar */}
         <div className="flex-1 space-y-1.5">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold text-[#222222] dark:text-[#C2D8C4]">SPRINT BACKLOG CAPACITY</p>
-            <p className="text-xs text-[rgba(34,34,34,0.5)] dark:text-[rgba(194,216,196,0.4)]">26 / 40 sp</p>
+            <p className="text-[0.75rem] leading-[1.35] tracking-[0.02em] font-semibold text-[#222222] dark:text-[#C2D8C4]">SPRINT BACKLOG CAPACITY</p>
+            <p className="text-[0.8125rem] leading-[1.5] tracking-[0.01em] font-medium text-[rgba(34,34,34,0.5)] dark:text-[rgba(194,216,196,0.4)]">26 / 40 sp</p>
           </div>
           <div className="h-2 rounded-full bg-[#E8EDE8] overflow-hidden dark:bg-[#333333]">
             <div
@@ -50,14 +50,14 @@ export function BoardPane({ tasks, currentRole }: BoardPaneProps) {
             <button
               key={id}
               onClick={() => setActiveView(id)}
-              className={`px-3 py-1.5 rounded-lg transition flex items-center gap-2 text-xs font-medium ${
+              className={`px-2.5 py-1.5 rounded-lg transition flex items-center gap-1.5 text-[0.75rem] leading-[1.2] ${
                 activeView === id
-                  ? "bg-[#C2D8C4] border border-[#C2D8C4] text-[#222222] dark:bg-[rgba(194,216,196,0.2)] dark:border-[rgba(194,216,196,0.4)] dark:text-[#C2D8C4]"
-                  : "bg-transparent border border-[#DDE5DD] text-[rgba(34,34,34,0.8)] hover:border-[#C2D8C4] dark:border-[rgba(194,216,196,0.2)] dark:text-[rgba(194,216,196,0.4)] dark:hover:border-[rgba(194,216,196,0.35)]"
+                  ? "bg-[#C2D8C4] border border-[#C2D8C4] text-[#222222] font-semibold tracking-[0.005em] dark:bg-[rgba(194,216,196,0.2)] dark:border-[rgba(194,216,196,0.4)] dark:text-[#C2D8C4]"
+                  : "bg-transparent border border-[#DDE5DD] text-[rgba(34,34,34,0.8)] font-medium tracking-[0.01em] hover:border-[#C2D8C4] dark:border-[rgba(194,216,196,0.2)] dark:text-[rgba(194,216,196,0.4)] dark:hover:border-[rgba(194,216,196,0.35)]"
               }`}
               title={label}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">{label}</span>
             </button>
           ))}

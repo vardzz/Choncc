@@ -48,6 +48,8 @@ export function TaskCard({
   isShaking: boolean;
   onBlockedDragAttempt?: () => void;
 }) {
+  const isSubtask = task.taskType === "SPRINT_SUBTASK";
+
   return (
     <Draggable draggableId={task.id} index={index} isDragDisabled={!canMoveCards}>
       {(provided, snapshot) => (
@@ -75,9 +77,17 @@ export function TaskCard({
           }}
         >
           <div className="flex items-start justify-between gap-2">
-            <p className="text-sm font-medium text-[#222222] dark:text-[#C2D8C4] flex-1">{task.title}</p>
+            <p
+              className={`flex-1 text-[#222222] dark:text-[#C2D8C4] ${
+                isSubtask
+                  ? "text-[0.875rem] leading-[1.45] tracking-[0em] font-medium"
+                  : "text-[1rem] leading-[1.35] tracking-[-0.01em] font-semibold"
+              }`}
+            >
+              {task.title}
+            </p>
             <div
-              className={`px-2 py-1 rounded text-xs font-semibold ${
+              className={`px-2 py-1 rounded text-[0.75rem] leading-[1.35] tracking-[0.02em] font-semibold ${
                 task.priority === "HIGH"
                   ? "bg-[rgba(217,75,75,0.18)] text-[#D94B4B]"
                   : task.priority === "MEDIUM"
@@ -89,14 +99,16 @@ export function TaskCard({
             </div>
           </div>
 
-          <p className="text-xs text-[rgba(34,34,34,0.8)] dark:text-[rgba(194,216,196,0.7)]">{task.category}</p>
+          <p className="text-[0.8125rem] leading-[1.5] tracking-[0.01em] font-medium text-[rgba(34,34,34,0.8)] dark:text-[rgba(194,216,196,0.7)]">
+            {task.category}
+          </p>
 
           <div className="flex items-center gap-2">
-            <span className="inline-block px-2 py-1 rounded text-xs bg-[#C2D8C4]/10 text-[#C2D8C4]">
+            <span className="inline-block px-2 py-1 rounded text-[0.75rem] leading-[1.35] tracking-[0.01em] font-semibold bg-[#C2D8C4]/10 text-[#C2D8C4]">
               {task.storyPoints} pts
             </span>
             {task.assignee && (
-              <span className="inline-block px-2 py-1 rounded text-xs bg-[rgba(34,34,34,0.08)] text-[rgba(34,34,34,0.5)] dark:bg-[rgba(194,216,196,0.12)] dark:text-[rgba(194,216,196,0.4)]">
+              <span className="inline-block px-2 py-1 rounded text-[0.75rem] leading-[1.35] tracking-[0.01em] font-medium bg-[rgba(34,34,34,0.08)] text-[rgba(34,34,34,0.5)] dark:bg-[rgba(194,216,196,0.12)] dark:text-[rgba(194,216,196,0.4)]">
                 {task.assignee}
               </span>
             )}
@@ -150,10 +162,10 @@ export function BoardKanban({ tasks, currentRole }: BoardKanbanProps) {
                 {/* Column Header */}
                 <div className="sticky top-0 px-4 py-3 border-b border-[#DDE5DD] bg-[#FFFFFF] backdrop-blur-md dark:border-[rgba(194,216,196,0.05)] dark:bg-[rgba(34,34,34,0.8)] dark:backdrop-blur-[20px]">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-[#222222] dark:text-[#C2D8C4]">
+                    <h3 className="type-h3 text-[#222222] dark:text-[#C2D8C4]">
                       {column.label}
                     </h3>
-                    <span className="text-xs font-semibold text-[rgba(34,34,34,0.5)] bg-[rgba(194,216,196,0.16)] px-2 py-1 rounded dark:text-[rgba(194,216,196,0.4)] dark:bg-[rgba(194,216,196,0.1)]">
+                    <span className="text-[0.75rem] leading-[1.35] tracking-[0.02em] font-semibold text-[rgba(34,34,34,0.5)] bg-[rgba(194,216,196,0.16)] px-2 py-1 rounded dark:text-[rgba(194,216,196,0.4)] dark:bg-[rgba(194,216,196,0.1)]">
                       {columnTasks.length}
                     </span>
                   </div>

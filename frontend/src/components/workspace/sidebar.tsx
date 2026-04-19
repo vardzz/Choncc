@@ -34,7 +34,7 @@ export function WorkspaceSidebar({ workspaces, activeSlug }: WorkspaceSidebarPro
             <Menu className="h-4 w-4" />
           </button>
           {!isCollapsed && (
-            <h3 className="ml-3 text-xs font-semibold uppercase tracking-wider text-[rgba(34,34,34,0.5)] dark:text-[rgba(194,216,196,0.4)]">
+            <h3 className="ml-3 type-tiny uppercase text-[rgba(34,34,34,0.5)] dark:text-[rgba(194,216,196,0.4)]">
               Workspaces
             </h3>
           )}
@@ -50,7 +50,7 @@ export function WorkspaceSidebar({ workspaces, activeSlug }: WorkspaceSidebarPro
                 title="New workspace"
               >
                 <Plus className="h-4 w-4" />
-                <span className="text-sm font-semibold">New Workspace</span>
+                <span className="type-caption font-semibold text-[#222222] dark:text-[#C2D8C4]">New Workspace</span>
               </button>
             </div>
 
@@ -86,10 +86,18 @@ export function WorkspaceSidebar({ workspaces, activeSlug }: WorkspaceSidebarPro
                       <Icon className={`h-4 w-4 ${iconColor}`} />
                     </div>
                     <div className="min-w-0">
-                      <p className="truncate text-xl font-semibold leading-none text-[#222222] dark:text-[#C2D8C4]">
+                      <p
+                        className={`truncate text-[0.875rem] leading-[1.3] tracking-[-0.005em] font-semibold ${
+                          isActive
+                            ? "text-[#222222] dark:text-[#C2D8C4]"
+                            : "text-[rgba(34,34,34,0.9)] dark:text-[#F2F4F3]"
+                        }`}
+                      >
                         {ws.name}
                       </p>
-                      <p className="mt-1 truncate text-xs text-[rgba(34,34,34,0.5)] dark:text-[rgba(194,216,196,0.4)]">{metaText}</p>
+                      <p className="mt-1 truncate text-[0.75rem] leading-[1.35] tracking-[0.015em] font-medium text-[rgba(34,34,34,0.5)] dark:text-[rgba(194,216,196,0.4)]">
+                        {metaText}
+                      </p>
                     </div>
                   </button>
                 );

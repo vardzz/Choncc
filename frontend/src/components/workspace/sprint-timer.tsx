@@ -62,16 +62,16 @@ export function SprintTimer({
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className={`rounded-lg border px-3 py-1.5 transition flex items-center gap-2 text-xs font-medium ${
+        className={`rounded-lg border px-2.5 py-1.5 transition flex items-center gap-1.5 text-[0.75rem] leading-[1.2] ${
           isOpen
-            ? "bg-[rgba(194,216,196,0.2)] border-[#C2D8C4] text-[#222222] dark:bg-[rgba(194,216,196,0.2)] dark:border-[rgba(194,216,196,0.4)] dark:text-[#C2D8C4]"
-            : "bg-transparent border-[#DDE5DD] text-[rgba(34,34,34,0.8)] hover:border-[#C2D8C4] dark:border-[rgba(194,216,196,0.2)] dark:text-[rgba(194,216,196,0.4)] dark:hover:border-[rgba(194,216,196,0.35)]"
+            ? "bg-[rgba(194,216,196,0.2)] border-[#C2D8C4] text-[#222222] font-semibold tracking-[0.005em] dark:bg-[rgba(194,216,196,0.2)] dark:border-[rgba(194,216,196,0.4)] dark:text-[#C2D8C4]"
+            : "bg-transparent border-[#DDE5DD] text-[rgba(34,34,34,0.8)] font-medium tracking-[0.01em] hover:border-[#C2D8C4] dark:border-[rgba(194,216,196,0.2)] dark:text-[rgba(194,216,196,0.4)] dark:hover:border-[rgba(194,216,196,0.35)]"
         }`}
         aria-expanded={isOpen}
         aria-label="Toggle sprint timer"
         title="Sprint timer"
       >
-        <Timer className="h-4 w-4" />
+        <Timer className="h-3.5 w-3.5" />
         <span className="hidden sm:inline">Sprint</span>
       </button>
 
@@ -89,15 +89,17 @@ export function SprintTimer({
           </div>
 
           <div className="p-4 space-y-3 text-center">
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-[#222222] dark:text-[#C2D8C4]">
+            <h3 className="text-[0.75rem] leading-[1.35] tracking-[0.03em] font-semibold uppercase text-[#222222] dark:text-[#C2D8C4]">
               {sprintName}
             </h3>
 
-            <div className="font-mono text-3xl font-bold text-[#222222] dark:text-[#C2D8C4]">
+            <div className="font-heading text-[2.25rem] leading-[1] tracking-[-0.02em] font-bold text-[#222222] dark:text-[#C2D8C4]">
               {String(minutes).padStart(2, "0")}:{String(secs).padStart(2, "0")}
             </div>
 
-            <p className="text-xs text-[rgba(34,34,34,0.5)] dark:text-[rgba(194,216,196,0.4)]">{sprintDates}</p>
+            <p className="text-[0.8125rem] leading-[1.5] tracking-[0.01em] font-medium text-[rgba(34,34,34,0.5)] dark:text-[rgba(194,216,196,0.4)]">
+              {sprintDates}
+            </p>
           </div>
         </div>
       )}
