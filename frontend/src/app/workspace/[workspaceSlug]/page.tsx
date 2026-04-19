@@ -256,15 +256,15 @@ export default function WorkspacePage() {
             {/* Center Pane: Backlog */}
             <BacklogPane 
               backlogTasks={productBacklogItems}
-              onAddTask={(title, category) => {
+              onAddTask={(title, category, storyPoints, priority) => {
                 const newTask: KanbanTask = {
                   id: `tsk-${Date.now()}`,
                   title,
                   taskType: "PRODUCT_BACKLOG_ITEM",
                   category,
                   status: "Backlog",
-                  priority: "MEDIUM",
-                  storyPoints: 0,
+                  priority,
+                  storyPoints,
                   assignee: "",
                   tags: [],
                   dateRange: "",

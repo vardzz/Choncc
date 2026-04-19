@@ -10,7 +10,7 @@ import { hasPermission, getRestrictionClass } from "@/lib/rbac";
 
 type BacklogPaneProps = {
   backlogTasks: KanbanTask[];
-  onAddTask: (title: string, category: string) => void;
+  onAddTask: (title: string, category: string, storyPoints: number, priority: KanbanTask["priority"]) => void;
   onCreateSubtask: (parentTaskId: string, title: string, category: string) => void;
   currentRole: UserRole;
 };
@@ -20,6 +20,8 @@ const CATEGORIES = ["Frontend", "Backend", "Design", "DevOps", "Documentation"];
 export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentRole }: BacklogPaneProps) {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState(CATEGORIES[0]);
+  const [storyPoints, setStoryPoints] = useState("0");
+  const [priority, setPriority] = useState<KanbanTask["priority"]>("MEDIUM");
   const [subtaskTitle, setSubtaskTitle] = useState("");
   const [selectedParentId, setSelectedParentId] = useState("");
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -28,9 +30,13 @@ export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentR
     event.preventDefault();
     const trimmedTitle = title.trim();
     if (!trimmedTitle) return;
+    const parsedPoints = Number.parseInt(storyPoints, 10);
+    const safePoints = Number.isNaN(parsedPoints) || parsedPoints < 0 ? 0 : parsedPoints;
 
-    onAddTask(trimmedTitle, category);
+    onAddTask(trimmedTitle, category, safePoints, priority);
     setTitle("");
+    setStoryPoints("0");
+    setPriority("MEDIUM");
   };
 
   const canCreateTask = hasPermission(currentRole, "create-backlog-task");
@@ -96,6 +102,27 @@ export function BacklogPane({ backlogTasks, onAddTask, onCreateSubtask, currentR
                       placeholder="Task title..."
                       className="w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-3 py-2 text-sm text-[#222222] placeholder:text-[rgba(34,34,34,0.5)] outline-none transition focus:border-[#C2D8C4] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:placeholder:text-[rgba(194,216,196,0.4)] dark:focus:border-[#C2D8C4] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
                     />
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="number"
+                        min={0}
+                        value={storyPoints}
+                        onChange={(e) => setStoryPoints(e.target.value)}
+                        placeholder="Story points"
+                        className="h-9 w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-3 py-2 text-xs text-[#222222] outline-none transition focus:border-[#C2D8C4] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:focus:border-[#C2D8C4]"
+                      />
+
+                      <Select
+                        value={priority}
+                        onValueChange={(value) => setPriority(value as KanbanTask["priority"])}
+                        className="h-9 w-full rounded-lg border border-[rgba(34,34,34,0.08)] bg-[#FFFFFF] px-2 py-2 text-xs text-[#222222] shadow-none transition focus:border-[#C2D8C4] hover:bg-[#FFFFFF] dark:border-[rgba(194,216,196,0.2)] dark:bg-[rgba(42,42,42,0.6)] dark:text-[#C2D8C4] dark:focus:border-[#C2D8C4]"
+                      >
+                        <option value="HIGH">High</option>
+                        <option value="MEDIUM">Medium</option>
+                        <option value="LOW">Easy</option>
+                      </Select>
+                    </div>
 
                     <div className="flex items-center gap-1.5">
                       <div className="flex-1">
